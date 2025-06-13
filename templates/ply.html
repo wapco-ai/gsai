@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PLY Viewer</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+
+     <!-- Import Map for resolving module specifiers -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "{{ url_for('serve_threejs_build', filename='three.module.js') }}",
+                "three/addons/": "{{ url_for('serve_threejs_jsm', filename='') }}"
+            }
+        }
+    </script>
+
+    <!-- Load the main application script as a module -->
+    <script type="module">
+         // Import necessary modules using the specifiers defined in the import map
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
+
+
+        let camera, scene, renderer, controls;
+
+        init();
+        animate();
+
+        function init() {
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x000000); // Black background
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 1000);
+            // Calculate initial camera position based on potential model size (placeholder)
+             camera.position.set(5, 5, 5); // Default starting position
+             camera.lookAt(0,0,0); // Look at origin
+
+
+            controls = new OrbitControls(camera, renderer.domElement); // Use imported OrbitControls
+            controls.addEventListener('change', render); // Render on interaction
+            controls.enableDamping = true; // Smooth camera movement
+            controls.dampingFactor = 0.25;
+            controls.screenSpacePanning = false;
+            controls.minDistance = 0.1;
+            controls.maxDistance = 500; // Adjust max zoom out
+
+             controls.target.set(0, 0, 0); // Center controls around origin
+             controls.update();
+
+            // --- CORRECTED FILE LOADING PATH ---
+            // This line uses the Flask url_for function to generate the correct path
+            // using the output_foldername and file_path passed from the Flask route.
+            var plyFilePath = "{{ url_for('serve_output_file', output_foldername=output_foldername, file_path=file_path) }}";
+            // --- END CORRECTED FILE LOADING PATH ---
+
+
+            var loader = new PLYLoader(); // Use imported PLYLoader
+            loader.load(plyFilePath, function (geometry) {
+
+                 geometry.computeBoundingBox(); // Ensure bounding box is computed for centering
+
+                 // Check if geometry has vertex colors
+                if (!geometry.attributes.color) {
+                     console.warn('PLY file does not contain vertex colors. Using default material.');
+                     // Create a basic white material if no colors are present
+                     var material = new THREE.PointsMaterial({ size: 0.05, color: 0xffffff });
+                } else {
+                    // Use vertex colors if available
+                    console.info('PLY file contains vertex colors.');
+                    var material = new THREE.PointsMaterial({ size: 0.05, vertexColors: true });
+                }
+
+
+                // Calculate bounding box and center the model and camera target
+                const box = new THREE.Box3().setFromObject(new THREE.Points(geometry, material)); // Create temp Points for bounding box
+                const center = new THREE.Vector3();
+                box.getCenter(center);
+                const size = new THREE.Vector3();
+                box.getSize(size);
+
+                // Translate the geometry so its center is at the origin (for easier orbiting)
+                geometry.translate(-center.x, -center.y, -center.z);
+
+
+                var points = new THREE.Points(geometry, material);
+                scene.add(points);
+
+
+                // Set controls target to the origin (where the model is now centered)
+                controls.target.set(0, 0, 0);
+
+
+                // Adjust camera position based on model size
+                const maxDim = Math.max(size.x, size.y, size.z);
+                camera.position.copy(center); // Start near the model's original center
+                camera.position.z += maxDim * 1.5; // Move camera back along z
+                camera.position.y += maxDim * 0.5; // Move camera up slightly
+                camera.lookAt(0,0,0); // Look at the new origin
+
+                controls.update(); // Update controls with the new target and camera position
+
+
+                render();
+
+            },
+             function (xhr) {
+				// Progress logging during loading
+				console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+			},
+            function (error) {
+                // Error handling during loading
+                console.error('An error happened loading the PLY file:', error);
+                document.getElementById('info').innerText = 'Failed to load PLY file.';
+            }
+            );
+
+
+            window.addEventListener('resize', onWindowResize, false);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            render();
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            render();
+        }
+
+        function render() {
+            renderer.render(scene, camera);
+        }
+    </script>
+
+     <div id="info" style="position: absolute; top: 10px; width: 100%; text-align: center; z-index: 100; color: white;">
+         <a href="{{ url_for('results', output_foldername=output_foldername) }}" style="color: white; text-decoration: none;">Back to Results</a>
+    </div>
+</body>
+</html>

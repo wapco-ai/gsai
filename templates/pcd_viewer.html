@@ -1,0 +1,128 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <title>Three.js PCD Viewer</title>  
+    <meta charset="utf-8">  
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">  
+    <style>  
+        body { margin: 0; }  
+    </style>  
+</head>  
+<body>  
+    <div id="container"></div>  
+
+    <script type="importmap">  
+        {  
+            "imports": {  
+                "three": "/static/threejs/build/three.module.js",  
+                "three/addons/": "/static/threejs/jsm/" 
+            }  
+        }  
+    </script>  
+
+    <script type="module">  
+        import * as THREE from 'three';  
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';  
+        import { PCDLoader } from 'three/addons/loaders/PCDLoader.js';  
+        import { GUI } from 'three/addons/libs/lil-gui.module.min.js';  
+
+        let camera, scene, renderer, controls;  
+        let pointCloud; // Store the point cloud object  
+        init();  
+        animate();  
+
+        function init() {  
+            // Renderer  
+            renderer = new THREE.WebGLRenderer({ antialias: true });  
+            renderer.setPixelRatio(window.devicePixelRatio);  
+            renderer.setSize(window.innerWidth, window.innerHeight);  
+            document.body.appendChild(renderer.domElement);  
+
+            // Scene  
+            scene = new THREE.Scene();  
+            scene.background = new THREE.Color(0x000000); // Black background  
+
+            // Camera  
+            camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 100);  
+            camera.position.set(0, 0, 3); // Adjust initial camera position  
+            scene.add(camera);  
+
+            // Controls  
+            controls = new OrbitControls(camera, renderer.domElement);  
+            controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled  
+            controls.dampingFactor = 0.05;  
+            controls.screenSpacePanning = false;  
+            controls.minDistance = 1;  
+            controls.maxDistance = 10;  
+
+            // Lights - add some ambient light for better visuals  
+            const ambientLight = new THREE.AmbientLight(0x404040); // soft white light  
+            scene.add(ambientLight);  
+
+            // PCD Loader  
+            const loader = new PCDLoader();  
+    // const pcdFilePath = '/static/{{ filename }}/{{ file_path }}';  
+    var pcdFilePath = "{{ url_for('serve_output_file', output_foldername=output_foldername, file_path=file_path) }}";
+
+    loader.load(pcdFilePath, function (points) {  
+        pointCloud = points;  
+
+        // Rotate before centering!  This is crucial.  
+        pointCloud.geometry.rotateX(0);  
+        pointCloud.geometry.rotateY(0);  
+
+
+        pointCloud.geometry.center(); // Center the point cloud  
+
+        scene.add(pointCloud);  
+
+
+        // Adjust point size (material)  
+        pointCloud.material.size = 0.01;  
+
+        // Initial camera adjustment  
+        const boundingBox = new THREE.Box3().setFromObject(pointCloud);  
+        const center = boundingBox.getCenter(new THREE.Vector3());  
+        const size = boundingBox.getSize(new THREE.Vector3()).length();  
+
+        camera.position.copy(center);  
+        camera.position.z += size * 0.5;  
+        controls.target.copy(center);  
+        camera.lookAt(center);  
+        controls.update();  
+
+        // GUI (optional)  
+        const gui = new GUI();  
+        gui.add(pointCloud.material, 'size', 0.001, 0.1).name('Point Size');  
+        gui.addColor(pointCloud.material, 'color').name('Color');  
+
+        render();  
+    }, function (xhr) {  
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');  
+    }, function (error) {  
+        console.error('An error happened loading the PCD file:', error);  
+    }); 
+
+            // Window Resize  
+            window.addEventListener('resize', onWindowResize);  
+        }  
+
+        function onWindowResize() {  
+            camera.aspect = window.innerWidth / window.innerHeight;  
+            camera.updateProjectionMatrix();  
+            renderer.setSize(window.innerWidth, window.innerHeight);  
+            render();  
+        }  
+
+        function animate() {  
+            requestAnimationFrame(animate);  
+            controls.update(); // Required if controls.enableDamping or controls.autoRotate are set to true  
+            render();  
+        }  
+
+        function render() {  
+            renderer.render(scene, camera);  
+        }  
+    </script>  
+</body>  
+</html>

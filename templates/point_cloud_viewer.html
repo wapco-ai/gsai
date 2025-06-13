@@ -1,0 +1,64 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <meta charset="UTF-8">  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>مشاهده ابر نقاط</title>  
+    <style>  
+        body { margin: 0; }  
+        canvas { display: block; }  
+    </style>  
+    <script src="https://threejs.org/build/three.min.js"></script>  
+    <script src="https://threejs.org/examples/js/loaders/PLYLoader.js"></script>  
+    <script src="https://threejs.org/examples/js/controls/OrbitControls.js"></script>  
+</head>  
+<body>  
+    <script>  
+        let scene, camera, renderer, controls;  
+
+        function init() {  
+            // Create scene  
+            scene = new THREE.Scene();  
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);  
+            renderer = new THREE.WebGLRenderer({ antialias: true });  
+            renderer.setSize(window.innerWidth, window.innerHeight);  
+            document.body.appendChild(renderer.domElement);  
+
+            // Add orbit controls  
+            controls = new THREE.OrbitControls(camera, renderer.domElement);  
+            controls.enableDamping = true;  
+            controls.dampingFactor = 0.25;  
+            controls.maxPolarAngle = Math.PI / 2;  
+
+            // Load the PLY file  
+            const loader = new THREE.PLYLoader();  
+            loader.load(`/download/${ply_file}`, function (geometry) {  
+                geometry.computeVertexNormals();  
+                const material = new THREE.PointsMaterial({ size: 0.01, vertexColors: THREE.VertexColors });  
+                const pointCloud = new THREE.Points(geometry, material);  
+                scene.add(pointCloud);  
+            });  
+
+            // Set camera position  
+            camera.position.z = 5;  
+
+            window.addEventListener('resize', onWindowResize, false);  
+            animate();  
+        }  
+
+        function animate() {  
+            requestAnimationFrame(animate);  
+            controls.update(); // only required if controls.enableDamping = true  
+            renderer.render(scene, camera);  
+        }  
+
+        function onWindowResize() {  
+            camera.aspect = window.innerWidth / window.innerHeight;  
+            camera.updateProjectionMatrix();  
+            renderer.setSize(window.innerWidth, window.innerHeight);  
+        }  
+
+        init();  
+    </script>  
+</body>  
+</html>

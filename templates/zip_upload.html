@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="fa">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font/dist/font-face.css" rel="stylesheet">
+    <title>بارگذاری فایل ZIP حاوی تصاویر</title>
+    <style>
+        body {
+            font-family: 'Vazir', Arial, sans-serif;
+            text-align: right;
+            direction: rtl;
+            background-color: #f8f9fa;
+            /* Light background for a clean appearance */
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #0056b3;
+            /* Dark blue header */
+            color: white;
+            text-align: center;
+            padding: 1rem 0;
+            /* Vertical padding */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            /* Subtle shadow */
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            /* Increased font size */
+            letter-spacing: 1px;
+            /* Letter spacing for emphasis */
+            text-transform: uppercase;
+            /* Uppercase for emphasis */
+        }
+
+        main {
+            max-width: 600px;
+            margin: 2rem auto;
+            /* Centered with margin */
+            background: white;
+            padding: 30px;
+            /* Spacing inside main area */
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            /* Better shadow */
+        }
+
+        h2 {
+            color: #007BFF;
+            /* Subtitle color */
+            font-size: 1.8rem;
+            /* Subtitle size */
+            margin-bottom: 1rem;
+            /* Space below subtitle */
+            text-align: center;
+            /* Centered subtitle */
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            /* Arrange items in column */
+            gap: 1.5rem;
+            /* Spacing between elements */
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            /* Stack label and input vertically */
+            gap: 0.4rem;
+            /* Space between label and input */
+        }
+
+        .form-group label {
+            font-weight: bold;
+            /* Make label bold */
+            color: #555;
+            /* Darker gray for labels */
+        }
+
+        .form-group input[type="file"] {
+            padding: 15px;
+            /* Padding for file input */
+            font-size: 1rem;
+            /* Font size */
+            border: 2px solid #007BFF;
+            /* Blue border */
+            border-radius: 5px;
+            /* Rounded corners */
+            transition: border-color 0.3s ease;
+            /* Smooth border change */
+        }
+
+        .form-group input[type="file"]:focus {
+            border-color: #0056b3;
+            /* Darker border on focus */
+            outline: none;
+            /* Remove default outline */
+        }
+
+        .form-group button {
+            padding: 15px;
+            /* Padding for button */
+            font-size: 1.1rem;
+            /* Button font size */
+            border: none;
+            /* Remove border */
+            border-radius: 5px;
+            /* Rounded corners */
+            background-image: linear-gradient(90deg, #007BFF, #0056b3);
+            /* Gradient background */
+            color: white;
+            /* Button text color */
+            cursor: pointer;
+            /* Pointer on hover */
+            transition: background-color 0.3s ease, transform 0.3s;
+            /* Smooth transitions */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            /* Shadow for depth */
+        }
+
+        .form-group button:hover {
+            background-color: #0056b3;
+            /* Darker blue on hover */
+            transform: scale(1.05);
+            /* Slight zoom effect */
+        }
+
+        .form-errors {
+            background-color: #fbc2c4;
+            /* Light background for errors */
+            color: #842029;
+            /* Error text color */
+            border: 1px solid #f5c2c7;
+            /* Border for the error box */
+            padding: 10px;
+            /* Inner padding */
+            margin-bottom: 1rem;
+            /* Space below */
+            border-radius: 5px;
+            /* Rounded corners for error box */
+        }
+
+        footer {
+            text-align: center;
+            /* Center footer text */
+            margin-top: 20px;
+            /* Space above footer */
+            padding: 10px;
+            /* Padding for footer */
+            font-size: 0.9rem;
+            /* Font size */
+            color: #666;
+            /* Text color */
+        }
+
+        footer a {
+            color: #007BFF;
+            /* Link color */
+            text-decoration: none;
+            /* No underline */
+            font-weight: bold;
+            /* Bold links */
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+            /* Underline link on hover */
+        }
+
+        ul {
+            list-style-type: none;
+            /* No bullets */
+            padding: 0;
+            /* Remove padding */
+            margin: 0;
+            /* Remove margin */
+        }
+
+        li {
+            margin: 5px 0;
+            /* Space between list items */
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>بارگذاری فایل ZIP</h1>
+    </header>
+
+    <main>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="form-errors">
+            <ul>
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <form action="/zip-upload" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="zip">انتخاب فایل ZIP:</label>
+                <input type="file" id="zip" name="zip" accept=".zip" required>
+            </div>
+            <div class="form-check mb-3">
+                <input type="checkbox" class="form-check-input" id="classifyImages" name="classify_images">
+                <label class="form-check-label" for="classifyImages">انجام طبقه‌بندی تصویر (با استفاده از Segformer)</label>
+            </div>
+            <div class="form-group">
+                <button type="submit">بارگذاری</button> <!-- Submit button styled within form-group -->
+            </div>
+        </form>
+    </main>
+
+    <footer>
+        <p>© ۱۴۰۳ - برنامه پردازش تصاویر. <a href="/">خانه</a></p>
+    </footer>
+
+</body>
+
+</html>
