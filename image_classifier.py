@@ -319,8 +319,9 @@ def classify_images_in_folder(image_folder, output_mask_folder, blended_output_f
 # --- New function to create colored mask and blend ---
 def create_colored_mask_and_blend(original_image_path, raw_mask, blended_output_folder):
      """
-     Creates a colored segmentation mask internally and blends it with the original image.
-     Saves the blended image to the specified output folder.
+    Creates an output image where the original RGB image is preserved except
+    for the green channel, which is replaced with the predicted class ID for
+    each pixel. The modified image is saved to the specified output folder.
 
      Args:
          original_image_path (str): Path to the original image.
@@ -334,21 +335,15 @@ def create_colored_mask_and_blend(original_image_path, raw_mask, blended_output_
         original_image = Image.open(original_image_path).convert("RGB")
         original_size = original_image.size # (width, height)
 
-        # Resize raw mask to original image size before coloring/blending
+        # Resize raw mask to match the original image size
         mask_image = Image.fromarray(raw_mask.astype(np.uint16), mode='I;16')
         mask_image = mask_image.resize(original_size, resample=Image.NEAREST)
-        resized_raw_mask = np.array(mask_image)
+        resized_raw_mask = np.array(mask_image, dtype=np.uint8)
 
-        # Create a colored visualization of the mask
-        # Normalize mask values for colormap
-        norm_mask = resized_raw_mask.astype(np.float32) / 149.0
-        colormap = plt.get_cmap('gist_ncar', 150)
-        colored_array = colormap(norm_mask)[:, :, :3]
-        colored_array = (colored_array * 255).astype(np.uint8)
-        color_image = Image.fromarray(colored_array, mode='RGB')
-
-        # Blend the original image and the colored mask with 50% opacity
-        blended = Image.blend(original_image, color_image, alpha=0.5)
+        # Insert the mask values into the green channel of the original image
+        original_array = np.array(original_image)
+        original_array[:, :, 1] = resized_raw_mask
+        blended = Image.fromarray(original_array, mode="RGB")
 
         # Define the save path for the blended image within the designated blended output folder
         base_filename = os.path.splitext(os.path.basename(original_image_path))[0]
@@ -367,7 +362,7 @@ def create_colored_mask_and_blend(original_image_path, raw_mask, blended_output_
             return None
 
      except Exception as e:
-        logging.error(f"Error creating colored mask and blend for {original_image_path}: {e}")
+        logging.error(f"Error creating green channel overlay for {original_image_path}: {e}")
         return None
 
 
