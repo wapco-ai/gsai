@@ -19,6 +19,7 @@ import json
 from threading import Thread
 import sys  # Import sys to get the python executable
 import sqlite3
+from flask_sqlalchemy import SQLAlchemy
 
 if sys.platform.startswith("win"):
     import winreg
