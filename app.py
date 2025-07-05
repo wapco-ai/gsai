@@ -66,32 +66,11 @@ app.config["ALLOWED_IMAGE_EXTENSIONS"] = {"jpg", "jpeg", "png"}
 app.config["ALLOWED_VIDEO_EXTENSIONS"] = {"mp4", "avi", "mov", "mkv"}
 app.config["ALLOWED_ZIP_EXTENSIONS"] = {"zip"}
 app.config["PROCESSING_STATES"] = {}
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///processes.db"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-db = SQLAlchemy(app)
-
-# Database configuration
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db = SQLAlchemy(app)
 
 
-class Process(db.Model):
-    id = db.Column(db.String, primary_key=True)
-    filename = db.Column(db.String)
-    start_time = db.Column(db.DateTime)
-    end_time = db.Column(db.DateTime)
-    duration = db.Column(db.Float)
-    frame_count = db.Column(db.Integer)
-    user = db.Column(db.String)
-    status = db.Column(db.String)
-    output_folder = db.Column(db.String)
-    progress = db.Column(db.Integer, default=0)
-    message = db.Column(db.String)
-
-
-with app.app_context():
-    db.create_all()
 
 
 def load_metashape_executable():
@@ -164,7 +143,7 @@ logging.basicConfig(
 
 
 class Process(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String, primary_key=True)
     process_uuid = db.Column(db.String(36), unique=True)
     filename = db.Column(db.String(255))
     user = db.Column(db.String(50))
@@ -173,6 +152,9 @@ class Process(db.Model):
     end_time = db.Column(db.DateTime)
     duration = db.Column(db.Float)
     status = db.Column(db.String(50))
+    output_folder = db.Column(db.String)
+    progress = db.Column(db.Integer, default=0)
+    message = db.Column(db.String)
 
 
 # Helper function to check allowed files
@@ -347,12 +329,14 @@ def video_upload():
             classify_images = request.form.get("classify_images") == "on"
 
             db_process = Process(
-                process_uuid=process_id,
+                id=process_id,
+                process_uuid=process_uuid,
                 filename=filename,
                 user=session.get("username", "unknown"),
                 frame_count=0,
                 start_time=datetime.utcnow(),
                 status="processing",
+                output_folder=process_id,
             )
             db.session.add(db_process)
 
@@ -808,12 +792,14 @@ def zip_upload():
 
         process_id = str(uuid.uuid4())
         db_process = Process(
-            process_uuid=process_id,
+            id=process_id,
+            process_uuid=process_uuid,
             filename=zip_filename,
             user=session.get("username", "unknown"),
             frame_count=0,
             start_time=datetime.utcnow(),
             status="processing",
+            output_folder=process_uuid,
         )
         db.session.add(db_process)
 
