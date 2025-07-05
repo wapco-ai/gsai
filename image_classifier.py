@@ -5,7 +5,19 @@ import tensorflow as tf
 from transformers import TFSegformerForSemanticSegmentation, SegformerFeatureExtractor
 import logging
 from tqdm import tqdm
-import matplotlib.pyplot as plt # Import matplotlib for colormap
+import matplotlib.pyplot as plt  # Import matplotlib for colormap
+
+# Configure TensorFlow to utilise GPU when available
+gpus = tf.config.list_physical_devices('GPU')
+if gpus:
+    try:
+        for gpu in gpus:
+            tf.config.experimental.set_memory_growth(gpu, True)
+        logging.info(f"Using GPU devices: {[gpu.name for gpu in gpus]}")
+    except Exception as e:
+        logging.warning(f"Could not set GPU memory growth: {e}")
+else:
+    logging.info("No GPU detected. Using CPU only.")
 
 # Configure logging for the classifier
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
