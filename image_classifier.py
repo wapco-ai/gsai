@@ -2,10 +2,14 @@ import os
 from PIL import Image
 import numpy as np
 import tensorflow as tf
-from transformers import TFSegformerForSemanticSegmentation, SegformerFeatureExtractor
+from transformers import (
+    TFSegformerForSemanticSegmentation,
+    SegformerFeatureExtractor,
+)
 import logging
 from tqdm import tqdm
 import matplotlib.pyplot as plt  # Import matplotlib for colormap
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 # Configure TensorFlow to utilise GPU when available
 # gpus = tf.config.list_physical_devices('GPU')
@@ -366,6 +370,15 @@ def create_colored_mask_and_blend(original_image_path, raw_mask, blended_output_
         return None
 
 
+# Helper for parallel processing
+def process_single_image(image_path, blended_output_folder):
+    """Classify a single image and return the blended output path."""
+    predicted_mask = classify_image(image_path)
+    if predicted_mask is not None:
+        return create_colored_mask_and_blend(image_path, predicted_mask, blended_output_folder)
+    return None
+
+
 # --- Modify classify_images_in_folder again to use create_colored_mask_and_blend ---
 def classify_images_in_folder(image_folder, blended_output_folder):
     """
@@ -399,17 +412,23 @@ def classify_images_in_folder(image_folder, blended_output_folder):
     logging.info(f"Found {len(image_files)} images to classify and blend.")
     blended_image_paths = []
 
-    for image_filename in tqdm(image_files, desc="Classifying and Blending Images"):
-        image_path = os.path.join(image_folder, image_filename)
+    image_paths = [os.path.join(image_folder, f) for f in image_files]
+    num_workers = max(1, (os.cpu_count() or 1) - 1)
 
-        predicted_mask = classify_image(image_path)
-
-        if predicted_mask is not None:
-            # Create colored mask and blended image, save blended image
-            blended_path = create_colored_mask_and_blend(image_path, predicted_mask, blended_output_folder)
-            if blended_path:
-                blended_image_paths.append(blended_path)
-            # Error saving blended image is logged within create_colored_mask_and_blend
+    with ProcessPoolExecutor(
+        max_workers=num_workers,
+        initializer=load_model_and_feature_extractor,
+    ) as executor:
+        futures = {
+            executor.submit(process_single_image, path, blended_output_folder): path
+            for path in image_paths
+        }
+        with tqdm(total=len(futures), desc="Classifying and Blending Images") as pbar:
+            for future in as_completed(futures):
+                result = future.result()
+                if result:
+                    blended_image_paths.append(result)
+                pbar.update(1)
 
     return blended_image_paths # Return the list of blended image paths
 
