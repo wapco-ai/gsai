@@ -22,7 +22,7 @@ model = None
 feature_extractor = None
 device_name = None
 gpu_available = False
-batch_size = 8  # Will be auto-adjusted based on GPU memory
+batch_size = 1  # Will be auto-adjusted based on GPU memory
 # Allow overriding batch size via environment variable
 _env_batch = os.environ.get("BATCH_SIZE")
 if _env_batch:

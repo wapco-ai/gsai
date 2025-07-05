@@ -1,0 +1,83 @@
+2025-07-05 17:22:57,145 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-05 17:22:57,146 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-05 17:23:16,746 - INFO - 127.0.0.1 - - [05/Jul/2025 17:23:16] "[32mGET /processing/421660ef-268d-4c0e-96dc-14906b04ec46 HTTP/1.1[0m" 302 -
+2025-07-05 17:23:16,769 - INFO - 127.0.0.1 - - [05/Jul/2025 17:23:16] "GET /file_selection HTTP/1.1" 200 -
+2025-07-05 17:23:18,802 - INFO - 127.0.0.1 - - [05/Jul/2025 17:23:18] "[32mPOST /file_selection HTTP/1.1[0m" 302 -
+2025-07-05 17:23:18,816 - INFO - 127.0.0.1 - - [05/Jul/2025 17:23:18] "GET /video-upload HTTP/1.1" 200 -
+2025-07-05 17:23:30,139 - INFO - Running frame extraction command: D:\ProgramData\anaconda3\envs\geosphereai\python.exe D:\AI\3dRecognition\geoSphereAi_v1.0.1\metashape_script.py --extract_frames uploads\675c0b52-094e-4b13-b896-eaf76e86fff6\torghabe2.mp4 --image_dir outputs\20642137-52d9-47b3-bda5-595765dc382a\frames --start_time 150.0 --frame_interval 1.0 --crop_height_ratio 0.1 --end_time 180.0
+2025-07-05 17:23:30,187 - INFO - 127.0.0.1 - - [05/Jul/2025 17:23:30] "[32mPOST /video-upload HTTP/1.1[0m" 302 -
+2025-07-05 17:23:30,200 - INFO - 127.0.0.1 - - [05/Jul/2025 17:23:30] "GET /processing/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:23:30,364 - INFO - 127.0.0.1 - - [05/Jul/2025 17:23:30] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:23:30,742 - INFO - ExtractFrames: Using frame rate: 29.97 FPS.
+2025-07-05 17:23:30,742 - INFO - ExtractFrames: Total frames in video: 8084
+2025-07-05 17:23:35,415 - INFO - 127.0.0.1 - - [05/Jul/2025 17:23:35] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:23:40,546 - INFO - 127.0.0.1 - - [05/Jul/2025 17:23:40] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:23:45,556 - INFO - 127.0.0.1 - - [05/Jul/2025 17:23:45] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:23:50,640 - INFO - 127.0.0.1 - - [05/Jul/2025 17:23:50] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:23:53,702 - INFO - ExtractFrames: Frame extraction completed.
+2025-07-05 17:23:53,732 - INFO - Frame extraction completed. Found 31 images.
+2025-07-05 17:23:53,734 - INFO - 🚀 TURBO processing: outputs\20642137-52d9-47b3-bda5-595765dc382a\frames
+2025-07-05 17:23:53,734 - INFO - 🎯 Target band: Red
+2025-07-05 17:23:53,735 - INFO - 🚀 TURBO CLASSIFICATION STARTED for: outputs\20642137-52d9-47b3-bda5-595765dc382a\frames
+2025-07-05 17:23:53,736 - INFO - 🚀 Loading model with TURBO optimizations...
+2025-07-05 17:23:53,794 - WARNING - Mixed precision compatibility check (mixed_float16): WARNING
+Your GPU may run slowly with dtype policy mixed_float16 because it does not have compute capability of at least 7.0. Your GPU:
+  Quadro M4000M, compute capability 5.2
+See https://developer.nvidia.com/cuda-gpus for a list of GPUs and their compute capabilities.
+If you will use compatible GPU(s) not attached to this host, e.g. by running a multi-worker model, you can ignore this warning. This message will only be logged once
+2025-07-05 17:23:53,795 - INFO - 🚀 GPU TURBO MODE ACTIVATED!
+2025-07-05 17:23:53,795 - INFO - 🎮 GPUs configured: 1
+2025-07-05 17:23:53,796 - INFO - ⚡ Mixed precision: ENABLED
+2025-07-05 17:23:53,796 - INFO - 💻 Device: /GPU:0
+2025-07-05 17:23:54,621 - INFO - 🎮 Using conservative batch size: 6
+2025-07-05 17:23:54,622 - INFO - 📦 Loading model from local directory...
+2025-07-05 17:23:55,659 - INFO - 127.0.0.1 - - [05/Jul/2025 17:23:55] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:24:00,730 - INFO - 127.0.0.1 - - [05/Jul/2025 17:24:00] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:24:04,996 - INFO - ✅ Model loaded from local directory.
+2025-07-05 17:24:05,000 - INFO - ✅ Feature extractor loaded from local JSON config.
+2025-07-05 17:24:05,000 - INFO - 🔥 TURBO MODE READY - Batch size: 6
+2025-07-05 17:24:05,001 - INFO - 📊 Processing 31 images with batch size 6
+2025-07-05 17:24:06,040 - INFO - 127.0.0.1 - - [05/Jul/2025 17:24:06] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:24:11,050 - INFO - 127.0.0.1 - - [05/Jul/2025 17:24:11] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:24:16,589 - INFO - 127.0.0.1 - - [05/Jul/2025 17:24:16] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:24:21,174 - ERROR - Batch classification failed: OOM when allocating tensor with shape[6,128,128,3072] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc [Op:ConcatV2] name: concat
+2025-07-05 17:24:21,612 - INFO - 127.0.0.1 - - [05/Jul/2025 17:24:21] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:24:26,637 - INFO - 127.0.0.1 - - [05/Jul/2025 17:24:26] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:24:31,648 - INFO - 127.0.0.1 - - [05/Jul/2025 17:24:31] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:24:33,379 - ERROR - Batch classification failed: OOM when allocating tensor with shape[6,128,128,3072] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc [Op:ConcatV2] name: concat
+2025-07-05 17:24:36,671 - INFO - 127.0.0.1 - - [05/Jul/2025 17:24:36] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:24:41,682 - INFO - 127.0.0.1 - - [05/Jul/2025 17:24:41] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:24:46,143 - ERROR - Batch classification failed: OOM when allocating tensor with shape[6,128,128,3072] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc [Op:ConcatV2] name: concat
+2025-07-05 17:24:46,698 - INFO - 127.0.0.1 - - [05/Jul/2025 17:24:46] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:24:52,124 - INFO - 127.0.0.1 - - [05/Jul/2025 17:24:52] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:24:57,145 - INFO - 127.0.0.1 - - [05/Jul/2025 17:24:57] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:24:58,340 - ERROR - Batch classification failed: OOM when allocating tensor with shape[6,128,128,3072] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc [Op:ConcatV2] name: concat
+2025-07-05 17:25:02,170 - INFO - 127.0.0.1 - - [05/Jul/2025 17:25:02] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:25:07,189 - INFO - 127.0.0.1 - - [05/Jul/2025 17:25:07] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:25:10,840 - ERROR - Batch classification failed: OOM when allocating tensor with shape[6,128,128,3072] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc [Op:ConcatV2] name: concat
+2025-07-05 17:25:12,201 - INFO - 127.0.0.1 - - [05/Jul/2025 17:25:12] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:25:17,211 - INFO - 127.0.0.1 - - [05/Jul/2025 17:25:17] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
+2025-07-05 17:25:19,487 - INFO - 🎯 TURBO COMPLETE!
+2025-07-05 17:25:19,487 - INFO - 📊 Processed: 1 band images
+2025-07-05 17:25:19,487 - INFO - ⏱️ Total time: 85.75s
+2025-07-05 17:25:19,488 - INFO - 🚀 Speed: 0.36 images/second
+2025-07-05 17:25:19,488 - INFO - ✅ TURBO COMPLETE: 1 images processed
+2025-07-05 17:25:19,489 - INFO - Generated 2 blended images.
+2025-07-05 17:25:19,489 - INFO - Starting geoSphereAi process with 59 images from outputs\20642137-52d9-47b3-bda5-595765dc382a\blended_images.
+2025-07-05 17:25:19,489 - INFO - Running geoSphereAi command: D:\\Program Files\\Agisoft\\Metashape Pro\\metashape.exe -r D:\AI\3dRecognition\geoSphereAi_v1.0.1\metashape_script.py --image_full_pipeline --image_dir outputs\20642137-52d9-47b3-bda5-595765dc382a\blended_images --output_dir outputs\20642137-52d9-47b3-bda5-595765dc382a
+2025-07-05 17:25:21,161 - INFO - Metashape: Agisoft Metashape Professional Version: 2.2.0 build 19135 (64 bit)
+2025-07-05 17:25:21,161 - INFO - Metashape: Platform: Windows
+2025-07-05 17:25:21,162 - INFO - Metashape: CPU: Intel(R) Core(TM) i7-6820HQ CPU @ 2.70GHz (laptop)
+2025-07-05 17:25:21,162 - INFO - Metashape: CPU family: 6 model: 94 signature: 506E3h
+2025-07-05 17:25:21,163 - INFO - Metashape: RAM: 15.9 GB
+2025-07-05 17:25:21,226 - INFO - Metashape: AddPhotos: filenames = outputs\20642137-52d9-47b3-bda5-595765dc382a\blended_images\frame_5365_band_0.png
+2025-07-05 17:25:21,436 - INFO - Metashape: Loaded 1 images
+2025-07-05 17:25:21,436 - INFO - Metashape: MatchPhotos: downscale = 2, generic_preselection = on, reference_preselection = off, filter_mask = off, mask_tiepoints = on, filter_stationary_points = on, keypoint_limit = 1000000, keypoint_limit_per_mpx = 1000, tiepoint_limit = 100000, guided_matching = off, exclude_corners = off
+2025-07-05 17:25:21,873 - ERROR - Metashape error: Traceback (most recent call last):
+  File "D:\AI\3dRecognition\geoSphereAi_v1.0.1\metashape_script.py", line 254, in <module>
+    process_in_metashape(image_dir, output_dir)
+  File "D:\AI\3dRecognition\geoSphereAi_v1.0.1\metashape_script.py", line 78, in process_in_metashape
+    chunk.matchPhotos(  
+RuntimeError: Not enough items
+2025-07-05 17:25:22,225 - INFO - 127.0.0.1 - - [05/Jul/2025 17:25:22] "GET /progress/20642137-52d9-47b3-bda5-595765dc382a HTTP/1.1" 200 -
