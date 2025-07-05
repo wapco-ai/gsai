@@ -12,18 +12,28 @@ from flask import (
     session,
 )
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
 import subprocess
 import uuid
 import json
 from threading import Thread
 import sys  # Import sys to get the python executable
-import winreg
+import sqlite3
+from flask_sqlalchemy import SQLAlchemy
+
+if sys.platform.startswith("win"):
+    import winreg
+else:
+    winreg = None
+
 
 # Import the new image classifier module
 import image_classifier
 
 
 def apply_windows_proxy():
+    if not sys.platform.startswith("win") or winreg is None:
+        return
     try:
         # باز کردن کلید تنظیمات اینترنت کاربر جاری
         reg_path = r"Software\Microsoft\Windows\CurrentVersion\Internet Settings"
@@ -55,12 +65,56 @@ app.config["OUTPUT_FOLDER"] = "outputs"
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = {"jpg", "jpeg", "png"}
 app.config["ALLOWED_VIDEO_EXTENSIONS"] = {"mp4", "avi", "mov", "mkv"}
 app.config["ALLOWED_ZIP_EXTENSIONS"] = {"zip"}
-app.secret_key = "your_secret_key"  # CHANGE THIS TO A REAL, SECRET KEY
 app.config["PROCESSING_STATES"] = {}
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///processes.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db = SQLAlchemy(app)
 
-# Path to Metashape Pro executable
-# Ensure this path is correct for your system
-METASHAPE_EXECUTABLE = r"D:\\Program Files\\Agisoft\\Metashape Pro\\metashape.exe"
+# Database configuration
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db = SQLAlchemy(app)
+
+
+class Process(db.Model):
+    id = db.Column(db.String, primary_key=True)
+    filename = db.Column(db.String)
+    start_time = db.Column(db.DateTime)
+    end_time = db.Column(db.DateTime)
+    duration = db.Column(db.Float)
+    frame_count = db.Column(db.Integer)
+    user = db.Column(db.String)
+    status = db.Column(db.String)
+    output_folder = db.Column(db.String)
+    progress = db.Column(db.Integer, default=0)
+    message = db.Column(db.String)
+
+
+with app.app_context():
+    db.create_all()
+
+
+def load_metashape_executable():
+    env_path = os.environ.get("METASHAPE_EXECUTABLE")
+    if env_path:
+        return env_path
+
+    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
+    if os.path.exists(config_path):
+        try:
+            with open(config_path, "r", encoding="utf-8") as cfg:
+                data = json.load(cfg)
+            if data.get("METASHAPE_EXECUTABLE"):
+                return data["METASHAPE_EXECUTABLE"]
+        except Exception as exc:
+            raise RuntimeError(f"Failed to load config file {config_path}: {exc}")
+
+    raise RuntimeError(
+        "METASHAPE_EXECUTABLE not set in environment or config file"
+    )
+
+
+METASHAPE_EXECUTABLE = load_metashape_executable()
 # Assuming metashape_script.py is in the same directory as app.py
 METASHAPE_SCRIPT_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "metashape_script.py"
@@ -70,10 +124,55 @@ METASHAPE_SCRIPT_PATH = os.path.join(
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 os.makedirs(app.config["OUTPUT_FOLDER"], exist_ok=True)
 
+# Database setup
+DB_PATH = os.path.join(app.root_path, "users.db")
+
+
+def get_db_connection():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def init_db():
+    conn = get_db_connection()
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+        """
+    )
+    cur = conn.execute("SELECT id FROM users WHERE username=?", ("wapco",))
+    if cur.fetchone() is None:
+        conn.execute(
+            "INSERT INTO users (username, password) VALUES (?, ?)",
+            ("wapco", generate_password_hash("wapco")),
+        )
+    conn.commit()
+    conn.close()
+
+
+init_db()
+
 # Setup logging
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
+
+
+class Process(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    process_uuid = db.Column(db.String(36), unique=True)
+    filename = db.Column(db.String(255))
+    user = db.Column(db.String(50))
+    frame_count = db.Column(db.Integer)
+    start_time = db.Column(db.DateTime)
+    end_time = db.Column(db.DateTime)
+    duration = db.Column(db.Float)
+    status = db.Column(db.String(50))
 
 
 # Helper function to check allowed files
@@ -128,14 +227,39 @@ def extract_images_from_zip(zip_path, output_folder):
     return extracted_files_count
 
 
+# Helper function to update process state both in-memory and in the database
+def update_process_state(process_id, updates=None, **kwargs):
+    state = app.config["PROCESSING_STATES"].setdefault(process_id, {})
+    if updates:
+        state.update(updates)
+    state.update(kwargs)
+    process = Process.query.get(process_id)
+    if process:
+        combined = updates.copy() if updates else {}
+        combined.update(kwargs)
+        for key, value in combined.items():
+            if hasattr(process, key):
+                setattr(process, key, value)
+        if "end_time" in combined and process.start_time and process.end_time:
+            process.duration = (process.end_time - process.start_time).total_seconds()
+        db.session.commit()
+
+
 # Index page
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        if username == "wapco" and password == "wapco":
+        conn = get_db_connection()
+        user = conn.execute(
+            "SELECT * FROM users WHERE username=?",
+            (username,),
+        ).fetchone()
+        conn.close()
+        if user and check_password_hash(user["password"], password):
             session["logged_in"] = True
+            session["username"] = username
             flash("ورود با موفقیت انجام شد.")
             return redirect(url_for("file_selection"))
         else:
@@ -166,6 +290,7 @@ def file_selection():
 @app.route("/logout")
 def logout():
     session.pop("logged_in", None)
+    session.pop("username", None)
     flash("شما با موفقیت خارج شدید.")
     return redirect(url_for("index"))
 
@@ -173,10 +298,20 @@ def logout():
 # New route for progress updates
 @app.route("/progress/<process_id>")
 def progress(process_id):
-    progress_data = app.config["PROCESSING_STATES"].get(
-        process_id,
-        {"status": "not_found", "progress": 0, "message": "Process not found"},
-    )
+    proc = Process.query.get(process_id)
+    if proc:
+        progress_data = {
+            "status": proc.status,
+            "progress": proc.progress or 0,
+            "message": proc.message or "",
+            "output_foldername": proc.output_folder,
+        }
+    else:
+        progress_data = {
+            "status": "not_found",
+            "progress": 0,
+            "message": "Process not found",
+        }
     return json.dumps(progress_data)
 
 
@@ -211,6 +346,18 @@ def video_upload():
 
             classify_images = request.form.get("classify_images") == "on"
 
+            db_process = Process(
+                process_uuid=process_id,
+                filename=filename,
+                user=session.get("username", "unknown"),
+                frame_count=0,
+                start_time=datetime.utcnow(),
+                status="processing",
+            )
+            db.session.add(db_process)
+
+            db.session.commit()
+
             app.config["PROCESSING_STATES"][process_id] = {
                 "status": "processing",
                 "progress": 0,
@@ -231,12 +378,21 @@ def video_upload():
                 frame_interval = float(frame_interval_str)
                 crop_height_ratio = float(crop_height_ratio_str)
             except ValueError as e:
-                app.config["PROCESSING_STATES"][process_id].update(
+                update_process_state(
+                    process_id,
                     {
                         "status": "failed",
                         "message": f"خطا در مقادیر ورودی زمان یا بازه: {str(e)}",
-                    }
+                        "end_time": datetime.utcnow(),
+                    },
                 )
+                proc = Process.query.filter_by(process_uuid=process_id).first()
+                if proc:
+                    proc.status = "failed"
+                    proc.end_time = datetime.utcnow()
+                    if proc.start_time:
+                        proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                    db.session.commit()
                 logging.error(f"Input value error: {e}")
                 return redirect(url_for("processing", process_id=process_id))
 
@@ -256,7 +412,7 @@ def video_upload():
                         image_dir = os.path.join(output_dir, "frames")
                         os.makedirs(image_dir, exist_ok=True)
 
-                        app.config["PROCESSING_STATES"][process_id].update(
+                        update_process_state(process_id, 
                             {"progress": 5, "message": "در حال استخراج فریم‌ها..."}
                         )
 
@@ -299,7 +455,7 @@ def video_upload():
                                 # Update progress based on extracted count if total is known
                                 # if total_frames > 0:
                                 #     progress_percentage = 5 + int(15 * (extracted_count / total_frames)) # 5 to 20%
-                                #     app.config["PROCESSING_STATES"][process_id].update({"progress": progress_percentage})
+                                #     update_process_state(process_id, {"progress": progress_percentage})
 
                         extract_process.wait()
 
@@ -308,12 +464,21 @@ def video_upload():
                                 extract_process.stderr.read().decode().strip()
                             )
                             logging.error(f"Frame extraction error: {stderr_output}")
-                            app.config["PROCESSING_STATES"][process_id].update(
+                            update_process_state(
+                                process_id,
                                 {
                                     "status": "failed",
                                     "message": f"خطا در استخراج فریم‌ها: {stderr_output}",
-                                }
+                                    "end_time": datetime.utcnow(),
+                                },
                             )
+                            proc = Process.query.filter_by(process_uuid=process_id).first()
+                            if proc:
+                                proc.status = "failed"
+                                proc.end_time = datetime.utcnow()
+                                if proc.start_time:
+                                    proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                                db.session.commit()
                             return  # Stop processing on error
 
                         # --- Check if any images were extracted ---
@@ -326,22 +491,36 @@ def video_upload():
                             logging.error(
                                 f"Frame extraction completed but no valid image files found in {image_dir}."
                             )
-                            app.config["PROCESSING_STATES"][process_id].update(
+                            update_process_state(
+                                process_id,
                                 {
                                     "status": "failed",
                                     "message": "استخراج فریم‌ها انجام شد، اما هیچ فایل تصویری یافت نشد. احتمالاً ویدئو مشکل دارد یا پارامترهای استخراج نادرست هستند.",
-                                }
+                                    "end_time": datetime.utcnow(),
+                                },
                             )
+                            proc = Process.query.filter_by(process_uuid=process_id).first()
+                            if proc:
+                                proc.status = "failed"
+                                proc.end_time = datetime.utcnow()
+                                if proc.start_time:
+                                    proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                                db.session.commit()
                             return  # Stop processing if no images were extracted
 
                         logging.info(
                             f"Frame extraction completed. Found {len(extracted_image_files)} images."
                         )
+                        proc = Process.query.filter_by(process_uuid=process_id).first()
+                        if proc:
+                            proc.frame_count = len(extracted_image_files)
+                            db.session.commit()
                         app.config["PROCESSING_STATES"][process_id].update(
                             {
                                 "progress": 20,
                                 "message": f"استخراج فریم‌ها کامل شد. یافت شد: {len(extracted_image_files)} تصویر.",
-                            }
+                                "frame_count": len(extracted_image_files),
+                            },
                         )
 
                         images_to_process_dir = image_dir  # Default to original frames
@@ -351,7 +530,7 @@ def video_upload():
 
                         # --- CLASSIFICATION AND BLENDING STEP ---
                         if classify_images:
-                            app.config["PROCESSING_STATES"][process_id].update(
+                            update_process_state(process_id, 
                                 {
                                     "progress": 25,
                                     "message": "در حال طبقه‌بندی و ترکیب تصاویر...",
@@ -372,7 +551,7 @@ def video_upload():
                                     )
                                     # If classification and blending successful, use blended images for Metashape
                                     images_to_process_dir = blended_image_dir  # Use blended images for Metashape
-                                    app.config["PROCESSING_STATES"][process_id].update(
+                                    update_process_state(process_id, 
                                         {
                                             "progress": 40,
                                             "message": f"طبقه‌بندی و ترکیب تصاویر کامل شد. استفاده از {len(blended_image_paths)} تصویر ترکیبی برای geoSphereAi.",
@@ -383,7 +562,7 @@ def video_upload():
                                     logging.warning(
                                         "Image classification and blending failed or produced no output blended images. Continuing with original images."
                                     )
-                                    app.config["PROCESSING_STATES"][process_id].update(
+                                    update_process_state(process_id, 
                                         {
                                             "message": "طبقه‌بندی و ترکیب تصاویر انجام نشد یا با خطا مواجه شد. ادامه با تصاویر اصلی."
                                         }
@@ -397,7 +576,7 @@ def video_upload():
                                     f"Image classification and blending failed: {e}"
                                 )
                                 # Log error and continue with original images
-                                app.config["PROCESSING_STATES"][process_id].update(
+                                update_process_state(process_id, 
                                     {
                                         "message": f"خطا در طبقه‌بندی و ترکیب تصاویر: {str(e)}. ادامه با تصاویر اصلی..."
                                     }
@@ -406,7 +585,7 @@ def video_upload():
                                     image_dir  # Revert to original images
                                 )
                         else:
-                            app.config["PROCESSING_STATES"][process_id].update(
+                            update_process_state(process_id, 
                                 {
                                     "progress": 25,
                                     "message": "طبقه‌بندی تصاویر فعال نیست. شروع پردازش geoSphereAi...",
@@ -425,18 +604,27 @@ def video_upload():
                             logging.error(
                                 f"The directory designated for geoSphereAi ({images_to_process_dir}) is empty or contains no valid images."
                             )
-                            app.config["PROCESSING_STATES"][process_id].update(
+                            update_process_state(
+                                process_id,
                                 {
                                     "status": "failed",
                                     "message": "هیچ فایل تصویری معتبری برای پردازش geoSphereAi یافت نشد.",
-                                }
+                                    "end_time": datetime.utcnow(),
+                                },
                             )
+                            proc = Process.query.filter_by(process_uuid=process_id).first()
+                            if proc:
+                                proc.status = "failed"
+                                proc.end_time = datetime.utcnow()
+                                if proc.start_time:
+                                    proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                                db.session.commit()
                             return  # Stop processing if no images for Metashape
 
                         logging.info(
                             f"Starting geoSphereAi process with {len(blended_image_dir)} images from {images_to_process_dir}."
                         )
-                        app.config["PROCESSING_STATES"][process_id].update(
+                        update_process_state(process_id, 
                             {
                                 "progress": 45,
                                 "message": "در حال اجرای پایپ لاین geoSphereAi...",
@@ -467,28 +655,28 @@ def video_upload():
                             logging.info(f"Metashape: {line.decode().strip()}")
                             line_str = line.decode().strip().lower()
                             if "aligncameras" in line_str:
-                                app.config["PROCESSING_STATES"][process_id].update(
+                                update_process_state(process_id, 
                                     {
                                         "progress": 50,
                                         "message": "geoSphereAi: تطبیق دوربین‌ها",
                                     }
                                 )
                             elif "builddepthmaps" in line_str:
-                                app.config["PROCESSING_STATES"][process_id].update(
+                                update_process_state(process_id, 
                                     {
                                         "progress": 70,
                                         "message": "geoSphereAi: ساخت نقشه‌های عمق",
                                     }
                                 )
                             elif "buildpointcloud" in line_str:
-                                app.config["PROCESSING_STATES"][process_id].update(
+                                update_process_state(process_id, 
                                     {
                                         "progress": 85,
                                         "message": "geoSphereAi: ساخت ابر نقاط",
                                     }
                                 )
                             elif "exportpointcloud" in line_str:
-                                app.config["PROCESSING_STATES"][process_id].update(
+                                update_process_state(process_id, 
                                     {
                                         "progress": 95,
                                         "message": "geoSphereAi: خروجی ابر نقاط",
@@ -500,30 +688,59 @@ def video_upload():
                         if process.returncode != 0:
                             stderr_output = process.stderr.read().decode().strip()
                             logging.error(f"Metashape error: {stderr_output}")
-                            app.config["PROCESSING_STATES"][process_id].update(
+                            update_process_state(
+                                process_id,
                                 {
                                     "status": "failed",
                                     "message": f"خطا در پردازش geoSphereAi: {stderr_output}",
-                                }
+                                    "end_time": datetime.utcnow(),
+                                },
                             )
+                            proc = Process.query.filter_by(process_uuid=process_id).first()
+                            if proc:
+                                proc.status = "failed"
+                                proc.end_time = datetime.utcnow()
+                                if proc.start_time:
+                                    proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                                db.session.commit()
                             return
 
-                        app.config["PROCESSING_STATES"][process_id].update(
+                        update_process_state(process_id,
                             {
                                 "progress": 100,
                                 "status": "completed",
                                 "message": "پردازش با موفقیت انجام شد!",
+                                "end_time": datetime.utcnow(),
                             }
                         )
+                        proc = Process.query.filter_by(process_uuid=process_id).first()
+                        if proc:
+                            proc.status = "completed"
+                            proc.end_time = datetime.utcnow()
+                            if proc.start_time:
+                                proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                            db.session.commit()
                         logging.info(f"Process {process_id} completed successfully.")
 
                     except Exception as e:
                         logging.error(
                             f"Unexpected error during processing for {process_id}: {str(e)}"
                         )
-                        app.config["PROCESSING_STATES"][process_id].update(
-                            {"status": "failed", "message": f"خطای غیرمنتظره: {str(e)}"}
+                        update_process_state(
+                            process_id,
+                            {
+                                "status": "failed",
+                                "message": f"خطای غیرمنتظره: {str(e)}",
+                                "end_time": datetime.utcnow(),
+                            },
                         )
+                        proc = Process.query.filter_by(process_uuid=process_id).first()
+                        if proc:
+                            proc.status = "failed"
+                            proc.end_time = datetime.utcnow()
+                            if proc.start_time:
+                                proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                            db.session.commit()
 
             Thread(
                 target=process_video_task,
@@ -590,6 +807,18 @@ def zip_upload():
         classify_images = request.form.get("classify_images") == "on"
 
         process_id = str(uuid.uuid4())
+        db_process = Process(
+            process_uuid=process_id,
+            filename=zip_filename,
+            user=session.get("username", "unknown"),
+            frame_count=0,
+            start_time=datetime.utcnow(),
+            status="processing",
+        )
+        db.session.add(db_process)
+
+        db.session.commit()
+
         app.config["PROCESSING_STATES"][process_id] = {
             "status": "processing",
             "progress": 0,
@@ -610,12 +839,21 @@ def zip_upload():
                     if extracted_files_count == 0:
                         flash("هیچ فایل تصویری مجاز در فایل ZIP یافت نشد.")
                         logging.debug("Debug: No valid images found in ZIP")
-                        app.config["PROCESSING_STATES"][process_id].update(
+                        update_process_state(
+                            process_id,
                             {
                                 "status": "failed",
                                 "message": "هیچ فایل تصویری معتبری در ZIP یافت نشد.",
-                            }
+                                "end_time": datetime.utcnow(),
+                            },
                         )
+                        proc = Process.query.filter_by(process_uuid=process_id).first()
+                        if proc:
+                            proc.status = "failed"
+                            proc.end_time = datetime.utcnow()
+                            if proc.start_time:
+                                proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                            db.session.commit()
                         # Clean up the uploaded zip file and empty output directory if no images were found
                         if os.path.exists(zip_path):
                             os.remove(zip_path)
@@ -625,6 +863,10 @@ def zip_upload():
                         return  # Stop processing
 
                     logging.info(f"Extracted {extracted_files_count} images from ZIP.")
+                    proc = Process.query.filter_by(process_uuid=process_id).first()
+                    if proc:
+                        proc.frame_count = extracted_files_count
+                        db.session.commit()
                     app.config["PROCESSING_STATES"][process_id].update(
                         {
                             "progress": 20,
@@ -639,7 +881,7 @@ def zip_upload():
 
                     # --- CLASSIFICATION AND BLENDING STEP ---
                     if classify_images:
-                        app.config["PROCESSING_STATES"][process_id].update(
+                        update_process_state(process_id, 
                             {
                                 "progress": 25,
                                 "message": "در حال طبقه‌بندی و ترکیب تصاویر...",
@@ -658,7 +900,7 @@ def zip_upload():
                                     f"Generated {len(blended_image_paths)} blended images."
                                 )
                                 images_to_process_dir = blended_image_dir  # Use blended images for Metashape
-                                app.config["PROCESSING_STATES"][process_id].update(
+                                update_process_state(process_id, 
                                     {
                                         "progress": 40,
                                         "message": f"طبقه‌بندی و ترکیب تصاویر کامل شد. استفاده از {len(blended_image_paths)} تصویر ترکیبی برای geoSphereAi.",
@@ -668,7 +910,7 @@ def zip_upload():
                                 logging.warning(
                                     "Image classification and blending failed or produced no output blended images. Continuing with original images."
                                 )
-                                app.config["PROCESSING_STATES"][process_id].update(
+                                update_process_state(process_id, 
                                     {
                                         "message": "طبقه‌بندی و ترکیب تصاویر انجام نشد یا با خطا مواجه شد. ادامه با تصاویر اصلی."
                                     }
@@ -681,7 +923,7 @@ def zip_upload():
                             logging.error(
                                 f"Image classification and blending failed: {e}"
                             )
-                            app.config["PROCESSING_STATES"][process_id].update(
+                            update_process_state(process_id, 
                                 {
                                     "message": f"خطا در طبقه‌بندی و ترکیب تصاویر: {str(e)}. ادامه با تصاویر اصلی..."
                                 }
@@ -690,7 +932,7 @@ def zip_upload():
                                 image_dir  # Revert to original images
                             )
                     else:
-                        app.config["PROCESSING_STATES"][process_id].update(
+                        update_process_state(process_id, 
                             {
                                 "progress": 25,
                                 "message": "طبقه‌بندی تصاویر فعال نیست. شروع پردازش geoSphereAi...",
@@ -711,18 +953,20 @@ def zip_upload():
                         logging.error(
                             f"The directory designated for geoSphereAi ({blended_image_dir}) is empty or contains no valid images."
                         )
-                        app.config["PROCESSING_STATES"][process_id].update(
+                        update_process_state(
+                            process_id,
                             {
                                 "status": "failed",
                                 "message": "هیچ فایل تصویری معتبری برای پردازش geoSphereAi یافت نشد.",
-                            }
+                                "end_time": datetime.utcnow(),
+                            },
                         )
                         return  # Stop processing if no images for Metashape
 
                     logging.info(
                         f"Starting geoSphereAi process with {len(images_for_metashape)} images from {blended_image_dir}."
                     )
-                    app.config["PROCESSING_STATES"][process_id].update(
+                    update_process_state(process_id, 
                         {
                             "progress": 45,
                             "message": "در حال اجرای پایپ لاین geoSphereAi...",
@@ -753,28 +997,28 @@ def zip_upload():
                         logging.info(f"Metashape: {line.decode().strip()}")
                         line_str = line.decode().strip().lower()
                         if "aligncameras" in line_str:
-                            app.config["PROCESSING_STATES"][process_id].update(
+                            update_process_state(process_id, 
                                 {
                                     "progress": 50,
                                     "message": "geoSphereAi: تطبیق دوربین‌ها",
                                 }
                             )
                         elif "builddepthmaps" in line_str:
-                            app.config["PROCESSING_STATES"][process_id].update(
+                            update_process_state(process_id, 
                                 {
                                     "progress": 70,
                                     "message": "geoSphereAi: ساخت نقشه‌های عمق",
                                 }
                             )
                         elif "buildpointcloud" in line_str:
-                            app.config["PROCESSING_STATES"][process_id].update(
+                            update_process_state(process_id, 
                                 {
                                     "progress": 85,
                                     "message": "geoSphereAi: ساخت ابر نقاط",
                                 }
                             )
                         elif "exportpointcloud" in line_str:
-                            app.config["PROCESSING_STATES"][process_id].update(
+                            update_process_state(process_id, 
                                 {
                                     "progress": 95,
                                     "message": "geoSphereAi: خروجی ابر نقاط",
@@ -786,30 +1030,58 @@ def zip_upload():
                     if process.returncode != 0:
                         stderr_output = process.stderr.read().decode().strip()
                         logging.error(f"Metashape error: {stderr_output}")
-                        app.config["PROCESSING_STATES"][process_id].update(
+                        update_process_state(
+                            process_id,
                             {
                                 "status": "failed",
                                 "message": f"خطا در پردازش geoSphereAi: {stderr_output}",
-                            }
+                                "end_time": datetime.utcnow(),
+                            },
                         )
+                        proc = Process.query.filter_by(process_uuid=process_id).first()
+                        if proc:
+                            proc.status = "failed"
+                            proc.end_time = datetime.utcnow()
+                            if proc.start_time:
+                                proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                            db.session.commit()
                         return
 
-                    app.config["PROCESSING_STATES"][process_id].update(
+                    update_process_state(process_id,
                         {
                             "progress": 100,
                             "status": "completed",
                             "message": "پردازش با موفقیت انجام شد!",
+                            "end_time": datetime.utcnow(),
                         }
                     )
+                    proc = Process.query.filter_by(process_uuid=process_id).first()
+                    if proc:
+                        proc.status = "completed"
+                        proc.end_time = datetime.utcnow()
+                        if proc.start_time:
+                            proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                        db.session.commit()
                     logging.info(f"Process {process_id} completed successfully.")
 
                 except Exception as e:
                     logging.error(
                         f"Unexpected error during processing for {process_id}: {str(e)}"
                     )
-                    app.config["PROCESSING_STATES"][process_id].update(
-                        {"status": "failed", "message": f"خطای غیرمنتظره: {str(e)}"}
+                    update_process_state(process_id,
+                        {
+                            "status": "failed",
+                            "message": f"خطای غیرمنتظره: {str(e)}",
+                            "end_time": datetime.utcnow(),
+                        }
                     )
+                    proc = Process.query.filter_by(process_uuid=process_id).first()
+                    if proc:
+                        proc.status = "failed"
+                        proc.end_time = datetime.utcnow()
+                        if proc.start_time:
+                            proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                        db.session.commit()
                 finally:
                     if os.path.exists(zip_path):
                         os.remove(zip_path)
@@ -831,11 +1103,23 @@ def processing(process_id):
         flash("لطفاً ابتدا وارد شوید.")
         return redirect(url_for("index"))
 
-    if process_id not in app.config["PROCESSING_STATES"]:
+    if not Process.query.get(process_id):
         flash("شناسه پردازش نامعتبر است.")
         return redirect(url_for("file_selection"))
 
     return render_template("processing.html", process_id=process_id)
+
+
+# Processes list route
+@app.route("/processes")
+def process_list():
+    if not session.get("logged_in"):
+        flash("لطفاً ابتدا وارد شوید.")
+        return redirect(url_for("index"))
+
+    page = request.args.get("page", 1, type=int)
+    pagination = Process.query.order_by(Process.start_time.desc()).paginate(page=page, per_page=10)
+    return render_template("process_list.html", processes=pagination.items, pagination=pagination)
 
 
 # Results page route
@@ -884,20 +1168,16 @@ def results(output_foldername):
     logging.info(f"Found {len(file_paths)} relevant files in results directory.")
 
     original_filename = "Processed Files"
-    process_state_found = False
-    for pid, state in app.config["PROCESSING_STATES"].items():
-        if state.get("output_foldername") == output_foldername:
-            original_filename = state.get("filename", original_filename)
-            process_state_found = True
-            if state.get("status") not in ["completed", "completed_with_warnings"]:
-                logging.warning(
-                    f"Accessing results for process {output_foldername} which has status: {state.get('status', 'unknown')}"
-                )
-            break
-
-    if not process_state_found:
+    process = Process.query.filter_by(output_folder=output_foldername).first()
+    if process:
+        original_filename = process.filename or original_filename
+        if process.status not in ["completed", "completed_with_warnings"]:
+            logging.warning(
+                f"Accessing results for process {output_foldername} which has status: {process.status}"
+            )
+    else:
         logging.warning(
-            f"Process state not found in PROCESSING_STATES for output_foldername: {output_foldername}. Using default filename."
+            f"Process state not found in database for output_foldername: {output_foldername}. Using default filename."
         )
 
     return render_template(
@@ -1045,4 +1325,6 @@ def serve_static(filename):
 
 # Run Flask app
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run(debug=False)
