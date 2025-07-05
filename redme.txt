@@ -5,6 +5,11 @@ conda remove --name geosphereai --all
 conda create -n geosphereai python=3.7
 conda activate geosphereai
 conda install tensorflow-gpu=2.6.0 cudatoolkit=11.3 cudnn=8.2 -c conda-forge
+# verify GPU availability
+python - <<'PY'
+import tensorflow as tf
+print(tf.config.list_physical_devices('GPU'))
+PY
 conda install opencv matplotlib numpy scipy scikit-learn pillow -c conda-forge
 conda install flask werkzeug -c conda-forge
 conda install tqdm -c conda-forge
