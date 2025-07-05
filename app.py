@@ -17,13 +17,19 @@ import uuid
 import json
 from threading import Thread
 import sys  # Import sys to get the python executable
-import winreg
+
+if sys.platform.startswith("win"):
+    import winreg
+else:
+    winreg = None
 
 # Import the new image classifier module
 import image_classifier
 
 
 def apply_windows_proxy():
+    if not sys.platform.startswith("win") or winreg is None:
+        return
     try:
         # باز کردن کلید تنظیمات اینترنت کاربر جاری
         reg_path = r"Software\Microsoft\Windows\CurrentVersion\Internet Settings"
@@ -56,11 +62,31 @@ app.config["ALLOWED_IMAGE_EXTENSIONS"] = {"jpg", "jpeg", "png"}
 app.config["ALLOWED_VIDEO_EXTENSIONS"] = {"mp4", "avi", "mov", "mkv"}
 app.config["ALLOWED_ZIP_EXTENSIONS"] = {"zip"}
 app.secret_key = "your_secret_key"  # CHANGE THIS TO A REAL, SECRET KEY
+# Helper function to load Metashape executable path
 app.config["PROCESSING_STATES"] = {}
 
-# Path to Metashape Pro executable
-# Ensure this path is correct for your system
-METASHAPE_EXECUTABLE = r"D:\\Program Files\\Agisoft\\Metashape Pro\\metashape.exe"
+
+def load_metashape_executable():
+    env_path = os.environ.get("METASHAPE_EXECUTABLE")
+    if env_path:
+        return env_path
+
+    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "config.json")
+    if os.path.exists(config_path):
+        try:
+            with open(config_path, "r", encoding="utf-8") as cfg:
+                data = json.load(cfg)
+            if data.get("METASHAPE_EXECUTABLE"):
+                return data["METASHAPE_EXECUTABLE"]
+        except Exception as exc:
+            raise RuntimeError(f"Failed to load config file {config_path}: {exc}")
+
+    raise RuntimeError(
+        "METASHAPE_EXECUTABLE not set in environment or config file"
+    )
+
+
+METASHAPE_EXECUTABLE = load_metashape_executable()
 # Assuming metashape_script.py is in the same directory as app.py
 METASHAPE_SCRIPT_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)), "metashape_script.py"
