@@ -18,6 +18,8 @@ import json
 from threading import Thread
 import sys  # Import sys to get the python executable
 import winreg
+from datetime import datetime
+from flask_sqlalchemy import SQLAlchemy
 
 # Import the new image classifier module
 import image_classifier
@@ -57,6 +59,9 @@ app.config["ALLOWED_VIDEO_EXTENSIONS"] = {"mp4", "avi", "mov", "mkv"}
 app.config["ALLOWED_ZIP_EXTENSIONS"] = {"zip"}
 app.secret_key = "your_secret_key"  # CHANGE THIS TO A REAL, SECRET KEY
 app.config["PROCESSING_STATES"] = {}
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///processes.db"
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+db = SQLAlchemy(app)
 
 # Path to Metashape Pro executable
 # Ensure this path is correct for your system
@@ -74,6 +79,18 @@ os.makedirs(app.config["OUTPUT_FOLDER"], exist_ok=True)
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
+
+
+class Process(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    process_uuid = db.Column(db.String(36), unique=True)
+    filename = db.Column(db.String(255))
+    user = db.Column(db.String(50))
+    frame_count = db.Column(db.Integer)
+    start_time = db.Column(db.DateTime)
+    end_time = db.Column(db.DateTime)
+    duration = db.Column(db.Float)
+    status = db.Column(db.String(50))
 
 
 # Helper function to check allowed files
@@ -136,6 +153,7 @@ def index():
         password = request.form.get("password")
         if username == "wapco" and password == "wapco":
             session["logged_in"] = True
+            session["username"] = username
             flash("ورود با موفقیت انجام شد.")
             return redirect(url_for("file_selection"))
         else:
@@ -166,6 +184,7 @@ def file_selection():
 @app.route("/logout")
 def logout():
     session.pop("logged_in", None)
+    session.pop("username", None)
     flash("شما با موفقیت خارج شدید.")
     return redirect(url_for("index"))
 
@@ -211,6 +230,17 @@ def video_upload():
 
             classify_images = request.form.get("classify_images") == "on"
 
+            db_process = Process(
+                process_uuid=process_id,
+                filename=filename,
+                user=session.get("username", "unknown"),
+                frame_count=0,
+                start_time=datetime.utcnow(),
+                status="processing",
+            )
+            db.session.add(db_process)
+            db.session.commit()
+
             app.config["PROCESSING_STATES"][process_id] = {
                 "status": "processing",
                 "progress": 0,
@@ -237,6 +267,13 @@ def video_upload():
                         "message": f"خطا در مقادیر ورودی زمان یا بازه: {str(e)}",
                     }
                 )
+                proc = Process.query.filter_by(process_uuid=process_id).first()
+                if proc:
+                    proc.status = "failed"
+                    proc.end_time = datetime.utcnow()
+                    if proc.start_time:
+                        proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                    db.session.commit()
                 logging.error(f"Input value error: {e}")
                 return redirect(url_for("processing", process_id=process_id))
 
@@ -314,6 +351,13 @@ def video_upload():
                                     "message": f"خطا در استخراج فریم‌ها: {stderr_output}",
                                 }
                             )
+                            proc = Process.query.filter_by(process_uuid=process_id).first()
+                            if proc:
+                                proc.status = "failed"
+                                proc.end_time = datetime.utcnow()
+                                if proc.start_time:
+                                    proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                                db.session.commit()
                             return  # Stop processing on error
 
                         # --- Check if any images were extracted ---
@@ -332,11 +376,22 @@ def video_upload():
                                     "message": "استخراج فریم‌ها انجام شد، اما هیچ فایل تصویری یافت نشد. احتمالاً ویدئو مشکل دارد یا پارامترهای استخراج نادرست هستند.",
                                 }
                             )
+                            proc = Process.query.filter_by(process_uuid=process_id).first()
+                            if proc:
+                                proc.status = "failed"
+                                proc.end_time = datetime.utcnow()
+                                if proc.start_time:
+                                    proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                                db.session.commit()
                             return  # Stop processing if no images were extracted
 
                         logging.info(
                             f"Frame extraction completed. Found {len(extracted_image_files)} images."
                         )
+                        proc = Process.query.filter_by(process_uuid=process_id).first()
+                        if proc:
+                            proc.frame_count = len(extracted_image_files)
+                            db.session.commit()
                         app.config["PROCESSING_STATES"][process_id].update(
                             {
                                 "progress": 20,
@@ -431,6 +486,13 @@ def video_upload():
                                     "message": "هیچ فایل تصویری معتبری برای پردازش geoSphereAi یافت نشد.",
                                 }
                             )
+                            proc = Process.query.filter_by(process_uuid=process_id).first()
+                            if proc:
+                                proc.status = "failed"
+                                proc.end_time = datetime.utcnow()
+                                if proc.start_time:
+                                    proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                                db.session.commit()
                             return  # Stop processing if no images for Metashape
 
                         logging.info(
@@ -506,6 +568,13 @@ def video_upload():
                                     "message": f"خطا در پردازش geoSphereAi: {stderr_output}",
                                 }
                             )
+                            proc = Process.query.filter_by(process_uuid=process_id).first()
+                            if proc:
+                                proc.status = "failed"
+                                proc.end_time = datetime.utcnow()
+                                if proc.start_time:
+                                    proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                                db.session.commit()
                             return
 
                         app.config["PROCESSING_STATES"][process_id].update(
@@ -515,6 +584,13 @@ def video_upload():
                                 "message": "پردازش با موفقیت انجام شد!",
                             }
                         )
+                        proc = Process.query.filter_by(process_uuid=process_id).first()
+                        if proc:
+                            proc.status = "completed"
+                            proc.end_time = datetime.utcnow()
+                            if proc.start_time:
+                                proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                            db.session.commit()
                         logging.info(f"Process {process_id} completed successfully.")
 
                     except Exception as e:
@@ -524,6 +600,13 @@ def video_upload():
                         app.config["PROCESSING_STATES"][process_id].update(
                             {"status": "failed", "message": f"خطای غیرمنتظره: {str(e)}"}
                         )
+                        proc = Process.query.filter_by(process_uuid=process_id).first()
+                        if proc:
+                            proc.status = "failed"
+                            proc.end_time = datetime.utcnow()
+                            if proc.start_time:
+                                proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                            db.session.commit()
 
             Thread(
                 target=process_video_task,
@@ -590,6 +673,17 @@ def zip_upload():
         classify_images = request.form.get("classify_images") == "on"
 
         process_id = str(uuid.uuid4())
+        db_process = Process(
+            process_uuid=process_id,
+            filename=zip_filename,
+            user=session.get("username", "unknown"),
+            frame_count=0,
+            start_time=datetime.utcnow(),
+            status="processing",
+        )
+        db.session.add(db_process)
+        db.session.commit()
+
         app.config["PROCESSING_STATES"][process_id] = {
             "status": "processing",
             "progress": 0,
@@ -616,6 +710,13 @@ def zip_upload():
                                 "message": "هیچ فایل تصویری معتبری در ZIP یافت نشد.",
                             }
                         )
+                        proc = Process.query.filter_by(process_uuid=process_id).first()
+                        if proc:
+                            proc.status = "failed"
+                            proc.end_time = datetime.utcnow()
+                            if proc.start_time:
+                                proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                            db.session.commit()
                         # Clean up the uploaded zip file and empty output directory if no images were found
                         if os.path.exists(zip_path):
                             os.remove(zip_path)
@@ -625,6 +726,10 @@ def zip_upload():
                         return  # Stop processing
 
                     logging.info(f"Extracted {extracted_files_count} images from ZIP.")
+                    proc = Process.query.filter_by(process_uuid=process_id).first()
+                    if proc:
+                        proc.frame_count = extracted_files_count
+                        db.session.commit()
                     app.config["PROCESSING_STATES"][process_id].update(
                         {
                             "progress": 20,
@@ -792,6 +897,13 @@ def zip_upload():
                                 "message": f"خطا در پردازش geoSphereAi: {stderr_output}",
                             }
                         )
+                        proc = Process.query.filter_by(process_uuid=process_id).first()
+                        if proc:
+                            proc.status = "failed"
+                            proc.end_time = datetime.utcnow()
+                            if proc.start_time:
+                                proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                            db.session.commit()
                         return
 
                     app.config["PROCESSING_STATES"][process_id].update(
@@ -801,6 +913,13 @@ def zip_upload():
                             "message": "پردازش با موفقیت انجام شد!",
                         }
                     )
+                    proc = Process.query.filter_by(process_uuid=process_id).first()
+                    if proc:
+                        proc.status = "completed"
+                        proc.end_time = datetime.utcnow()
+                        if proc.start_time:
+                            proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                        db.session.commit()
                     logging.info(f"Process {process_id} completed successfully.")
 
                 except Exception as e:
@@ -810,6 +929,13 @@ def zip_upload():
                     app.config["PROCESSING_STATES"][process_id].update(
                         {"status": "failed", "message": f"خطای غیرمنتظره: {str(e)}"}
                     )
+                    proc = Process.query.filter_by(process_uuid=process_id).first()
+                    if proc:
+                        proc.status = "failed"
+                        proc.end_time = datetime.utcnow()
+                        if proc.start_time:
+                            proc.duration = (proc.end_time - proc.start_time).total_seconds()
+                        db.session.commit()
                 finally:
                     if os.path.exists(zip_path):
                         os.remove(zip_path)
@@ -836,6 +962,18 @@ def processing(process_id):
         return redirect(url_for("file_selection"))
 
     return render_template("processing.html", process_id=process_id)
+
+
+# Processes list route
+@app.route("/processes")
+def process_list():
+    if not session.get("logged_in"):
+        flash("لطفاً ابتدا وارد شوید.")
+        return redirect(url_for("index"))
+
+    page = request.args.get("page", 1, type=int)
+    pagination = Process.query.order_by(Process.start_time.desc()).paginate(page=page, per_page=10)
+    return render_template("process_list.html", processes=pagination.items, pagination=pagination)
 
 
 # Results page route
@@ -1045,4 +1183,6 @@ def serve_static(filename):
 
 # Run Flask app
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run(debug=False)
