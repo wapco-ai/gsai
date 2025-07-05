@@ -73,6 +73,7 @@ db = SQLAlchemy(app)
 
 
 
+
 def load_metashape_executable():
     env_path = os.environ.get("METASHAPE_EXECUTABLE")
     if env_path:
