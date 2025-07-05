@@ -12,11 +12,13 @@ from flask import (
     session,
 )
 from werkzeug.utils import secure_filename
+from werkzeug.security import generate_password_hash, check_password_hash
 import subprocess
 import uuid
 import json
 from threading import Thread
 import sys  # Import sys to get the python executable
+import sqlite3
 
 if sys.platform.startswith("win"):
     import winreg
@@ -62,8 +64,6 @@ app.config["OUTPUT_FOLDER"] = "outputs"
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = {"jpg", "jpeg", "png"}
 app.config["ALLOWED_VIDEO_EXTENSIONS"] = {"mp4", "avi", "mov", "mkv"}
 app.config["ALLOWED_ZIP_EXTENSIONS"] = {"zip"}
-app.secret_key = "your_secret_key"  # CHANGE THIS TO A REAL, SECRET KEY
-# Helper function to load Metashape executable path
 app.config["PROCESSING_STATES"] = {}
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///processes.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -122,6 +122,39 @@ METASHAPE_SCRIPT_PATH = os.path.join(
 # Ensure directories exist
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 os.makedirs(app.config["OUTPUT_FOLDER"], exist_ok=True)
+
+# Database setup
+DB_PATH = os.path.join(app.root_path, "users.db")
+
+
+def get_db_connection():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+def init_db():
+    conn = get_db_connection()
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+        """
+    )
+    cur = conn.execute("SELECT id FROM users WHERE username=?", ("wapco",))
+    if cur.fetchone() is None:
+        conn.execute(
+            "INSERT INTO users (username, password) VALUES (?, ?)",
+            ("wapco", generate_password_hash("wapco")),
+        )
+    conn.commit()
+    conn.close()
+
+
+init_db()
 
 # Setup logging
 logging.basicConfig(
@@ -217,7 +250,13 @@ def index():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        if username == "wapco" and password == "wapco":
+        conn = get_db_connection()
+        user = conn.execute(
+            "SELECT * FROM users WHERE username=?",
+            (username,),
+        ).fetchone()
+        conn.close()
+        if user and check_password_hash(user["password"], password):
             session["logged_in"] = True
             session["username"] = username
             flash("ورود با موفقیت انجام شد.")
