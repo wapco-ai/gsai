@@ -1,6 +1,7 @@
 import os
 import zipfile
 import logging
+from datetime import datetime
 from flask import (
     Flask,
     request,
@@ -41,9 +42,17 @@ METASHAPE_SCRIPT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 os.makedirs(app.config["OUTPUT_FOLDER"], exist_ok=True)
 
-# Setup logging to both console and a log file. The log file is cleared on each
-# start to keep logs relevant to the current run.
-LOG_FILE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "app.log")
+# Directory to store log files
+LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
+os.makedirs(LOG_DIR, exist_ok=True)
+
+# Create a unique log file for each run
+LOG_FILE_PATH = os.path.join(
+    LOG_DIR,
+    f"app_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log",
+)
+
+# Setup logging to both console and a log file
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -51,8 +60,7 @@ logging.basicConfig(
         logging.FileHandler(LOG_FILE_PATH, mode="w", encoding="utf-8"),
         logging.StreamHandler(sys.stdout),
     ],
-    force=True,  # apply configuration even if logging was already configured
-
+    force=True,
 )
 
 
