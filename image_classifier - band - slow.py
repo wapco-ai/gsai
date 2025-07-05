@@ -8,6 +8,7 @@ from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import logging
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import json
 
 # Configure logging for the classifier
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -29,17 +30,25 @@ def load_model_and_feature_extractor():
         logging.info("📦 Loading Segformer model and feature extractor...")
         try:
             if not os.path.exists(MODEL_DIR):
-                logging.info("⬇ Model not found locally. Downloading...")
-                model = TFSegformerForSemanticSegmentation.from_pretrained(MODEL_NAME, from_pt=True)
-                model.save_pretrained(MODEL_DIR)
-                logging.info("✅ Model downloaded and saved.")
+                raise FileNotFoundError(
+                    f"Local model directory not found: {MODEL_DIR}. "
+                    "Place the model in this directory to run without internet."
+                )
             else:
                 logging.info("📦 Loading model from local path...")
                 model = TFSegformerForSemanticSegmentation.from_pretrained(MODEL_DIR)
                 logging.info("✅ Model loaded from local path.")
 
-            feature_extractor = SegformerFeatureExtractor.from_pretrained(MODEL_NAME)
-            logging.info("✅ Feature extractor loaded.")
+            preprocessor_path = os.path.join(MODEL_DIR, "preprocessor_config.json")
+            if os.path.exists(preprocessor_path):
+                with open(preprocessor_path, "r", encoding="utf-8") as f:
+                    config_dict = json.load(f)
+                feature_extractor = SegformerFeatureExtractor(**config_dict)
+                logging.info("✅ Feature extractor loaded from local JSON config.")
+            else:
+                raise FileNotFoundError(
+                    "preprocessor_config.json not found in saved_model directory."
+                )
 
         except Exception as e:
             logging.error(f"Error loading model or feature extractor: {e}")
