@@ -23,10 +23,24 @@ feature_extractor = None
 device_name = None
 gpu_available = False
 batch_size = 8  # Will be auto-adjusted based on GPU memory
+# Allow overriding batch size via environment variable
+_env_batch = os.environ.get("BATCH_SIZE")
+if _env_batch:
+    try:
+        batch_size = int(_env_batch)
+        logging.info(f"🔧 Using batch size from environment: {batch_size}")
+    except ValueError:
+        logging.warning(
+            f"Invalid BATCH_SIZE value '{_env_batch}', falling back to auto detection"
+        )
 
 def detect_optimal_batch_size():
     """Detect optimal batch size based on GPU memory"""
     global batch_size
+
+    # Respect manual override if provided
+    if _env_batch:
+        return batch_size
     
     if not gpu_available:
         batch_size = 1
