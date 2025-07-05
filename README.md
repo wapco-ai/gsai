@@ -1,21 +1,80 @@
 # GeoSphereAI
 
-This project processes video or image archives using Agisoft Metashape. Before running `app.py` make sure the following configuration is available:
+GeoSphereAI is a Flask application that processes images or video to generate 3D point clouds with Agisoft Metashape and performs semantic segmentation using NVIDIA SegFormer. This document explains how to install the project, configure Metashape and SpatiaLite, and run the app.
 
-1. **Proxy settings (Windows only)**
-   - The application reads the current user's Windows proxy configuration. The proxy is only applied when running on Windows.
+## Installation
 
-2. **Metashape executable location**
-   - Set the `METASHAPE_EXECUTABLE` environment variable to the path of the Metashape executable, for example:
-     ```bash
-     export METASHAPE_EXECUTABLE="C:\\Program Files\\Agisoft\\Metashape Pro\\metashape.exe"
-     ```
-   - Alternatively create a `config.json` file next to `app.py` with the following structure:
-     ```json
-     {
-       "METASHAPE_EXECUTABLE": "C:/Program Files/Agisoft/Metashape Pro/metashape.exe"
-     }
-     ```
-   - The application will raise an error if the executable path is not found via either method.
+1. Create and activate a Python 3.7 environment:
+   ```bash
+   conda create -n geosphereai python=3.7
+   conda activate geosphereai
+   ```
+2. Install the required packages:
+   ```bash
+   conda install tensorflow-gpu=2.6.0 cudatoolkit=11.3 cudnn=8.2 -c conda-forge
+   conda install opencv matplotlib numpy scipy scikit-learn pillow -c conda-forge
+   conda install flask werkzeug tqdm transformers keras=2.6.0 -c conda-forge
+   ```
+3. (Optional) Verify that TensorFlow sees your GPU:
+   ```bash
+   python - <<'PY'
+   import tensorflow as tf
+   print(tf.config.list_physical_devices('GPU'))
+   PY
+   ```
 
-Run the application with `python app.py` once these settings have been configured.
+## SpatiaLite setup
+
+If you intend to store geospatial data, install SpatiaLite and create a new database:
+
+```bash
+sudo apt-get install spatialite-bin
+spatialite geosphere.db < /usr/share/spatialite/init_spatialite.sql
+```
+
+Set the `SPATIALITE_DB` environment variable to the path of the database if your code uses it:
+
+```bash
+export SPATIALITE_DB=/path/to/geosphere.db
+```
+
+## Configuring Metashape
+
+Edit `app.py` and set the `METASHAPE_EXECUTABLE` variable to the path of the Metashape binary:
+
+```python
+METASHAPE_EXECUTABLE = r"D:\\Program Files\\Agisoft\\Metashape Pro\\metashape.exe"
+```
+
+Adjust the path for your operating system.
+
+## Environment variables
+
+The application reads proxy settings from `HTTP_PROXY` and `HTTPS_PROXY`. You can set them manually if required:
+
+```bash
+export HTTP_PROXY=http://proxy.example.com:8080
+export HTTPS_PROXY=http://proxy.example.com:8080
+```
+
+## Starting the application
+
+Run the Flask server from the project directory:
+
+```bash
+python app.py
+```
+
+Visit `http://localhost:5000` in a browser to access the web interface.
+
+## Usage examples
+
+Processing a directory of images from the command line:
+
+```bash
+metashape -r metashape_script.py --image_full_pipeline \
+    --image_dir path/to/images --output_dir outputs/run1
+```
+
+The web interface performs similar commands internally when you upload files through the browser.
+
