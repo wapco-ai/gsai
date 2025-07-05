@@ -16,10 +16,37 @@ import subprocess
 import uuid
 import json
 from threading import Thread
-import sys # Import sys to get the python executable
+import sys  # Import sys to get the python executable
+import winreg
 
 # Import the new image classifier module
 import image_classifier
+
+
+def apply_windows_proxy():
+    try:
+        # باز کردن کلید تنظیمات اینترنت کاربر جاری
+        reg_path = r"Software\Microsoft\Windows\CurrentVersion\Internet Settings"
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, reg_path) as key:
+            proxy_enable, _ = winreg.QueryValueEx(key, "ProxyEnable")
+            if proxy_enable:
+                # اگر پروکسی فعال است، مقدار ProxyServer را بخوان
+                proxy_server, _ = winreg.QueryValueEx(key, "ProxyServer")
+                # ست کردن متغیرهای محیطی
+                os.environ["HTTP_PROXY"] = proxy_server
+                os.environ["HTTPS_PROXY"] = proxy_server
+                print(f"Proxy enabled: {proxy_server}")
+            else:
+                # اگر پروکسی غیرفعال است، مطمئن شو که متغیرها حذف شده‌اند
+                os.environ.pop("HTTP_PROXY", None)
+                os.environ.pop("HTTPS_PROXY", None)
+                print("Proxy disabled, using direct connection.")
+    except OSError as e:
+        print(f"Failed to read Windows proxy settings: {e}")
+
+
+# استفاده:
+apply_windows_proxy()
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -28,21 +55,25 @@ app.config["OUTPUT_FOLDER"] = "outputs"
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = {"jpg", "jpeg", "png"}
 app.config["ALLOWED_VIDEO_EXTENSIONS"] = {"mp4", "avi", "mov", "mkv"}
 app.config["ALLOWED_ZIP_EXTENSIONS"] = {"zip"}
-app.secret_key = "your_secret_key" # CHANGE THIS TO A REAL, SECRET KEY
+app.secret_key = "your_secret_key"  # CHANGE THIS TO A REAL, SECRET KEY
 app.config["PROCESSING_STATES"] = {}
 
 # Path to Metashape Pro executable
 # Ensure this path is correct for your system
 METASHAPE_EXECUTABLE = r"D:\\Program Files\\Agisoft\\Metashape Pro\\metashape.exe"
 # Assuming metashape_script.py is in the same directory as app.py
-METASHAPE_SCRIPT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "metashape_script.py")
+METASHAPE_SCRIPT_PATH = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "metashape_script.py"
+)
 
 # Ensure directories exist
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 os.makedirs(app.config["OUTPUT_FOLDER"], exist_ok=True)
 
 # Setup logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 # Helper function to check allowed files
@@ -53,13 +84,15 @@ def allowed_file(filename, allowed_extensions):
 # Helper function to extract ZIP files
 def extract_images_from_zip(zip_path, output_folder):
     """Extract images from a ZIP file to the output folder."""
-    extracted_files_count = 0 # Count of successfully extracted images
+    extracted_files_count = 0  # Count of successfully extracted images
     allowed_extensions = app.config["ALLOWED_IMAGE_EXTENSIONS"]
     try:
         with zipfile.ZipFile(zip_path, "r") as zip_ref:
             for file in zip_ref.namelist():
                 if "../" in file or file.startswith("/"):
-                    logging.warning(f"Skipping potentially malicious path in zip: {file}")
+                    logging.warning(
+                        f"Skipping potentially malicious path in zip: {file}"
+                    )
                     continue
 
                 if allowed_file(file, allowed_extensions):
@@ -67,21 +100,27 @@ def extract_images_from_zip(zip_path, output_folder):
                         # Construct the full path for extraction target
                         extract_target_path = os.path.join(output_folder, file)
                         # Normalize path to check against output_folder
-                        normalized_extract_target = os.path.normpath(extract_target_path)
+                        normalized_extract_target = os.path.normpath(
+                            extract_target_path
+                        )
 
                         # Ensure extraction is within the intended directory
-                        if normalized_extract_target.startswith(os.path.normpath(output_folder)):
+                        if normalized_extract_target.startswith(
+                            os.path.normpath(output_folder)
+                        ):
                             zip_ref.extract(file, output_folder)
                             extracted_files_count += 1
                         else:
-                             logging.warning(f"Skipping extraction outside target directory: {file}")
+                            logging.warning(
+                                f"Skipping extraction outside target directory: {file}"
+                            )
 
                     except Exception as e:
                         logging.error(f"Error extracting file {file} from zip: {e}")
 
     except zipfile.BadZipFile:
-         logging.error(f"Invalid ZIP file: {zip_path}")
-         flash("Invalid ZIP file.")
+        logging.error(f"Invalid ZIP file: {zip_path}")
+        flash("Invalid ZIP file.")
     except Exception as e:
         logging.error(f"Error processing ZIP file {zip_path}: {e}")
         flash(f"Error processing ZIP file: {e}")
@@ -98,9 +137,7 @@ def index():
         if username == "wapco" and password == "wapco":
             session["logged_in"] = True
             flash("ورود با موفقیت انجام شد.")
-            return redirect(
-                url_for("file_selection")
-            )
+            return redirect(url_for("file_selection"))
         else:
             flash("نام کاربری یا کلمه عبور اشتباه است.")
             return redirect(request.url)
@@ -169,9 +206,7 @@ def video_upload():
             file.save(video_path)
 
             process_id = str(uuid.uuid4())
-            output_dir = os.path.join(
-                app.config["OUTPUT_FOLDER"], process_id
-            )
+            output_dir = os.path.join(app.config["OUTPUT_FOLDER"], process_id)
             os.makedirs(output_dir, exist_ok=True)
 
             classify_images = request.form.get("classify_images") == "on"
@@ -181,7 +216,7 @@ def video_upload():
                 "progress": 0,
                 "message": "در حال پردازش اولیه و آماده‌سازی...",
                 "filename": filename,
-                "output_foldername": process_id
+                "output_foldername": process_id,
             }
 
             start_time_str = request.form.get("start_time", "0")
@@ -196,13 +231,14 @@ def video_upload():
                 frame_interval = float(frame_interval_str)
                 crop_height_ratio = float(crop_height_ratio_str)
             except ValueError as e:
-                app.config["PROCESSING_STATES"][process_id].update({
-                     "status": "failed",
-                     "message": f"خطا در مقادیر ورودی زمان یا بازه: {str(e)}"
-                })
+                app.config["PROCESSING_STATES"][process_id].update(
+                    {
+                        "status": "failed",
+                        "message": f"خطا در مقادیر ورودی زمان یا بازه: {str(e)}",
+                    }
+                )
                 logging.error(f"Input value error: {e}")
                 return redirect(url_for("processing", process_id=process_id))
-
 
             def process_video_task(
                 process_id,
@@ -213,7 +249,7 @@ def video_upload():
                 frame_interval,
                 crop_height_ratio,
                 model_format,
-                classify_images
+                classify_images,
             ):
                 with app.app_context():
                     try:
@@ -227,16 +263,23 @@ def video_upload():
                         extract_command = [
                             sys.executable,
                             METASHAPE_SCRIPT_PATH,
-                            "--extract_frames", video_path,
-                            "--image_dir", image_dir,
-                            "--start_time", str(start_time),
-                            "--frame_interval", str(frame_interval),
-                            "--crop_height_ratio", str(crop_height_ratio)
+                            "--extract_frames",
+                            video_path,
+                            "--image_dir",
+                            image_dir,
+                            "--start_time",
+                            str(start_time),
+                            "--frame_interval",
+                            str(frame_interval),
+                            "--crop_height_ratio",
+                            str(crop_height_ratio),
                         ]
                         if end_time is not None:
-                             extract_command.extend(["--end_time", str(end_time)])
+                            extract_command.extend(["--end_time", str(end_time)])
 
-                        logging.info(f"Running frame extraction command: {' '.join(extract_command)}")
+                        logging.info(
+                            f"Running frame extraction command: {' '.join(extract_command)}"
+                        )
                         extract_process = subprocess.Popen(
                             extract_command,
                             stdout=subprocess.PIPE,
@@ -245,24 +288,25 @@ def video_upload():
 
                         # Monitor frame extraction output - rudimentary progress
                         # You might need to modify metashape_script.py to output more detailed progress
-                        total_frames = 0 # You could try to get total frames from video info before extraction
+                        total_frames = 0  # You could try to get total frames from video info before extraction
                         extracted_count = 0
                         for line in iter(extract_process.stdout.readline, b""):
-                             line_str = line.decode().strip()
-                             logging.info(f"ExtractFrames: {line_str}")
-                             # Simple check for extracted frame count (depends on script's output format)
-                             if "Extracted frame" in line_str:
-                                 extracted_count += 1
-                                 # Update progress based on extracted count if total is known
-                                 # if total_frames > 0:
-                                 #     progress_percentage = 5 + int(15 * (extracted_count / total_frames)) # 5 to 20%
-                                 #     app.config["PROCESSING_STATES"][process_id].update({"progress": progress_percentage})
-
+                            line_str = line.decode().strip()
+                            logging.info(f"ExtractFrames: {line_str}")
+                            # Simple check for extracted frame count (depends on script's output format)
+                            if "Extracted frame" in line_str:
+                                extracted_count += 1
+                                # Update progress based on extracted count if total is known
+                                # if total_frames > 0:
+                                #     progress_percentage = 5 + int(15 * (extracted_count / total_frames)) # 5 to 20%
+                                #     app.config["PROCESSING_STATES"][process_id].update({"progress": progress_percentage})
 
                         extract_process.wait()
 
                         if extract_process.returncode != 0:
-                            stderr_output = extract_process.stderr.read().decode().strip()
+                            stderr_output = (
+                                extract_process.stderr.read().decode().strip()
+                            )
                             logging.error(f"Frame extraction error: {stderr_output}")
                             app.config["PROCESSING_STATES"][process_id].update(
                                 {
@@ -270,85 +314,133 @@ def video_upload():
                                     "message": f"خطا در استخراج فریم‌ها: {stderr_output}",
                                 }
                             )
-                            return # Stop processing on error
+                            return  # Stop processing on error
 
                         # --- Check if any images were extracted ---
-                        extracted_image_files = [f for f in os.listdir(image_dir) if allowed_file(f, app.config["ALLOWED_IMAGE_EXTENSIONS"])]
+                        extracted_image_files = [
+                            f
+                            for f in os.listdir(image_dir)
+                            if allowed_file(f, app.config["ALLOWED_IMAGE_EXTENSIONS"])
+                        ]
                         if not extracted_image_files:
-                            logging.error(f"Frame extraction completed but no valid image files found in {image_dir}.")
+                            logging.error(
+                                f"Frame extraction completed but no valid image files found in {image_dir}."
+                            )
                             app.config["PROCESSING_STATES"][process_id].update(
                                 {
                                     "status": "failed",
                                     "message": "استخراج فریم‌ها انجام شد، اما هیچ فایل تصویری یافت نشد. احتمالاً ویدئو مشکل دارد یا پارامترهای استخراج نادرست هستند.",
                                 }
                             )
-                            return # Stop processing if no images were extracted
+                            return  # Stop processing if no images were extracted
 
-                        logging.info(f"Frame extraction completed. Found {len(extracted_image_files)} images.")
+                        logging.info(
+                            f"Frame extraction completed. Found {len(extracted_image_files)} images."
+                        )
                         app.config["PROCESSING_STATES"][process_id].update(
-                            {"progress": 20, "message": f"استخراج فریم‌ها کامل شد. یافت شد: {len(extracted_image_files)} تصویر."}
+                            {
+                                "progress": 20,
+                                "message": f"استخراج فریم‌ها کامل شد. یافت شد: {len(extracted_image_files)} تصویر.",
+                            }
                         )
 
-                        images_to_process_dir = image_dir # Default to original frames
-                        blended_image_dir = os.path.join(output_dir, "blended_images") # Define blended output dir
-
+                        images_to_process_dir = image_dir  # Default to original frames
+                        blended_image_dir = os.path.join(
+                            output_dir, "blended_images"
+                        )  # Define blended output dir
 
                         # --- CLASSIFICATION AND BLENDING STEP ---
                         if classify_images:
                             app.config["PROCESSING_STATES"][process_id].update(
-                                {"progress": 25, "message": "در حال طبقه‌بندی و ترکیب تصاویر..."}
+                                {
+                                    "progress": 25,
+                                    "message": "در حال طبقه‌بندی و ترکیب تصاویر...",
+                                }
                             )
                             try:
                                 # classify_images_in_folder returns a list of paths to blended images
-                                blended_image_paths = image_classifier.classify_images_in_folder(
-                                    image_dir, blended_image_dir
+                                blended_image_paths = (
+                                    image_classifier.classify_images_in_folder(
+                                        image_dir, blended_image_dir
+                                    )
                                 )
 
                                 # --- Check if any blended images were generated ---
                                 if blended_image_paths:
-                                     logging.info(f"Generated {len(blended_image_paths)} blended images.")
-                                     # If classification and blending successful, use blended images for Metashape
-                                     images_to_process_dir = blended_image_dir # Use blended images for Metashape
-                                     app.config["PROCESSING_STATES"][process_id].update(
-                                         {"progress": 40, "message": f"طبقه‌بندی و ترکیب تصاویر کامل شد. استفاده از {len(blended_image_paths)} تصویر ترکیبی برای geoSphereAi."}
-                                     )
+                                    logging.info(
+                                        f"Generated {len(blended_image_paths)} blended images."
+                                    )
+                                    # If classification and blending successful, use blended images for Metashape
+                                    images_to_process_dir = blended_image_dir  # Use blended images for Metashape
+                                    app.config["PROCESSING_STATES"][process_id].update(
+                                        {
+                                            "progress": 40,
+                                            "message": f"طبقه‌بندی و ترکیب تصاویر کامل شد. استفاده از {len(blended_image_paths)} تصویر ترکیبی برای geoSphereAi.",
+                                        }
+                                    )
                                 else:
                                     # If classification failed or produced no blended images, log and continue with original images
-                                    logging.warning("Image classification and blending failed or produced no output blended images. Continuing with original images.")
-                                    app.config["PROCESSING_STATES"][process_id].update(
-                                         {"message": "طبقه‌بندی و ترکیب تصاویر انجام نشد یا با خطا مواجه شد. ادامه با تصاویر اصلی."}
+                                    logging.warning(
+                                        "Image classification and blending failed or produced no output blended images. Continuing with original images."
                                     )
-                                    images_to_process_dir = image_dir # Revert to original images
+                                    app.config["PROCESSING_STATES"][process_id].update(
+                                        {
+                                            "message": "طبقه‌بندی و ترکیب تصاویر انجام نشد یا با خطا مواجه شد. ادامه با تصاویر اصلی."
+                                        }
+                                    )
+                                    images_to_process_dir = (
+                                        image_dir  # Revert to original images
+                                    )
 
                             except Exception as e:
-                                logging.error(f"Image classification and blending failed: {e}")
+                                logging.error(
+                                    f"Image classification and blending failed: {e}"
+                                )
                                 # Log error and continue with original images
                                 app.config["PROCESSING_STATES"][process_id].update(
-                                    {"message": f"خطا در طبقه‌بندی و ترکیب تصاویر: {str(e)}. ادامه با تصاویر اصلی..."}
+                                    {
+                                        "message": f"خطا در طبقه‌بندی و ترکیب تصاویر: {str(e)}. ادامه با تصاویر اصلی..."
+                                    }
                                 )
-                                images_to_process_dir = image_dir # Revert to original images
+                                images_to_process_dir = (
+                                    image_dir  # Revert to original images
+                                )
                         else:
-                             app.config["PROCESSING_STATES"][process_id].update(
-                                {"progress": 25, "message": "طبقه‌بندی تصاویر فعال نیست. شروع پردازش geoSphereAi..."}
-                             )
-                             images_to_process_dir = image_dir # Use original images if classification is off
+                            app.config["PROCESSING_STATES"][process_id].update(
+                                {
+                                    "progress": 25,
+                                    "message": "طبقه‌بندی تصاویر فعال نیست. شروع پردازش geoSphereAi...",
+                                }
+                            )
+                            images_to_process_dir = image_dir  # Use original images if classification is off
                         # --- END CLASSIFICATION AND BLENDING STEP ---
 
                         # --- Final check before Metashape ---
-                        images_for_metashape = [f for f in os.listdir(images_to_process_dir) if allowed_file(f, app.config["ALLOWED_IMAGE_EXTENSIONS"])]
+                        images_for_metashape = [
+                            f
+                            for f in os.listdir(images_to_process_dir)
+                            if allowed_file(f, app.config["ALLOWED_IMAGE_EXTENSIONS"])
+                        ]
                         if not images_for_metashape:
-                            logging.error(f"The directory designated for geoSphereAi ({images_to_process_dir}) is empty or contains no valid images.")
+                            logging.error(
+                                f"The directory designated for geoSphereAi ({images_to_process_dir}) is empty or contains no valid images."
+                            )
                             app.config["PROCESSING_STATES"][process_id].update(
                                 {
                                     "status": "failed",
                                     "message": "هیچ فایل تصویری معتبری برای پردازش geoSphereAi یافت نشد.",
                                 }
                             )
-                            return # Stop processing if no images for Metashape
+                            return  # Stop processing if no images for Metashape
 
-                        logging.info(f"Starting geoSphereAi process with {len(blended_image_dir)} images from {images_to_process_dir}.")
+                        logging.info(
+                            f"Starting geoSphereAi process with {len(blended_image_dir)} images from {images_to_process_dir}."
+                        )
                         app.config["PROCESSING_STATES"][process_id].update(
-                            {"progress": 45, "message": "در حال اجرای پایپ لاین geoSphereAi..."}
+                            {
+                                "progress": 45,
+                                "message": "در حال اجرای پایپ لاین geoSphereAi...",
+                            }
                         )
 
                         metashape_command = [
@@ -356,11 +448,15 @@ def video_upload():
                             "-r",
                             METASHAPE_SCRIPT_PATH,
                             "--image_full_pipeline",
-                            "--image_dir", blended_image_dir,
-                            "--output_dir", output_dir
+                            "--image_dir",
+                            blended_image_dir,
+                            "--output_dir",
+                            output_dir,
                         ]
 
-                        logging.info(f"Running geoSphereAi command: {' '.join(metashape_command)}")
+                        logging.info(
+                            f"Running geoSphereAi command: {' '.join(metashape_command)}"
+                        )
                         process = subprocess.Popen(
                             metashape_command,
                             stdout=subprocess.PIPE,
@@ -371,14 +467,33 @@ def video_upload():
                             logging.info(f"Metashape: {line.decode().strip()}")
                             line_str = line.decode().strip().lower()
                             if "aligncameras" in line_str:
-                                app.config["PROCESSING_STATES"][process_id].update({"progress": 50, "message": "geoSphereAi: تطبیق دوربین‌ها"})
+                                app.config["PROCESSING_STATES"][process_id].update(
+                                    {
+                                        "progress": 50,
+                                        "message": "geoSphereAi: تطبیق دوربین‌ها",
+                                    }
+                                )
                             elif "builddepthmaps" in line_str:
-                                app.config["PROCESSING_STATES"][process_id].update({"progress": 70, "message": "geoSphereAi: ساخت نقشه‌های عمق"})
+                                app.config["PROCESSING_STATES"][process_id].update(
+                                    {
+                                        "progress": 70,
+                                        "message": "geoSphereAi: ساخت نقشه‌های عمق",
+                                    }
+                                )
                             elif "buildpointcloud" in line_str:
-                                 app.config["PROCESSING_STATES"][process_id].update({"progress": 85, "message": "geoSphereAi: ساخت ابر نقاط"})
+                                app.config["PROCESSING_STATES"][process_id].update(
+                                    {
+                                        "progress": 85,
+                                        "message": "geoSphereAi: ساخت ابر نقاط",
+                                    }
+                                )
                             elif "exportpointcloud" in line_str:
-                                app.config["PROCESSING_STATES"][process_id].update({"progress": 95, "message": "geoSphereAi: خروجی ابر نقاط"})
-
+                                app.config["PROCESSING_STATES"][process_id].update(
+                                    {
+                                        "progress": 95,
+                                        "message": "geoSphereAi: خروجی ابر نقاط",
+                                    }
+                                )
 
                         process.wait()
 
@@ -403,11 +518,12 @@ def video_upload():
                         logging.info(f"Process {process_id} completed successfully.")
 
                     except Exception as e:
-                        logging.error(f"Unexpected error during processing for {process_id}: {str(e)}")
+                        logging.error(
+                            f"Unexpected error during processing for {process_id}: {str(e)}"
+                        )
                         app.config["PROCESSING_STATES"][process_id].update(
                             {"status": "failed", "message": f"خطای غیرمنتظره: {str(e)}"}
                         )
-
 
             Thread(
                 target=process_video_task,
@@ -420,7 +536,7 @@ def video_upload():
                     frame_interval,
                     crop_height_ratio,
                     model_format,
-                    classify_images
+                    classify_images,
                 ),
             ).start()
 
@@ -468,9 +584,7 @@ def zip_upload():
             flash("مشکلی در ذخیره‌سازی فایل ZIP رخ داد.")
             return redirect(request.url)
 
-        output_dir = os.path.join(
-            app.config["OUTPUT_FOLDER"], process_uuid
-        )
+        output_dir = os.path.join(app.config["OUTPUT_FOLDER"], process_uuid)
         os.makedirs(output_dir, exist_ok=True)
 
         classify_images = request.form.get("classify_images") == "on"
@@ -481,7 +595,7 @@ def zip_upload():
             "progress": 0,
             "message": "در حال استخراج تصاویر از فایل ZIP...",
             "filename": zip_filename,
-            "output_foldername": process_uuid
+            "output_foldername": process_uuid,
         }
 
         def process_zip_task(process_id, zip_path, output_dir, classify_images):
@@ -497,76 +611,122 @@ def zip_upload():
                         flash("هیچ فایل تصویری مجاز در فایل ZIP یافت نشد.")
                         logging.debug("Debug: No valid images found in ZIP")
                         app.config["PROCESSING_STATES"][process_id].update(
-                            {"status": "failed", "message": "هیچ فایل تصویری معتبری در ZIP یافت نشد."}
+                            {
+                                "status": "failed",
+                                "message": "هیچ فایل تصویری معتبری در ZIP یافت نشد.",
+                            }
                         )
                         # Clean up the uploaded zip file and empty output directory if no images were found
                         if os.path.exists(zip_path):
                             os.remove(zip_path)
                         # Only remove output_dir if it's empty to avoid deleting files from a previous run with the same UUID (unlikely but safe)
                         if os.path.exists(output_dir) and not os.listdir(output_dir):
-                             os.rmdir(output_dir)
-                        return # Stop processing
+                            os.rmdir(output_dir)
+                        return  # Stop processing
 
                     logging.info(f"Extracted {extracted_files_count} images from ZIP.")
                     app.config["PROCESSING_STATES"][process_id].update(
-                        {"progress": 20, "message": f"تصاویر از ZIP استخراج شدند. یافت شد: {extracted_files_count} تصویر."}
+                        {
+                            "progress": 20,
+                            "message": f"تصاویر از ZIP استخراج شدند. یافت شد: {extracted_files_count} تصویر.",
+                        }
                     )
 
-                    images_to_process_dir = image_dir # Default to extracted images
-                    blended_image_dir = os.path.join(output_dir, "blended_images") # Define blended output dir
+                    images_to_process_dir = image_dir  # Default to extracted images
+                    blended_image_dir = os.path.join(
+                        output_dir, "blended_images"
+                    )  # Define blended output dir
 
                     # --- CLASSIFICATION AND BLENDING STEP ---
                     if classify_images:
                         app.config["PROCESSING_STATES"][process_id].update(
-                            {"progress": 25, "message": "در حال طبقه‌بندی و ترکیب تصاویر..."}
+                            {
+                                "progress": 25,
+                                "message": "در حال طبقه‌بندی و ترکیب تصاویر...",
+                            }
                         )
                         try:
-                            blended_image_paths = image_classifier.classify_images_in_folder(
-                                image_dir, blended_image_dir
+                            blended_image_paths = (
+                                image_classifier.classify_images_in_folder(
+                                    image_dir, blended_image_dir
+                                )
                             )
 
                             # --- Check if any blended images were generated ---
                             if blended_image_paths:
-                                 logging.info(f"Generated {len(blended_image_paths)} blended images.")
-                                 images_to_process_dir = blended_image_dir # Use blended images for Metashape
-                                 app.config["PROCESSING_STATES"][process_id].update(
-                                     {"progress": 40, "message": f"طبقه‌بندی و ترکیب تصاویر کامل شد. استفاده از {len(blended_image_paths)} تصویر ترکیبی برای geoSphereAi."}
-                                 )
+                                logging.info(
+                                    f"Generated {len(blended_image_paths)} blended images."
+                                )
+                                images_to_process_dir = blended_image_dir  # Use blended images for Metashape
+                                app.config["PROCESSING_STATES"][process_id].update(
+                                    {
+                                        "progress": 40,
+                                        "message": f"طبقه‌بندی و ترکیب تصاویر کامل شد. استفاده از {len(blended_image_paths)} تصویر ترکیبی برای geoSphereAi.",
+                                    }
+                                )
                             else:
-                                 logging.warning("Image classification and blending failed or produced no output blended images. Continuing with original images.")
-                                 app.config["PROCESSING_STATES"][process_id].update(
-                                     {"message": "طبقه‌بندی و ترکیب تصاویر انجام نشد یا با خطا مواجه شد. ادامه با تصاویر اصلی."}
-                                 )
-                                 images_to_process_dir = image_dir # Revert to original images
+                                logging.warning(
+                                    "Image classification and blending failed or produced no output blended images. Continuing with original images."
+                                )
+                                app.config["PROCESSING_STATES"][process_id].update(
+                                    {
+                                        "message": "طبقه‌بندی و ترکیب تصاویر انجام نشد یا با خطا مواجه شد. ادامه با تصاویر اصلی."
+                                    }
+                                )
+                                images_to_process_dir = (
+                                    image_dir  # Revert to original images
+                                )
 
                         except Exception as e:
-                            logging.error(f"Image classification and blending failed: {e}")
-                            app.config["PROCESSING_STATES"][process_id].update(
-                                {"message": f"خطا در طبقه‌بندی و ترکیب تصاویر: {str(e)}. ادامه با تصاویر اصلی..."}
+                            logging.error(
+                                f"Image classification and blending failed: {e}"
                             )
-                            images_to_process_dir = image_dir # Revert to original images
+                            app.config["PROCESSING_STATES"][process_id].update(
+                                {
+                                    "message": f"خطا در طبقه‌بندی و ترکیب تصاویر: {str(e)}. ادامه با تصاویر اصلی..."
+                                }
+                            )
+                            images_to_process_dir = (
+                                image_dir  # Revert to original images
+                            )
                     else:
-                         app.config["PROCESSING_STATES"][process_id].update(
-                            {"progress": 25, "message": "طبقه‌بندی تصاویر فعال نیست. شروع پردازش geoSphereAi..."}
-                         )
-                         images_to_process_dir = image_dir # Use original images if classification is off
+                        app.config["PROCESSING_STATES"][process_id].update(
+                            {
+                                "progress": 25,
+                                "message": "طبقه‌بندی تصاویر فعال نیست. شروع پردازش geoSphereAi...",
+                            }
+                        )
+                        images_to_process_dir = (
+                            image_dir  # Use original images if classification is off
+                        )
                     # --- END CLASSIFICATION AND BLENDING STEP ---
 
                     # --- Final check before Metashape ---
-                    images_for_metashape = [f for f in os.listdir(blended_image_dir) if allowed_file(f, app.config["ALLOWED_IMAGE_EXTENSIONS"])]
+                    images_for_metashape = [
+                        f
+                        for f in os.listdir(blended_image_dir)
+                        if allowed_file(f, app.config["ALLOWED_IMAGE_EXTENSIONS"])
+                    ]
                     if not images_for_metashape:
-                        logging.error(f"The directory designated for geoSphereAi ({blended_image_dir}) is empty or contains no valid images.")
+                        logging.error(
+                            f"The directory designated for geoSphereAi ({blended_image_dir}) is empty or contains no valid images."
+                        )
                         app.config["PROCESSING_STATES"][process_id].update(
                             {
                                 "status": "failed",
                                 "message": "هیچ فایل تصویری معتبری برای پردازش geoSphereAi یافت نشد.",
                             }
                         )
-                        return # Stop processing if no images for Metashape
+                        return  # Stop processing if no images for Metashape
 
-                    logging.info(f"Starting geoSphereAi process with {len(images_for_metashape)} images from {blended_image_dir}.")
+                    logging.info(
+                        f"Starting geoSphereAi process with {len(images_for_metashape)} images from {blended_image_dir}."
+                    )
                     app.config["PROCESSING_STATES"][process_id].update(
-                        {"progress": 45, "message": "در حال اجرای پایپ لاین geoSphereAi..."}
+                        {
+                            "progress": 45,
+                            "message": "در حال اجرای پایپ لاین geoSphereAi...",
+                        }
                     )
 
                     metashape_command = [
@@ -574,11 +734,15 @@ def zip_upload():
                         "-r",
                         METASHAPE_SCRIPT_PATH,
                         "--image_full_pipeline",
-                        "--image_dir", blended_image_dir,
-                        "--output_dir", output_dir
+                        "--image_dir",
+                        blended_image_dir,
+                        "--output_dir",
+                        output_dir,
                     ]
 
-                    logging.info(f"Running Metashape command: {' '.join(metashape_command)}")
+                    logging.info(
+                        f"Running Metashape command: {' '.join(metashape_command)}"
+                    )
                     process = subprocess.Popen(
                         metashape_command,
                         stdout=subprocess.PIPE,
@@ -586,17 +750,36 @@ def zip_upload():
                     )
 
                     for line in iter(process.stdout.readline, b""):
-                         logging.info(f"Metashape: {line.decode().strip()}")
-                         line_str = line.decode().strip().lower()
-                         if "aligncameras" in line_str:
-                             app.config["PROCESSING_STATES"][process_id].update({"progress": 50, "message": "geoSphereAi: تطبیق دوربین‌ها"})
-                         elif "builddepthmaps" in line_str:
-                             app.config["PROCESSING_STATES"][process_id].update({"progress": 70, "message": "geoSphereAi: ساخت نقشه‌های عمق"})
-                         elif "buildpointcloud" in line_str:
-                              app.config["PROCESSING_STATES"][process_id].update({"progress": 85, "message": "geoSphereAi: ساخت ابر نقاط"})
-                         elif "exportpointcloud" in line_str:
-                             app.config["PROCESSING_STATES"][process_id].update({"progress": 95, "message": "geoSphereAi: خروجی ابر نقاط"})
-
+                        logging.info(f"Metashape: {line.decode().strip()}")
+                        line_str = line.decode().strip().lower()
+                        if "aligncameras" in line_str:
+                            app.config["PROCESSING_STATES"][process_id].update(
+                                {
+                                    "progress": 50,
+                                    "message": "geoSphereAi: تطبیق دوربین‌ها",
+                                }
+                            )
+                        elif "builddepthmaps" in line_str:
+                            app.config["PROCESSING_STATES"][process_id].update(
+                                {
+                                    "progress": 70,
+                                    "message": "geoSphereAi: ساخت نقشه‌های عمق",
+                                }
+                            )
+                        elif "buildpointcloud" in line_str:
+                            app.config["PROCESSING_STATES"][process_id].update(
+                                {
+                                    "progress": 85,
+                                    "message": "geoSphereAi: ساخت ابر نقاط",
+                                }
+                            )
+                        elif "exportpointcloud" in line_str:
+                            app.config["PROCESSING_STATES"][process_id].update(
+                                {
+                                    "progress": 95,
+                                    "message": "geoSphereAi: خروجی ابر نقاط",
+                                }
+                            )
 
                     process.wait()
 
@@ -611,7 +794,6 @@ def zip_upload():
                         )
                         return
 
-
                     app.config["PROCESSING_STATES"][process_id].update(
                         {
                             "progress": 100,
@@ -622,16 +804,20 @@ def zip_upload():
                     logging.info(f"Process {process_id} completed successfully.")
 
                 except Exception as e:
-                    logging.error(f"Unexpected error during processing for {process_id}: {str(e)}")
+                    logging.error(
+                        f"Unexpected error during processing for {process_id}: {str(e)}"
+                    )
                     app.config["PROCESSING_STATES"][process_id].update(
                         {"status": "failed", "message": f"خطای غیرمنتظره: {str(e)}"}
                     )
                 finally:
-                     if os.path.exists(zip_path):
-                         os.remove(zip_path)
+                    if os.path.exists(zip_path):
+                        os.remove(zip_path)
 
-
-        Thread(target=process_zip_task, args=(process_id, zip_path, output_dir, classify_images)).start()
+        Thread(
+            target=process_zip_task,
+            args=(process_id, zip_path, output_dir, classify_images),
+        ).start()
 
         return redirect(url_for("processing", process_id=process_id))
 
@@ -646,8 +832,8 @@ def processing(process_id):
         return redirect(url_for("index"))
 
     if process_id not in app.config["PROCESSING_STATES"]:
-         flash("شناسه پردازش نامعتبر است.")
-         return redirect(url_for("file_selection"))
+        flash("شناسه پردازش نامعتبر است.")
+        return redirect(url_for("file_selection"))
 
     return render_template("processing.html", process_id=process_id)
 
@@ -676,19 +862,26 @@ def results(output_foldername):
     except Exception as e:
         logging.error(f"Error listing contents of {output_dir}: {e}")
 
-
     file_paths = []
     for subdir, _, files in os.walk(output_dir):
         for file in files:
             full_path = os.path.join(subdir, file)
             relative_path = os.path.relpath(full_path, output_dir)
 
-            if relative_path.lower().endswith((".pcd", ".ply", "_mask.png", "_colored_mask.png", "_blended.png", ".obj")): # Include .obj as a viewable/downloadable file
+            if relative_path.lower().endswith(
+                (
+                    ".pcd",
+                    ".ply",
+                    "_mask.png",
+                    "_colored_mask.png",
+                    "_blended.png",
+                    ".obj",
+                )
+            ):  # Include .obj as a viewable/downloadable file
                 normalized_path = relative_path.replace("\\", "/")
                 file_paths.append(normalized_path)
 
     logging.info(f"Found {len(file_paths)} relevant files in results directory.")
-
 
     original_filename = "Processed Files"
     process_state_found = False
@@ -697,16 +890,22 @@ def results(output_foldername):
             original_filename = state.get("filename", original_filename)
             process_state_found = True
             if state.get("status") not in ["completed", "completed_with_warnings"]:
-                 logging.warning(f"Accessing results for process {output_foldername} which has status: {state.get('status', 'unknown')}")
+                logging.warning(
+                    f"Accessing results for process {output_foldername} which has status: {state.get('status', 'unknown')}"
+                )
             break
 
     if not process_state_found:
-         logging.warning(f"Process state not found in PROCESSING_STATES for output_foldername: {output_foldername}. Using default filename.")
+        logging.warning(
+            f"Process state not found in PROCESSING_STATES for output_foldername: {output_foldername}. Using default filename."
+        )
 
-
-    return render_template("results.html", filename=original_filename, output_foldername=output_foldername, file_paths=file_paths)
-
-
+    return render_template(
+        "results.html",
+        filename=original_filename,
+        output_foldername=output_foldername,
+        file_paths=file_paths,
+    )
 
 
 # Download route
@@ -721,9 +920,10 @@ def download(output_foldername, file_path):
 
     if not os.path.abspath(full_file_path).startswith(os.path.abspath(output_dir)):
         flash("Attempted to access a file outside the results directory.")
-        logging.warning(f"Attempted directory traversal: {output_foldername}/{file_path}")
+        logging.warning(
+            f"Attempted directory traversal: {output_foldername}/{file_path}"
+        )
         return redirect(url_for("results", output_foldername=output_foldername))
-
 
     if os.path.exists(full_file_path) and os.path.isfile(full_file_path):
         directory = os.path.dirname(full_file_path)
@@ -747,11 +947,15 @@ def ply(output_foldername, file_path):
 
     if not os.path.abspath(full_file_path).startswith(os.path.abspath(output_dir)):
         flash("Attempted to access a file outside the results directory.")
-        logging.warning(f"Attempted directory traversal: {output_foldername}/{file_path}")
+        logging.warning(
+            f"Attempted directory traversal: {output_foldername}/{file_path}"
+        )
         return redirect(url_for("results", output_foldername=output_foldername))
 
     if os.path.exists(full_file_path) and os.path.isfile(full_file_path):
-        return render_template("ply.html", output_foldername=output_foldername, file_path=file_path)
+        return render_template(
+            "ply.html", output_foldername=output_foldername, file_path=file_path
+        )
     else:
         flash("PLY file not found.")
         return redirect(url_for("results", output_foldername=output_foldername))
@@ -769,7 +973,9 @@ def pcd_viewer(output_foldername, file_path):
 
     if not os.path.abspath(full_file_path).startswith(os.path.abspath(output_dir)):
         flash("Attempted to access a file outside the results directory.")
-        logging.warning(f"Attempted directory traversal: {output_foldername}/{file_path}")
+        logging.warning(
+            f"Attempted directory traversal: {output_foldername}/{file_path}"
+        )
         return redirect(url_for("results", output_foldername=output_foldername))
 
     if os.path.exists(full_file_path) and os.path.isfile(full_file_path):
@@ -788,7 +994,9 @@ def serve_output_file(output_foldername, file_path):
     full_file_path = os.path.join(output_dir, file_path)
 
     if not os.path.abspath(full_file_path).startswith(os.path.abspath(output_dir)):
-        logging.warning(f"Attempted directory traversal via serve_output_file: {output_foldername}/{file_path}")
+        logging.warning(
+            f"Attempted directory traversal via serve_output_file: {output_foldername}/{file_path}"
+        )
         return "Unauthorized", 401
 
     if os.path.exists(full_file_path) and os.path.isfile(full_file_path):
@@ -798,13 +1006,13 @@ def serve_output_file(output_foldername, file_path):
         if file_name.lower().endswith(".ply"):
             mimetype = "model/ply"
         elif file_name.lower().endswith(".pcd"):
-             mimetype = "text/plain"
+            mimetype = "text/plain"
         elif file_name.lower().endswith(".png"):
-             mimetype = "image/png"
+            mimetype = "image/png"
         elif file_name.lower().endswith(".jpg") or file_name.lower().endswith(".jpeg"):
-             mimetype = "image/jpeg"
+            mimetype = "image/jpeg"
         else:
-             mimetype = "application/octet-stream"
+            mimetype = "application/octet-stream"
 
         return send_from_directory(directory, file_name, mimetype=mimetype)
     else:
@@ -816,18 +1024,23 @@ def serve_output_file(output_foldername, file_path):
 @app.route("/static/threejs/build/<path:filename>")
 def serve_threejs_build(filename):
     threejs_build_dir = os.path.join(app.root_path, "static", "threejs", "build")
-    return send_from_directory(threejs_build_dir, filename, mimetype="application/javascript")
+    return send_from_directory(
+        threejs_build_dir, filename, mimetype="application/javascript"
+    )
 
 
 @app.route("/static/threejs/jsm/<path:filename>")
 def serve_threejs_jsm(filename):
     threejs_jsm_dir = os.path.join(app.root_path, "static", "threejs", "jsm")
-    return send_from_directory(threejs_jsm_dir, filename, mimetype="application/javascript")
+    return send_from_directory(
+        threejs_jsm_dir, filename, mimetype="application/javascript"
+    )
+
 
 @app.route("/static/<path:filename>")
 def serve_static(filename):
-     static_dir = os.path.join(app.root_path, "static")
-     return send_from_directory(static_dir, filename)
+    static_dir = os.path.join(app.root_path, "static")
+    return send_from_directory(static_dir, filename)
 
 
 # Run Flask app
