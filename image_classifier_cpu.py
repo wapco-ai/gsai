@@ -10,8 +10,7 @@ import gc
 import time
 import json
 
-# Configure logging for the classifier
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# Use the application's logging configuration
 
 # Model and feature extractor paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
