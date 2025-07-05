@@ -39,8 +39,20 @@ def load_model_and_feature_extractor():
                 model = TFSegformerForSemanticSegmentation.from_pretrained(MODEL_DIR)
                 logging.info("✅ Model loaded from local path.")
 
-            feature_extractor = SegformerFeatureExtractor.from_pretrained(MODEL_NAME)
-            logging.info("✅ Feature extractor loaded.")
+            # Try loading the feature extractor from the same local directory as the model
+            if os.path.exists(MODEL_DIR):
+                try:
+                    feature_extractor = SegformerFeatureExtractor.from_pretrained(MODEL_DIR)
+                    logging.info("✅ Feature extractor loaded from local path.")
+                except Exception as e:
+                    logging.warning(
+                        f"Could not load feature extractor from local path: {e}. Falling back to Hugging Face hub."
+                    )
+                    feature_extractor = SegformerFeatureExtractor.from_pretrained(MODEL_NAME)
+                    logging.info("✅ Feature extractor downloaded and loaded.")
+            else:
+                feature_extractor = SegformerFeatureExtractor.from_pretrained(MODEL_NAME)
+                logging.info("✅ Feature extractor downloaded and loaded.")
 
         except Exception as e:
             logging.error(f"Error loading model or feature extractor: {e}")
