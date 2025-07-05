@@ -64,6 +64,7 @@ logging.basicConfig(
         logging.FileHandler(LOG_FILE_PATH, mode="w", encoding="utf-8"),
         logging.StreamHandler(sys.stdout),
     ],
+    force=True,  # apply configuration even if logging was already configured
 )
 
 
