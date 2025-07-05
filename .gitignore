@@ -2,3 +2,6 @@
 /saved_model
 /uploads
 /static
+/__pycache__
+
+*.docx

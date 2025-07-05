@@ -1,0 +1,39 @@
+@echo off
+chcp 65001
+echo.
+echo ====================================
+echo 🎮 فعال‌سازی GPU برای PyTorch
+echo ====================================
+echo.
+
+echo 📊 وضعیت فعلی:
+echo   - GPU: NVIDIA Quadro M4000M ✅
+echo   - درایور: 566.24 ✅  
+echo   - PyTorch: CPU فقط ❌
+echo.
+
+echo 🔧 مراحل فعال‌سازی GPU:
+echo.
+
+echo [1/4] بروزرسانی pip...
+python -m pip install --upgrade pip
+
+echo.
+echo [2/4] حذف PyTorch فعلی...
+pip uninstall torch torchvision torchaudio -y
+
+echo.
+echo [3/4] نصب PyTorch با پشتیبانی CUDA...
+echo این عملیات ممکن است چند دقیقه طول بکشد...
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+echo.
+echo [4/4] تست GPU...
+python -c "import torch; print('CUDA Available:', torch.cuda.is_available()); print('GPU Name:', torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'No GPU')"
+
+echo.
+echo ====================================
+echo ✅ تنظیمات GPU کامل شد!
+echo ====================================
+echo.
+pause

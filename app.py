@@ -19,7 +19,7 @@ from threading import Thread
 import sys # Import sys to get the python executable
 
 # Import the new image classifier module
-import image_classifier
+import image_classifier_cpu as image_classifier
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -300,7 +300,7 @@ def video_upload():
                             )
                             try:
                                 # classify_images_in_folder returns a list of paths to blended images
-                                blended_image_paths = image_classifier.classify_images_in_folder(
+                                blended_image_paths = image_classifier.process_images_band_only(
                                     image_dir, blended_image_dir
                                 )
 
@@ -521,7 +521,7 @@ def zip_upload():
                             {"progress": 25, "message": "در حال طبقه‌بندی و ترکیب تصاویر..."}
                         )
                         try:
-                            blended_image_paths = image_classifier.classify_images_in_folder(
+                            blended_image_paths = image_classifier.process_images_band_only(
                                 image_dir, blended_image_dir
                             )
 
