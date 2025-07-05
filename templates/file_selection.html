@@ -123,8 +123,8 @@
             <input type="radio" name="file_type" value="zip"> فایل ZIP حاوی تصاویر  
         </label>  
         <button type="submit" class="btn">ادامه</button>  
-    </form>  
-
-    <a href="{{ url_for('logout') }}" class="logout-link">خروج</a> <!-- Logout link -->  
-</body>  
+    </form>
+    <a href="{{ url_for('process_list') }}" class="logout-link">مشاهده پردازش‌ها</a>
+    <a href="{{ url_for('logout') }}" class="logout-link">خروج</a> <!-- Logout link -->
+</body>
 </html>
