@@ -1,0 +1,53 @@
+2025-07-05 17:40:55,511 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+2025-07-05 17:40:55,511 - INFO - [33mPress CTRL+C to quit[0m
+2025-07-05 17:40:59,992 - INFO - 127.0.0.1 - - [05/Jul/2025 17:40:59] "[32mGET /processing/1a0cad7d-09f2-4004-99f5-bda0282e2fae HTTP/1.1[0m" 302 -
+2025-07-05 17:41:00,020 - INFO - 127.0.0.1 - - [05/Jul/2025 17:41:00] "GET /file_selection HTTP/1.1" 200 -
+2025-07-05 17:41:01,665 - INFO - 127.0.0.1 - - [05/Jul/2025 17:41:01] "[32mPOST /file_selection HTTP/1.1[0m" 302 -
+2025-07-05 17:41:01,679 - INFO - 127.0.0.1 - - [05/Jul/2025 17:41:01] "GET /video-upload HTTP/1.1" 200 -
+2025-07-05 17:41:14,763 - INFO - Running frame extraction command: D:\ProgramData\anaconda3\envs\geosphereai\python.exe D:\AI\3dRecognition\geoSphereAi_v1.0.1\metashape_script.py --extract_frames uploads\b6f249c4-3ac1-42d3-8c82-11494d2dc5ae\torghabe2.mp4 --image_dir outputs\deec3ef8-fa3d-44e8-83c9-b47ad380e6bd\frames --start_time 150.0 --frame_interval 1.0 --crop_height_ratio 0.1 --end_time 180.0
+2025-07-05 17:41:14,816 - INFO - 127.0.0.1 - - [05/Jul/2025 17:41:14] "[32mPOST /video-upload HTTP/1.1[0m" 302 -
+2025-07-05 17:41:14,828 - INFO - 127.0.0.1 - - [05/Jul/2025 17:41:14] "GET /processing/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:41:14,889 - INFO - 127.0.0.1 - - [05/Jul/2025 17:41:14] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:41:15,339 - INFO - ExtractFrames: Using frame rate: 29.97 FPS.
+2025-07-05 17:41:15,339 - INFO - ExtractFrames: Total frames in video: 8084
+2025-07-05 17:41:20,479 - INFO - 127.0.0.1 - - [05/Jul/2025 17:41:20] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:41:25,794 - INFO - 127.0.0.1 - - [05/Jul/2025 17:41:25] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:41:30,818 - INFO - 127.0.0.1 - - [05/Jul/2025 17:41:30] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:41:35,830 - INFO - 127.0.0.1 - - [05/Jul/2025 17:41:35] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:41:38,333 - INFO - ExtractFrames: Frame extraction completed.
+2025-07-05 17:41:38,363 - INFO - Frame extraction completed. Found 31 images.
+2025-07-05 17:41:38,363 - INFO - 🚀 TURBO processing: outputs\deec3ef8-fa3d-44e8-83c9-b47ad380e6bd\frames
+2025-07-05 17:41:38,363 - INFO - 🎯 Target band: Red
+2025-07-05 17:41:38,364 - INFO - 🚀 TURBO CLASSIFICATION STARTED for: outputs\deec3ef8-fa3d-44e8-83c9-b47ad380e6bd\frames
+2025-07-05 17:41:38,365 - INFO - 🚀 Loading model with TURBO optimizations...
+2025-07-05 17:41:38,422 - WARNING - Mixed precision compatibility check (mixed_float16): WARNING
+Your GPU may run slowly with dtype policy mixed_float16 because it does not have compute capability of at least 7.0. Your GPU:
+  Quadro M4000M, compute capability 5.2
+See https://developer.nvidia.com/cuda-gpus for a list of GPUs and their compute capabilities.
+If you will use compatible GPU(s) not attached to this host, e.g. by running a multi-worker model, you can ignore this warning. This message will only be logged once
+2025-07-05 17:41:38,423 - INFO - 🚀 GPU TURBO MODE ACTIVATED!
+2025-07-05 17:41:38,423 - INFO - 🎮 GPUs configured: 1
+2025-07-05 17:41:38,424 - INFO - ⚡ Mixed precision: ENABLED
+2025-07-05 17:41:38,424 - INFO - 💻 Device: /GPU:0
+2025-07-05 17:41:38,492 - INFO - 🎮 GPU Memory: 4.0GB, Optimal batch size: 8
+2025-07-05 17:41:38,493 - INFO - 📦 Loading model from local directory...
+2025-07-05 17:41:41,337 - INFO - 127.0.0.1 - - [05/Jul/2025 17:41:41] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:41:46,371 - INFO - 127.0.0.1 - - [05/Jul/2025 17:41:46] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:41:49,519 - INFO - ✅ Model loaded from local directory.
+2025-07-05 17:41:49,522 - INFO - ✅ Feature extractor loaded from local JSON config.
+2025-07-05 17:41:49,523 - INFO - 🔥 TURBO MODE READY - Batch size: 8
+2025-07-05 17:41:49,523 - INFO - 📊 Processing 31 images with batch size 8
+2025-07-05 17:41:51,394 - INFO - 127.0.0.1 - - [05/Jul/2025 17:41:51] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:41:56,411 - INFO - 127.0.0.1 - - [05/Jul/2025 17:41:56] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:42:01,446 - INFO - 127.0.0.1 - - [05/Jul/2025 17:42:01] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:42:06,481 - INFO - 127.0.0.1 - - [05/Jul/2025 17:42:06] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:42:06,843 - ERROR - Batch classification failed: OOM when allocating tensor with shape[8,128,128,3072] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc [Op:ConcatV2] name: concat
+2025-07-05 17:42:11,498 - INFO - 127.0.0.1 - - [05/Jul/2025 17:42:11] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:42:16,515 - INFO - 127.0.0.1 - - [05/Jul/2025 17:42:16] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:42:19,686 - ERROR - Batch classification failed: OOM when allocating tensor with shape[8,128,128,3072] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc [Op:ConcatV2] name: concat
+2025-07-05 17:42:21,535 - INFO - 127.0.0.1 - - [05/Jul/2025 17:42:21] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:42:27,085 - INFO - 127.0.0.1 - - [05/Jul/2025 17:42:27] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:42:32,102 - INFO - 127.0.0.1 - - [05/Jul/2025 17:42:32] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
+2025-07-05 17:42:32,156 - ERROR - Batch classification failed: OOM when allocating tensor with shape[8,128,128,3072] and type float on /job:localhost/replica:0/task:0/device:GPU:0 by allocator GPU_0_bfc [Op:ConcatV2] name: concat
+2025-07-05 17:42:37,116 - INFO - 127.0.0.1 - - [05/Jul/2025 17:42:37] "GET /progress/deec3ef8-fa3d-44e8-83c9-b47ad380e6bd HTTP/1.1" 200 -
