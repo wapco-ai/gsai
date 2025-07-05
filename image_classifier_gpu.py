@@ -37,9 +37,9 @@ def detect_optimal_batch_size():
                 elif total_memory >= 6:
                     batch_size = 12
                 elif total_memory >= 4:
-                    batch_size = 8
+                    batch_size = 2
                 else:
-                    batch_size = 4
+                    batch_size = 1
                 logging.info(f"🎮 GPU Memory: {total_memory:.1f}GB, Optimal batch size: {batch_size}")
             except:
                 batch_size = 6
@@ -114,9 +114,21 @@ def classify_image(image_path):
     try:
         image = Image.open(image_path).convert("RGB")
         inputs = feature_extractor(images=image, return_tensors="tf")
-        with tf.device(device_name):
-            outputs = model(**inputs)
-            logits = outputs.logits
+        try:
+            with tf.device(device_name):
+                outputs = model(**inputs)
+                logits = outputs.logits
+        except tf.errors.ResourceExhaustedError as oom:
+            logging.warning(
+                f"GPU OOM for {image_path}. Falling back to CPU: {oom}")
+            try:
+                with tf.device('/CPU:0'):
+                    outputs = model(**inputs)
+                    logits = outputs.logits
+            except Exception as cpu_e:
+                logging.error(
+                    f"CPU fallback failed for {image_path}: {cpu_e}")
+                return None
         predicted_mask = tf.argmax(logits, axis=1)[0].numpy()
         predicted_mask = np.where(predicted_mask > 149, 0, predicted_mask)
         del inputs, outputs, logits
