@@ -3,11 +3,9 @@ from PIL import Image
 import numpy as np
 import tensorflow as tf
 from transformers import TFSegformerForSemanticSegmentation, SegformerFeatureExtractor
-from tensorflow.keras.preprocessing.image import load_img, img_to_array
 import logging
 from tqdm import tqdm
 import matplotlib.pyplot as plt # Import matplotlib for colormap
-import json
 
 # Configure logging for the classifier
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -30,25 +28,19 @@ def load_model_and_feature_extractor():
         logging.info("📦 Loading Segformer model and feature extractor...")
         try:
             if not os.path.exists(MODEL_DIR):
-                raise FileNotFoundError(
-                    f"Local model directory not found: {MODEL_DIR}. "
-                    "Place the model in this directory to run without internet."
-                )
+                logging.info("⬇ Model not found locally. Downloading...")
+                # Specify from_pt=True to load PyTorch weights
+                # Specify a cache_dir if you want to control where models are downloaded
+                model = TFSegformerForSemanticSegmentation.from_pretrained(MODEL_NAME, from_pt=True)
+                model.save_pretrained(MODEL_DIR)
+                logging.info("✅ Model downloaded and saved.")
             else:
                 logging.info("📦 Loading model from local path...")
                 model = TFSegformerForSemanticSegmentation.from_pretrained(MODEL_DIR)
                 logging.info("✅ Model loaded from local path.")
 
-            preprocessor_path = os.path.join(MODEL_DIR, "preprocessor_config.json")
-            if os.path.exists(preprocessor_path):
-                with open(preprocessor_path, "r", encoding="utf-8") as f:
-                    config_dict = json.load(f)
-                feature_extractor = SegformerFeatureExtractor(**config_dict)
-                logging.info("✅ Feature extractor loaded from local JSON config.")
-            else:
-                raise FileNotFoundError(
-                    "preprocessor_config.json not found in saved_model directory."
-                )
+            feature_extractor = SegformerFeatureExtractor.from_pretrained(MODEL_NAME)
+            logging.info("✅ Feature extractor loaded.")
 
         except Exception as e:
             logging.error(f"Error loading model or feature extractor: {e}")
@@ -353,32 +345,8 @@ def create_colored_mask_and_blend(original_image_path, raw_mask, blended_output_
      except Exception as e:
         logging.error(f"Error creating colored mask and blend for {original_image_path}: {e}")
         return None
-    
-    
-# تابع بارگذاری تصویر با اندازه اصلی
-def load_image(image_path, target_size=(256, 256)):
-    image = load_img(image_path)
-    original_size = image.size
-    resized_image = image.resize(target_size)
-    image_array = img_to_array(resized_image) / 255.0
-    return np.expand_dims(image_array, axis=0), original_size, image  # بازگرداندن تصویر اصلی
 
-# توابع ذخیره‌سازی
-def save_segmentation_result(prediction, original_size, output_path):
-    prediction = np.argmax(prediction, axis=-1)
-    prediction = np.squeeze(prediction)
-    output_image = Image.fromarray(prediction.astype(np.uint8)).resize(original_size, Image.NEAREST)
-    output_image.save(output_path)
 
-def save_colored_segmentation(prediction, original_size, output_path):
-    prediction = np.argmax(prediction, axis=-1)
-    prediction = np.squeeze(prediction)
-    colored_result = np.zeros((prediction.shape[0], prediction.shape[1], 3), dtype=np.uint8)
-    for class_idx in range(num_classes):
-        colored_result[prediction == class_idx] = colors[class_idx]
-    colored_image = Image.fromarray(colored_result).resize(original_size, Image.NEAREST)
-    colored_image.save(output_path)
-    
 # --- Modify classify_images_in_folder again to use create_colored_mask_and_blend ---
 def classify_images_in_folder(image_folder, blended_output_folder):
     """

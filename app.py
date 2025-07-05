@@ -1,7 +1,6 @@
 import os
 import zipfile
 import logging
-from datetime import datetime
 from flask import (
     Flask,
     request,
@@ -20,7 +19,7 @@ from threading import Thread
 import sys # Import sys to get the python executable
 
 # Import the new image classifier module
-import image_classifier_cpu as image_classifier
+import image_classifier
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -42,30 +41,8 @@ METASHAPE_SCRIPT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 os.makedirs(app.config["OUTPUT_FOLDER"], exist_ok=True)
 
-# Directory to store log files
-LOG_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logs")
-os.makedirs(LOG_DIR, exist_ok=True)
-
-# Create a unique log file for each run
-LOG_FILE_PATH = os.path.join(
-    LOG_DIR,
-    f"app_{datetime.now().strftime('%Y%m%d_%H%M%S')}.log",
-)
-
-# Setup logging to both console and a log file
-# Clear any existing handlers to avoid duplicate logs
-for handler in logging.root.handlers[:]:
-    logging.root.removeHandler(handler)
-
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[
-        logging.FileHandler(LOG_FILE_PATH, mode="w", encoding="utf-8"),
-        logging.StreamHandler(sys.stdout),
-    ],
-    force=True,  # apply configuration even if logging was already configured
-)
+# Setup logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 # Helper function to check allowed files
@@ -323,7 +300,7 @@ def video_upload():
                             )
                             try:
                                 # classify_images_in_folder returns a list of paths to blended images
-                                blended_image_paths = image_classifier.process_images_band_only(
+                                blended_image_paths = image_classifier.classify_images_in_folder(
                                     image_dir, blended_image_dir
                                 )
 
@@ -544,7 +521,7 @@ def zip_upload():
                             {"progress": 25, "message": "در حال طبقه‌بندی و ترکیب تصاویر..."}
                         )
                         try:
-                            blended_image_paths = image_classifier.process_images_band_only(
+                            blended_image_paths = image_classifier.classify_images_in_folder(
                                 image_dir, blended_image_dir
                             )
 

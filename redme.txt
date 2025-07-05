@@ -1,8 +1,18 @@
 add classification
 
 
-conda activate 3d_reconstruction
-cd D:\AI\3dRecognition\geoSphereAi_v1.0.0
+conda remove --name geosphereai --all
+conda create -n geosphereai python=3.7
+conda activate geosphereai
+conda install tensorflow-gpu=2.6.0 cudatoolkit=11.3 cudnn=8.2 -c conda-forge
+conda install opencv matplotlib numpy scipy scikit-learn pillow -c conda-forge
+conda install flask werkzeug -c conda-forge
+conda install tqdm -c conda-forge
+conda install transformers -c conda-forge
+conda install keras=2.6.0 -c conda-forge
+
+conda activate geosphereai
+cd D:\AI\3dRecognition\geoSphereAi_v1.0.1
 python app.py
 
 metashape -r "D:\AI\3dRecognition\app4\metashape_script.py" --convert_to_point_cloud "D:\AI\3dRecognition\app4\outputs\test5\project.psx" --output_dir "D:\AI\3dRecognition\app4\outputs\test5"
