@@ -52,6 +52,7 @@ logging.basicConfig(
         logging.StreamHandler(sys.stdout),
     ],
     force=True,  # apply configuration even if logging was already configured
+
 )
 
 
