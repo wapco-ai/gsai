@@ -53,6 +53,10 @@ LOG_FILE_PATH = os.path.join(
 )
 
 # Setup logging to both console and a log file
+# Clear any existing handlers to avoid duplicate logs
+for handler in logging.root.handlers[:]:
+    logging.root.removeHandler(handler)
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -60,7 +64,6 @@ logging.basicConfig(
         logging.FileHandler(LOG_FILE_PATH, mode="w", encoding="utf-8"),
         logging.StreamHandler(sys.stdout),
     ],
-    force=True,
 )
 
 
