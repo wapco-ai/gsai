@@ -136,11 +136,11 @@ def convert_to_point_cloud(project_path, output_dir):
     # Export point cloud  
     try:  
         output_path = os.path.join(output_dir, "point_cloud.ply")  
-        chunk.exportPointCloud(  
-            output_path,  
-            format=Metashape.PointCloudFormatPLY,  # Point cloud format (PLY)  
-            crs=chunk.crs,  # Coordinate Reference System  
-            binary=False,
+        chunk.exportPointCloud(
+            output_path,
+            format=Metashape.PointCloudFormatPLY,  # Point cloud format (PLY)
+            crs=chunk.crs,  # Coordinate Reference System
+            binary=True,
             save_point_classification=True
         )
         print(f"ply Point cloud exported to {output_path}") 
