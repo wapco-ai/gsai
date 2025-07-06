@@ -1,30 +1,91 @@
+
 <!DOCTYPE html>
-<html lang="fa">
+<html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}GeoSphereAI{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font/dist/font-face.css" rel="stylesheet">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global-fixes.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/video-upload.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/zip-upload.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+    
     {% block head %}{% endblock %}
 </head>
 <body>
-    <header>
-        <h1>GeoSphereAI</h1>
+    <!-- Header Navigation -->
+    <header class="main-header">
+        <nav class="main-nav">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <a href="{{ url_for('home') }}" class="brand-link">
+                        <img src="{{ url_for('static', filename='images/geosphere-logo.png') }}" alt="GeoSphere" class="brand-logo">
+                        <span class="brand-text">GeoSphereAI</span>
+                    </a>
+                </div>
+                
+                <div class="nav-menu">
+                    <a href="{{ url_for('home') }}" class="nav-link">خانه</a>
+                    <a href="{{ url_for('file_selection') }}" class="nav-link">پردازش جدید</a>
+                    <a href="{{ url_for('process_list') }}" class="nav-link">پردازش‌های قبلی</a>
+                    <a href="{{ url_for('logout') }}" class="nav-link logout-btn">خروج</a>
+                </div>
+                
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </nav>
     </header>
-    <main class="container">
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
+
+    <!-- Main Content -->
+    <main class="main-content">
         {% block content %}{% endblock %}
     </main>
-    <footer>
-        <p>© ۱۴۰۳ - GeoSphereAI</p>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <img src="{{ url_for('static', filename='images/wapco-logo.png') }}" alt="Wapco" class="footer-logo">
+                    <span>&copy; 2024 Wapco - GeoSphereAI</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">راهنما</a>
+                    <a href="#" class="footer-link">پشتیبانی</a>
+                    <a href="#" class="footer-link">تماس با ما</a>
+                </div>
+            </div>
+        </div>
     </footer>
+
+    <script>
+        function toggleMobileMenu() {
+            const navMenu = document.querySelector('.nav-menu');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            navMenu.classList.toggle('active');
+            toggle.classList.toggle('active');
+        }
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const navMenu = document.querySelector('.nav-menu');
+            const toggle = document.querySelector('.mobile-menu-toggle');
+            
+            if (!navMenu.contains(e.target) && !toggle.contains(e.target)) {
+                navMenu.classList.remove('active');
+                toggle.classList.remove('active');
+            }
+        });
+    </script>
 </body>
 </html>

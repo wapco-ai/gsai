@@ -1,0 +1,400 @@
+
+/* === Enhanced Video Upload Styles with Fixed RTL Sliders === */
+
+.upload-area {
+    margin: 2rem 0;
+}
+
+.file-input {
+    display: none;
+}
+
+.file-label {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    border: 2px dashed #007bff;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    justify-content: center;
+}
+
+.file-label:hover,
+.file-label.drag-over {
+    border-color: #0056b3;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.15);
+}
+
+.upload-icon {
+    font-size: 3rem;
+    opacity: 0.8;
+}
+
+.upload-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.upload-text strong {
+    font-size: 1.2rem;
+    color: #007bff;
+}
+
+.upload-text span {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.settings-container {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin: 2rem 0;
+}
+
+.settings-container h3 {
+    color: #007bff;
+    margin-bottom: 1.5rem;
+    font-size: 1.3rem;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.5rem;
+}
+
+.input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #495057;
+    font-weight: 600;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    right: 12px;
+    z-index: 2;
+    font-size: 1.2rem;
+}
+
+.input-with-icon input {
+    padding: 12px 45px 12px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+    text-align: right;
+}
+
+.input-with-icon input:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.input-unit {
+    position: absolute;
+    left: 12px;
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Enhanced Range Container */
+.range-container {
+    position: relative;
+    padding: 1rem 0;
+}
+
+.range-display {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.range-current-value {
+    display: inline-block;
+    background: #007bff;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.range-wrapper {
+    position: relative;
+    padding: 0 10px;
+}
+
+.range-labels-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    color: #6c757d;
+    padding: 0 10px;
+    direction: rtl; /* Fixed: RTL direction for labels */
+}
+
+.modern-range {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    background: #e9ecef;
+    outline: none;
+    -webkit-appearance: none;
+    direction: rtl; /* Fixed: RTL direction for slider */
+    position: relative;
+    z-index: 2;
+}
+
+.modern-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+    transition: all 0.3s ease;
+    border: 2px solid white;
+}
+
+.modern-range::-webkit-slider-thumb:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
+}
+
+.modern-range::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #007bff;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Step Marks */
+.range-step-marks {
+    position: absolute;
+    top: 28px;
+    left: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 1;
+    direction: rtl; /* Fixed: RTL direction for step marks */
+}
+
+.range-step-marks span {
+    width: 2px;
+    height: 12px;
+    background: #ccc;
+    border-radius: 1px;
+}
+
+.range-step-marks span:nth-child(1),
+.range-step-marks span:nth-child(11) {
+    background: #007bff;
+    height: 16px;
+}
+
+.range-step-marks span:nth-child(6) {
+    background: #28a745;
+    height: 14px;
+}
+
+/* Fixed Toggle Switch for RTL */
+.toggle-group {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef;
+}
+
+.toggle-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    position: relative;
+    width: 100%;
+}
+
+.toggle-content {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    margin-left: 1rem;
+}
+
+.toggle-text {
+    font-weight: 600;
+    color: #495057;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.toggle-description {
+    font-size: 0.9rem;
+    color: #6c757d;
+    display: block;
+}
+
+.toggle-input {
+    display: none;
+}
+
+.toggle-switch {
+    width: 50px;
+    height: 26px;
+    background: #ccc;
+    border-radius: 13px;
+    position: relative;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+}
+
+.toggle-switch::after {
+    content: '';
+    width: 22px;
+    height: 22px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-input:checked + .toggle-switch {
+    background: #007bff;
+}
+
+.toggle-input:checked + .toggle-switch::after {
+    transform: translateX(-24px);
+}
+
+.select-container {
+    position: relative;
+}
+
+.modern-select {
+    width: 100%;
+    padding: 12px 40px 12px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    background: white;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 12px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    text-align: right;
+}
+
+.modern-select:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.submit-container {
+    text-align: center;
+    margin: 3rem 0;
+}
+
+.submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 16px 32px;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.btn-icon {
+    font-size: 1.2rem;
+}
+
+.btn-text {
+    font-size: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .input-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .file-label {
+        flex-direction: column;
+        padding: 1.5rem;
+    }
+    
+    .upload-icon {
+        font-size: 2rem;
+    }
+    
+    .settings-container {
+        padding: 1.5rem;
+    }
+    
+    .toggle-label {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .toggle-content {
+        margin-left: 0;
+        text-align: center;
+    }
+}

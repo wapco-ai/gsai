@@ -1,0 +1,419 @@
+
+/* === Clean Login Page with Proper Logos === */
+
+body {
+    background: #f5f5f5;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+}
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-box {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 420px;
+    padding: 0;
+    overflow: hidden;
+    animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.login-header {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    padding: 2rem;
+    text-align: center;
+    position: relative;
+}
+
+/* Logos Container */
+.logos-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    position: relative;
+}
+
+.company-logo, .product-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 50%;
+    padding: 8px;
+    transition: all 0.3s ease;
+}
+
+.company-logo:hover, .product-logo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+}
+
+.wapco-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    /* Remove filter to keep original colors */
+}
+
+.geosphere-logo {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    /* Remove filter to keep original colors */
+}
+
+.login-header h2 {
+    margin: 0.5rem 0 0.3rem 0;
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+.login-header p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 0.95rem;
+}
+
+.login-form {
+    padding: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.2rem;
+    position: relative;
+}
+
+.form-group:last-child {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #495057;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    right: 12px;
+    z-index: 2;
+    font-size: 1.1rem;
+    color: #6c757d;
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding: 12px 40px 12px 40px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.input-with-icon input:focus {
+    outline: none;
+    border-color: #007bff;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.input-with-icon input::placeholder {
+    color: #adb5bd;
+    font-size: 0.9rem;
+}
+
+.password-toggle {
+    position: absolute;
+    left: 12px;
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: #6c757d;
+    z-index: 2;
+    padding: 4px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.password-toggle:hover {
+    background: #e9ecef;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+    margin-top: 0.5rem;
+}
+
+.login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+.login-btn:active {
+    transform: translateY(0);
+}
+
+.login-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.btn-icon {
+    font-size: 1.1rem;
+}
+
+.btn-spinner {
+    font-size: 1.1rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.login-footer {
+    background: #f8f9fa;
+    padding: 1rem 2rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.features h3 {
+    margin: 0 0 0.8rem 0;
+    color: #495057;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.features ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.features li {
+    padding: 0.4rem 0;
+    color: #6c757d;
+    font-size: 0.8rem;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.features li:last-child {
+    border-bottom: none;
+}
+
+/* Alert Styles */
+.alert {
+    padding: 0.8rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.alert-error {
+    background: linear-gradient(135deg, #f8d7da 0%, #f1b0b7 100%);
+    border: 1px solid #f5c2c7;
+    color: #842029;
+}
+
+.alert-icon {
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.alert-content {
+    flex: 1;
+}
+
+.alert-content p {
+    margin: 0;
+    font-size: 0.85rem;
+}
+
+/* Form Validation States */
+.form-group.focused .input-with-icon input {
+    border-color: #007bff;
+    background: white;
+}
+
+.form-group.valid .input-with-icon input {
+    border-color: #28a745;
+    background: #f8fff9;
+}
+
+.form-group.error .input-with-icon input {
+    border-color: #dc3545;
+    background: #fff5f5;
+}
+
+.form-group.focused .input-icon {
+    color: #007bff;
+}
+
+.form-group.valid .input-icon {
+    color: #28a745;
+}
+
+.form-group.error .input-icon {
+    color: #dc3545;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .login-container {
+        padding: 15px;
+    }
+    
+    .login-box {
+        max-width: 100%;
+    }
+    
+    .login-header {
+        padding: 1.5rem;
+    }
+    
+    .company-logo, .product-logo {
+        padding: 6px;
+    }
+    
+    .wapco-logo {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .geosphere-logo {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .login-header h2 {
+        font-size: 1.4rem;
+    }
+    
+    .login-form {
+        padding: 1.5rem;
+    }
+    
+    .login-footer {
+        padding: 1rem 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 10px;
+    }
+    
+    .login-header {
+        padding: 1.2rem;
+    }
+    
+    .logos-container {
+        margin-bottom: 0.8rem;
+    }
+    
+    .company-logo, .product-logo {
+        padding: 5px;
+    }
+    
+    .wapco-logo {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .geosphere-logo {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .login-header h2 {
+        font-size: 1.2rem;
+    }
+    
+    .login-form {
+        padding: 1.2rem;
+    }
+    
+    .login-footer {
+        padding: 0.8rem 1.2rem;
+    }
+    
+    .input-with-icon input {
+        padding: 10px 35px 10px 35px;
+        font-size: 0.9rem;
+    }
+    
+    .login-btn {
+        padding: 10px;
+        font-size: 0.95rem;
+    }
+    
+    .features li {
+        font-size: 0.75rem;
+        padding: 0.3rem 0;
+    }
+}
+
+/* Global fixes */
+* {
+    box-sizing: border-box;
+    max-width: 100%;
+}
+
+html, body {
+    overflow-x: hidden;
+}

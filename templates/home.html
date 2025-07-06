@@ -1,0 +1,83 @@
+
+{% extends "base.html" %}
+
+{% block title %}GeoSphereAI - صفحه اصلی{% endblock %}
+
+{% block content %}
+<div class="home-container">
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <div class="hero-logos">
+            <div class="company-logo">
+                <img src="{{ url_for('static', filename='images/wapco-logo.png') }}" alt="Wapco Logo" class="wapco-logo">
+            </div>
+            <div class="product-logo">
+                <img src="{{ url_for('static', filename='images/geosphere-logo.png') }}" alt="GeoSphere Logo" class="geosphere-logo">
+            </div>
+        </div>
+        <h1>به GeoSphereAI خوش آمدید</h1>
+        <p>پلتفرم پیشرفته برای پردازش و بصری‌سازی داده‌های مکانی</p>
+    </div>
+
+    <!-- Main Actions Section -->
+    <div class="main-actions">
+        <h2>انتخاب عملیات</h2>
+        <div class="action-grid">
+            <div class="action-card">
+                <div class="action-icon">🚀</div>
+                <h3>شروع پردازش جدید</h3>
+                <p>آپلود فایل‌های جدید و شروع پردازش</p>
+                <a href="{{ url_for('file_selection') }}" class="action-btn primary">شروع کنید</a>
+            </div>
+            
+            <div class="action-card">
+                <div class="action-icon">📊</div>
+                <h3>مشاهده پردازش‌های قبلی</h3>
+                <p>بررسی و مدیریت پردازش‌های انجام شده</p>
+                <a href="{{ url_for('process_list') }}" class="action-btn secondary">مشاهده فهرست</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.total_processes or 150 }}</div>
+                <div class="stat-label">کل پردازش‌ها</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.successful_processes or 142 }}</div>
+                <div class="stat-label">پردازش موفق</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ stats.active_processes or 3 }}</div>
+                <div class="stat-label">در حال پردازش</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Overview -->
+    <div class="features-overview">
+        <h3>قابلیت‌های سیستم</h3>
+        <div class="features-list">
+            <div class="feature-item">
+                <span class="feature-icon">🎥</span>
+                <span>پردازش ویدیو به مدل سه‌بعدی</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">📁</span>
+                <span>پردازش فایل‌های ZIP حاوی تصاویر</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🤖</span>
+                <span>طبقه‌بندی تصاویر با هوش مصنوعی</span>
+            </div>
+            <div class="feature-item">
+                <span class="feature-icon">🔄</span>
+                <span>تبدیل فرمت‌های مختلف سه‌بعدی</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

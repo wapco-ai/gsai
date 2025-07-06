@@ -213,9 +213,30 @@ def update_process_state(process_id, updates=None, **kwargs):
         db.session.commit()
 
 
-# Index page
+
+# اضافه کردن این route جدید بعد از index route:
+
+@app.route("/home")
+def home():
+    """صفحه خانه بعد از لاگین"""
+    if not session.get("logged_in"):
+        flash("لطفاً ابتدا وارد شوید.")
+        return redirect(url_for("index"))
+    
+    stats = {
+        'total_processes': Process.query.count(),
+        'successful_processes': Process.query.filter_by(status='completed').count(),
+        'active_processes': Process.query.filter_by(status='processing').count()
+    }
+    return render_template('home.html', stats=stats)
+
+# تغییر دادن index function:
 @app.route("/", methods=["GET", "POST"])
 def index():
+    # اگر کاربر قبلاً لاگین کرده، به home برو
+    if session.get("logged_in"):
+        return redirect(url_for("home"))
+        
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
@@ -224,11 +245,12 @@ def index():
             session["logged_in"] = True
             session["username"] = username
             flash("ورود با موفقیت انجام شد.")
-            return redirect(url_for("file_selection"))
+            return redirect(url_for("home"))  # تغییر به redirect
         else:
             flash("نام کاربری یا کلمه عبور اشتباه است.")
             return redirect(request.url)
     return render_template("index.html")
+
 
 
 @app.route("/file_selection", methods=["GET", "POST"])
@@ -1295,4 +1317,5 @@ if __name__ == "__main__":
     with app.app_context():
         db.create_all()
         init_users()
-    app.run(debug=False)
+    # app.run(debug=False)
+    app.run(debug=True, use_reloader=True)

@@ -1,30 +1,40 @@
+
 {% extends "base.html" %}
 
-{% block title %}نتایج پردازش{% endblock %}
-
-{% block head %}
-<style>
-ul { list-style: none; padding: 0; }
-ul li { border: 1px solid #ddd; padding: 10px; margin: 5px 0; border-radius: 5px; background: #f9f9f9; display: flex; justify-content: space-between; }
-ul li a { color: #007BFF; text-decoration: none; margin-left: 10px; }
-ul li a:hover { text-decoration: underline; }
-</style>
-{% endblock %}
+{% block title %}نتایج پردازش - GeoSphereAI{% endblock %}
 
 {% block content %}
-<h2>پرونده‌های موجود برای دانلود</h2>
-<ul>
-{% for file in file_paths %}
-    <li>
-        {{ file }}
-        {% if file.lower().endswith('.ply') %}
-            <a href="{{ url_for('ply', output_foldername=output_foldername, file_path=file) }}" target="_blank">مشاهده PLY</a>
-        {% elif file.lower().endswith('.pcd') %}
-            <a href="{{ url_for('pcd_viewer', output_foldername=output_foldername, file_path=file) }}" target="_blank">مشاهده PCD</a>
-        {% endif %}
-        <a href="{{ url_for('download', output_foldername=output_foldername, file_path=file) }}">دریافت</a>
-    </li>
-{% endfor %}
-</ul>
-<a href="{{ url_for('file_selection') }}" class="btn" style="margin-top:15px;">بازگشت به صفحه اصلی</a>
+<div class="container">
+    <h2>نتایج پردازش</h2>
+    <p>پردازش با موفقیت کامل شد. فایل‌های زیر برای دانلود آماده هستند:</p>
+    
+    <div class="results-grid">
+        {% for file in file_paths %}
+        <div class="result-item">
+            <div class="file-info">
+                <h3 class="file-name">{{ file }}</h3>
+                <div class="file-actions">
+                    {% if file.lower().endswith('.ply') %}
+                        <a href="{{ url_for('view_ply', filename=file) }}" class="btn-viewer" target="_blank">
+                            <i class="icon-eye"></i> مشاهده PLY
+                        </a>
+                    {% elif file.lower().endswith('.pcd') %}
+                        <a href="{{ url_for('view_pcd', filename=file) }}" class="btn-viewer" target="_blank">
+                            <i class="icon-eye"></i> مشاهده PCD
+                        </a>
+                    {% endif %}
+                    <a href="{{ url_for('download_file', filename=file) }}" class="btn-download">
+                        <i class="icon-download"></i> دریافت
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="navigation-links">
+        <a href="{{ url_for('index') }}" class="back-link">&larr; بازگشت به صفحه اصلی</a>
+        <a href="{{ url_for('process_list') }}" class="back-link">مشاهده تمام پردازش‌ها</a>
+    </div>
+</div>
 {% endblock %}

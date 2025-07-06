@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}بارگذاری و پردازش ویدئو{% endblock %}
+
+{% block head %}
+<style>
+.form-group { display: flex; flex-direction: column; margin-bottom: 1rem; }
+.form-group label { font-weight: bold; margin-bottom: 0.3rem; }
+.form-group input[type="file"],
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<h2>بارگذاری و پردازش ویدئو</h2>
+<form action="/video-upload" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="video">انتخاب ویدئو:</label>
+        <input type="file" id="video" name="video" accept="video/*" required>
+    </div>
+    <div class="form-group">
+        <label for="start_time">زمان شروع پردازش (ثانیه):</label>
+        <input type="number" id="start_time" name="start_time" value="0" min="0" step="1">
+    </div>
+    <div class="form-group">
+        <label for="end_time">زمان پایان پردازش (ثانیه):</label>
+        <input type="number" id="end_time" name="end_time" placeholder="بدون محدودیت">
+    </div>
+    <div class="form-group">
+        <label for="frame_interval">فاصله زمانی بین فریم‌ها (ثانیه):</label>
+        <input type="number" id="frame_interval" name="frame_interval" value="1" min="0.1" step="0.1">
+    </div>
+    <div class="form-group">
+        <input type="checkbox" id="classifyImages" name="classify_images">
+        <label for="classifyImages">انجام طبقه‌بندی تصویر (Segformer)</label>
+    </div>
+    <div class="form-group">
+        <label for="crop_height_ratio">درصد برش ارتفاع (0 تا 1):</label>
+        <input type="text" id="crop_height_ratio" name="crop_height_ratio" value="0.1" pattern="[0-1](\.\d+)?">
+    </div>
+    <div class="form-group">
+        <label for="model_format">قالب سه‌بعدی خروجی:</label>
+        <select id="model_format" name="model_format">
+            <option value="obj">OBJ</option>
+            <option value="ply">PLY</option>
+            <option value="fbx">FBX</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <input type="submit" class="btn" value="بارگذاری و پردازش">
+    </div>
+</form>
+{% endblock %}

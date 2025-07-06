@@ -1,0 +1,283 @@
+
+/* === Global Scroll Fix for All Pages === */
+
+/* حذف اسکرول افقی از تمام صفحات */
+html {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+body {
+    overflow-x: hidden;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* جلوگیری از تجاوز عناصر از viewport */
+* {
+    box-sizing: border-box;
+}
+
+*:not(html):not(body) {
+    max-width: 100%;
+}
+
+/* کنترل container اصلی */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    overflow-x: hidden;
+}
+
+/* حل مشکل عناصر wide */
+.wide-element {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto;
+}
+
+/* حل مشکل جداول */
+table {
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed;
+    word-wrap: break-word;
+}
+
+/* حل مشکل تصاویر */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* حل مشکل pre و code */
+pre, code {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    overflow-x: auto;
+    max-width: 100%;
+}
+
+/* حل مشکل فرم‌ها */
+form {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+input, textarea, select {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* حل مشکل grid layouts */
+.input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    max-width: 100%;
+}
+
+@media (max-width: 768px) {
+    .input-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+/* حل مشکل flex layouts */
+.flex-container {
+    display: flex;
+    flex-wrap: wrap;
+    max-width: 100%;
+}
+
+/* حل مشکل عناصر position fixed/absolute */
+.fixed-element, .absolute-element {
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+/* حل مشکل slider container */
+.range-container {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.range-wrapper {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.range-labels-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.8rem;
+    color: #6c757d;
+    padding: 0 10px;
+    direction: rtl;
+    max-width: 100%;
+    overflow-x: hidden;
+    white-space: nowrap;
+}
+
+/* حل مشکل upload area */
+.upload-area {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.file-label {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* حل مشکل settings container */
+.settings-container {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* حل مشکل navigation */
+.navigation-links {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* حل مشکل toggle group */
+.toggle-group {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.toggle-label {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* حل مشکل submit container */
+.submit-container {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* حل مشکل عناصر با width بیش از 100% */
+[style*="width"] {
+    max-width: 100% !important;
+}
+
+/* حل مشکل margin منفی */
+* {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* مخصوص صفحات موبایل */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .settings-container {
+        padding: 1rem;
+    }
+    
+    .input-with-icon {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .upload-area {
+        margin: 1rem 0;
+    }
+    
+    .file-label {
+        padding: 1rem;
+    }
+    
+    .range-labels-top {
+        font-size: 0.7rem;
+        padding: 0 5px;
+    }
+}
+
+/* حل مشکل اسکرول بار در صورت نیاز */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* حل مشکل اسکرول افقی در جداول */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-container table {
+    min-width: 100%;
+}
+
+/* حل مشکل عناصر که از صفحه خارج می‌شوند */
+.content-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    word-wrap: break-word;
+}
+
+/* حل مشکل padding و margin بیش از حد */
+.no-horizontal-overflow {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Debug mode - فقط برای تست */
+.debug-borders * {
+    border: 1px solid red !important;
+}
+
+/* حل مشکل اسکرول در صفحات خاص */
+.page-wrapper {
+    width: 100%;
+    max-width: 100vw;
+    overflow-x: hidden;
+}
+
+/* حل مشکل بخش‌های خاص */
+.section {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.row {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.col, .column {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}

@@ -1,18 +1,31 @@
+
 {% extends "base.html" %}
 
-{% block title %}انتخاب نوع فایل{% endblock %}
+{% block title %}انتخاب نوع ورودی - GeoSphereAI{% endblock %}
 
 {% block content %}
-<h2>انتخاب نوع فایل برای بارگذاری</h2>
-<form action="/file_selection" method="POST">
-    <label>
-        <input type="radio" name="file_type" value="video"> ویدئو
-    </label>
-    <label>
-        <input type="radio" name="file_type" value="zip"> فایل ZIP حاوی تصاویر
-    </label>
-    <button type="submit" class="btn">ادامه</button>
-</form>
-<a href="{{ url_for('process_list') }}" class="btn" style="margin-top:10px;">مشاهده پردازش‌ها</a>
-<a href="{{ url_for('logout') }}" class="btn" style="margin-top:10px;">خروج</a>
+<div class="container">
+    <h2>شروع پردازش جدید</h2>
+    <p>لطفاً نوع فایل ورودی خود را برای شروع فرآیند پردازش انتخاب کنید.</p>
+
+    <div class="selection-container">
+        <!-- گزینه فایل ZIP -->
+        <a href="{{ url_for('zip_upload') }}" class="selection-card">
+            <h3>پردازش با فایل ZIP</h3>
+            <p class="card-description">مجموعه‌ای از تصاویر خود را در قالب یک فایل فشرده (zip.) برای بازسازی سه‌بعدی بارگذاری کنید.</p>
+            <span class="btn-card">انتخاب</span>
+        </a>
+
+        <!-- گزینه فایل ویدیو -->
+        <a href="{{ url_for('video_upload') }}" class="selection-card">
+            <h3>پردازش با ویدیو</h3>
+            <p class="card-description">یک فایل ویدیویی بارگذاری کنید تا فریم‌های آن به صورت خودکار استخراج و برای پردازش استفاده شوند.</p>
+            <span class="btn-card">انتخاب</span>
+        </a>
+    </div>
+
+    <div class="navigation-links">
+        <a href="{{ url_for('index') }}" class="back-link">&larr; بازگشت به صفحه اصلی</a>
+    </div>
+</div>
 {% endblock %}

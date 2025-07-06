@@ -1,16 +1,170 @@
+
 {% extends "base.html" %}
 
-{% block title %}ورود به سیستم{% endblock %}
+{% block title %}ورود به سیستم - GeoSphereAI{% endblock %}
 
 {% block content %}
-<h2>ورود به سیستم</h2>
-<form action="/" method="POST">
-    <label for="username">نام کاربری:</label>
-    <input type="text" id="username" name="username" required>
+<div class="login-container">
+    <div class="login-box">
+        <div class="login-header">
+            <div class="logos-container">
+                <div class="company-logo">
+                    <img src="{{ url_for('static', filename='images/wapco-logo.png') }}" alt="Wapco Logo" class="wapco-logo">
+                </div>
+                <div class="product-logo">
+                    <img src="{{ url_for('static', filename='images/geosphere-logo.png') }}" alt="GeoSphere Logo" class="geosphere-logo">
+                </div>
+            </div>
+            <h2>ورود به سیستم</h2>
+            <p>به GeoSphereAI خوش آمدید</p>
+        </div>
 
-    <label for="password">کلمه عبور:</label>
-    <input type="password" id="password" name="password" required>
+        <!-- نمایش پیام‌های خطا -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <div class="alert alert-error">
+            <div class="alert-icon">⚠️</div>
+            <div class="alert-content">
+                {% for message in messages %}
+                <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% endwith %}
 
-    <button type="submit" class="btn">ورود</button>
-</form>
+        <form action="/" method="POST" class="login-form">
+            <div class="form-group">
+                <label for="username">نام کاربری</label>
+                <div class="input-with-icon">
+                    <span class="input-icon">👤</span>
+                    <input type="text" id="username" name="username" required placeholder="نام کاربری خود را وارد کنید">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">کلمه عبور</label>
+                <div class="input-with-icon">
+                    <span class="input-icon">🔒</span>
+                    <input type="password" id="password" name="password" required placeholder="کلمه عبور خود را وارد کنید">
+                    <button type="button" class="password-toggle" onclick="togglePassword()">
+                        <span id="password-toggle-icon">👁️</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="login-btn">
+                    <span class="btn-icon">🚀</span>
+                    <span class="btn-text">ورود به سیستم</span>
+                </button>
+            </div>
+        </form>
+
+        <div class="login-footer">
+            <div class="features">
+                <h3>قابلیت‌های سیستم</h3>
+                <ul>
+                    <li>🎥 پردازش ویدیو و تبدیل به مدل سه‌بعدی</li>
+                    <li>📁 پردازش فایل‌های ZIP حاوی تصاویر</li>
+                    <li>🤖 طبقه‌بندی تصاویر با هوش مصنوعی</li>
+                    <li>🔄 تبدیل فرمت‌های مختلف سه‌بعدی</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function togglePassword() {
+    const passwordField = document.getElementById('password');
+    const toggleIcon = document.getElementById('password-toggle-icon');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleIcon.textContent = '🙈';
+    } else {
+        passwordField.type = 'password';
+        toggleIcon.textContent = '👁️';
+    }
+}
+
+// Form validation and enhancement
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('.login-form');
+    const usernameInput = document.getElementById('username');
+    const passwordInput = document.getElementById('password');
+    
+    // Add real-time validation
+    usernameInput.addEventListener('input', function() {
+        validateUsername();
+    });
+    
+    passwordInput.addEventListener('input', function() {
+        validatePassword();
+    });
+    
+    function validateUsername() {
+        const username = usernameInput.value.trim();
+        const formGroup = usernameInput.closest('.form-group');
+        
+        if (username.length < 3) {
+            formGroup.classList.add('error');
+            formGroup.classList.remove('valid');
+        } else {
+            formGroup.classList.remove('error');
+            formGroup.classList.add('valid');
+        }
+    }
+    
+    function validatePassword() {
+        const password = passwordInput.value;
+        const formGroup = passwordInput.closest('.form-group');
+        
+        if (password.length < 4) {
+            formGroup.classList.add('error');
+            formGroup.classList.remove('valid');
+        } else {
+            formGroup.classList.remove('error');
+            formGroup.classList.add('valid');
+        }
+    }
+    
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
+        
+        if (username.length < 3) {
+            e.preventDefault();
+            alert('نام کاربری باید حداقل 3 کاراکتر باشد');
+            usernameInput.focus();
+            return false;
+        }
+        
+        if (password.length < 4) {
+            e.preventDefault();
+            alert('کلمه عبور باید حداقل 4 کاراکتر باشد');
+            passwordInput.focus();
+            return false;
+        }
+        
+        // Show loading state
+        const submitBtn = form.querySelector('.login-btn');
+        submitBtn.innerHTML = '<span class="btn-spinner">⏳</span><span class="btn-text">در حال ورود...</span>';
+        submitBtn.disabled = true;
+    });
+    
+    // Add focus effects
+    document.querySelectorAll('input').forEach(input => {
+        input.addEventListener('focus', function() {
+            this.closest('.form-group').classList.add('focused');
+        });
+        
+        input.addEventListener('blur', function() {
+            this.closest('.form-group').classList.remove('focused');
+        });
+    });
+});
+</script>
 {% endblock %}

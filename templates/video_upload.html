@@ -1,59 +1,206 @@
+
 {% extends "base.html" %}
 
-{% block title %}بارگذاری و پردازش ویدئو{% endblock %}
-
-{% block head %}
-<style>
-.form-group { display: flex; flex-direction: column; margin-bottom: 1rem; }
-.form-group label { font-weight: bold; margin-bottom: 0.3rem; }
-.form-group input[type="file"],
-.form-group input[type="text"],
-.form-group input[type="number"],
-.form-group select {
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-</style>
-{% endblock %}
+{% block title %}بارگذاری و پردازش ویدئو - GeoSphereAI{% endblock %}
 
 {% block content %}
-<h2>بارگذاری و پردازش ویدئو</h2>
-<form action="/video-upload" method="post" enctype="multipart/form-data">
-    <div class="form-group">
-        <label for="video">انتخاب ویدئو:</label>
-        <input type="file" id="video" name="video" accept="video/*" required>
+<div class="container">
+    <h2>بارگذاری و پردازش ویدئو</h2>
+    <p>فایل ویدیویی و پارامترهای مورد نظر برای پردازش را مشخص کنید.</p>
+    
+    <form action="/video-upload" method="post" enctype="multipart/form-data">
+        <!-- بخش آپلود فایل -->
+        <div class="upload-area">
+            <input type="file" name="video" id="video" accept="video/*" required class="file-input">
+            <label for="video" class="file-label">
+                <div class="upload-icon">📹</div>
+                <div class="upload-text">
+                    <strong>انتخاب فایل ویدیو</strong>
+                    <span>یا فایل را اینجا رها کنید</span>
+                </div>
+            </label>
+        </div>
+
+        <div class="settings-container">
+            <h3>تنظیمات زمانی پردازش</h3>
+            
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="start_time">زمان شروع</label>
+                    <div class="input-with-icon">
+                        <span class="input-icon">⏱️</span>
+                        <input type="number" name="start_time" id="start_time" value="0" min="0" step="0.1">
+                        <span class="input-unit">ثانیه</span>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="end_time">زمان پایان</label>
+                    <div class="input-with-icon">
+                        <span class="input-icon">⏱️</span>
+                        <input type="number" name="end_time" id="end_time" value="10" min="0" step="0.1">
+                        <span class="input-unit">ثانیه</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="frame_interval">فاصله زمانی بین فریم‌ها</label>
+                <div class="range-container">
+                    <div class="range-display">
+                        <span class="range-current-value" id="frame-interval-display">0.5 ثانیه</span>
+                    </div>
+                    <div class="range-wrapper">
+                        <div class="range-labels-top">
+                            <span>0.1</span>
+                            <span>1</span>
+                            <span>2</span>
+                            <span>3</span>
+                            <span>4</span>
+                            <span>5</span>
+                            <span>6</span>
+                            <span>7</span>
+                            <span>8</span>
+                            <span>9</span>
+                            <span>10</span>
+                        </div>
+                        <input type="range" name="frame_interval" id="frame_interval" min="0.1" max="10" step="0.1" value="0.5" class="modern-range" oninput="updateFrameInterval(this.value)">
+                        <div class="range-step-marks">
+                            <span></span><span></span><span></span><span></span><span></span>
+                            <span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>تنظیمات پردازش پیشرفته</h3>
+            
+            <div class="toggle-group">
+                <label class="toggle-label" for="classify_images">
+                    <span class="toggle-content">
+                        <span class="toggle-text">انجام طبقه‌بندی تصویر (Segformer)</span>
+                        <span class="toggle-description">برای تشخیص و جداسازی اجزای مختلف تصویر</span>
+                    </span>
+                    <input type="checkbox" class="toggle-input" id="classify_images" name="classify_images" value="true">
+                    <span class="toggle-switch"></span>
+                </label>
+            </div>
+
+            <div class="input-group">
+                <label for="crop_height_ratio">درصد برش ارتفاع</label>
+                <div class="range-container">
+                    <div class="range-display">
+                        <span class="range-current-value" id="crop-ratio-display">0%</span>
+                    </div>
+                    <div class="range-wrapper">
+                        <div class="range-labels-top">
+                            <span>0%</span>
+                            <span>10%</span>
+                            <span>20%</span>
+                            <span>30%</span>
+                            <span>40%</span>
+                            <span>50%</span>
+                            <span>60%</span>
+                            <span>70%</span>
+                            <span>80%</span>
+                            <span>90%</span>
+                            <span>100%</span>
+                        </div>
+                        <input type="range" name="crop_height_ratio" id="crop_height_ratio" min="0" max="1" step="0.1" value="0" class="modern-range" oninput="updateCropRatio(this.value)">
+                        <div class="range-step-marks">
+                            <span></span><span></span><span></span><span></span><span></span>
+                            <span></span><span></span><span></span><span></span><span></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="model_format">قالب سه‌بعدی خروجی</label>
+                <div class="select-container">
+                    <select name="model_format" id="model_format" class="modern-select">
+                        <option value="obj" selected>OBJ - Wavefront Object</option>
+                        <option value="ply">PLY - Polygon File Format</option>
+                        <option value="fbx">FBX - Autodesk FBX</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- دکمه ارسال -->
+        <div class="submit-container">
+            <button type="submit" class="submit-btn">
+                <span class="btn-icon">🚀</span>
+                <span class="btn-text">بارگذاری و شروع پردازش</span>
+            </button>
+        </div>
+    </form>
+    
+    <div class="navigation-links">
+        <a href="{{ url_for('file_selection') }}" class="back-link">&larr; بازگشت به انتخاب نوع فایل</a>
     </div>
-    <div class="form-group">
-        <label for="start_time">زمان شروع پردازش (ثانیه):</label>
-        <input type="number" id="start_time" name="start_time" value="0" min="0" step="1">
-    </div>
-    <div class="form-group">
-        <label for="end_time">زمان پایان پردازش (ثانیه):</label>
-        <input type="number" id="end_time" name="end_time" placeholder="بدون محدودیت">
-    </div>
-    <div class="form-group">
-        <label for="frame_interval">فاصله زمانی بین فریم‌ها (ثانیه):</label>
-        <input type="number" id="frame_interval" name="frame_interval" value="1" min="0.1" step="0.1">
-    </div>
-    <div class="form-group">
-        <input type="checkbox" id="classifyImages" name="classify_images">
-        <label for="classifyImages">انجام طبقه‌بندی تصویر (Segformer)</label>
-    </div>
-    <div class="form-group">
-        <label for="crop_height_ratio">درصد برش ارتفاع (0 تا 1):</label>
-        <input type="text" id="crop_height_ratio" name="crop_height_ratio" value="0.1" pattern="[0-1](\.\d+)?">
-    </div>
-    <div class="form-group">
-        <label for="model_format">قالب سه‌بعدی خروجی:</label>
-        <select id="model_format" name="model_format">
-            <option value="obj">OBJ</option>
-            <option value="ply">PLY</option>
-            <option value="fbx">FBX</option>
-        </select>
-    </div>
-    <div class="form-group">
-        <input type="submit" class="btn" value="بارگذاری و پردازش">
-    </div>
-</form>
+</div>
+
+<script>
+// Fixed functions - corrected the reverse calculation
+function updateFrameInterval(value) {
+    document.getElementById('frame-interval-display').textContent = value + ' ثانیه';
+}
+
+function updateCropRatio(value) {
+    const percentage = Math.round(parseFloat(value) * 100);
+    document.getElementById('crop-ratio-display').textContent = percentage + '%';
+}
+
+// File upload functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('video');
+    const fileLabel = document.querySelector('.file-label');
+    
+    // Drag and drop events
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        fileLabel.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    ['dragenter', 'dragover'].forEach(eventName => {
+        fileLabel.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        fileLabel.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight(e) {
+        fileLabel.classList.add('drag-over');
+    }
+    
+    function unhighlight(e) {
+        fileLabel.classList.remove('drag-over');
+    }
+    
+    fileLabel.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        fileInput.files = files;
+        updateFileName();
+    }
+    
+    fileInput.addEventListener('change', updateFileName);
+    
+    function updateFileName() {
+        const fileName = fileInput.files[0]?.name;
+        if (fileName) {
+            document.querySelector('.upload-text strong').textContent = fileName;
+            document.querySelector('.upload-text span').textContent = 'فایل انتخاب شده';
+        }
+    }
+});
+</script>
 {% endblock %}
