@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        fetch(`/api/process-status/${processId}`)
+        fetch(`/progress/${processId}`)
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
