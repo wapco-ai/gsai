@@ -1275,7 +1275,7 @@ def serve_output_file(output_foldername, file_path):
         if file_name.lower().endswith(".ply"):
             mimetype = "model/ply"
         elif file_name.lower().endswith(".pcd"):
-            mimetype = "text/plain"
+            mimetype = "application/octet-stream"
         elif file_name.lower().endswith(".png"):
             mimetype = "image/png"
         elif file_name.lower().endswith(".jpg") or file_name.lower().endswith(".jpeg"):
