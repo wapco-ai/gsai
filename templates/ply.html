@@ -71,43 +71,41 @@
                                     - ( geometry.boundingBox.min.y + geometry.boundingBox.max.y ) / 2,
                                     - ( geometry.boundingBox.min.z + geometry.boundingBox.max.z ) / 2 );
 
-                const pos = geometry.getAttribute('position').array;
+                const total = geometry.getAttribute('position').count;
+
                 const colAttr = geometry.getAttribute('color');
                 const colorGroups = {};
 
                 if (colAttr) {
                     const col = colAttr.array;
-                    const total = geometry.getAttribute('position').count;
                     for (let i = 0; i < total; i++) {
                         const r = col[i * 3];
                         const g = col[i * 3 + 1];
                         const b = col[i * 3 + 2];
-                        const color = new THREE.Color(r, g, b);
-                        const hex = color.getHexString();
+                        const hex = new THREE.Color(r, g, b).getHexString();
                         if (!colorGroups[hex]) {
-                            colorGroups[hex] = { positions: [], colors: [] };
+                            colorGroups[hex] = [];
                         }
-                        colorGroups[hex].positions.push(pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]);
-                        colorGroups[hex].colors.push(r, g, b);
+                        colorGroups[hex].push(i);
                     }
                 } else {
-                    colorGroups['ffffff'] = { positions: Array.from(pos), colors: [] };
+                    colorGroups['ffffff'] = Array.from({length: total}, (_, i) => i);
                 }
 
                 const groupObjects = {};
                 for (const hex in colorGroups) {
-                    const gPositions = new Float32Array(colorGroups[hex].positions);
-                    const gColors = colorGroups[hex].colors.length ? new Float32Array(colorGroups[hex].colors) : null;
+                    const idx = new Uint32Array(colorGroups[hex]);
                     const g = new THREE.BufferGeometry();
-                    g.setAttribute('position', new THREE.Float32BufferAttribute(gPositions, 3));
-                    if (gColors) {
-                        g.setAttribute('color', new THREE.Float32BufferAttribute(gColors, 3));
+                    g.setAttribute('position', geometry.getAttribute('position'));
+                    if (colAttr) {
+                        g.setAttribute('color', colAttr);
                     }
+                    g.setIndex(new THREE.BufferAttribute(idx, 1));
                     const materialOpts = { size: 0.05 };
-                    if (gColors) {
+                    if (colAttr) {
                         materialOpts.vertexColors = true;
                     } else {
-                        materialOpts.color = 0xffffff;
+                        materialOpts.color = '#' + hex;
                     }
                     const material = new THREE.PointsMaterial(materialOpts);
                     const pts = new THREE.Points(g, material);
