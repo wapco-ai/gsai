@@ -10,6 +10,7 @@ from flask import (
     flash,
     send_from_directory,
     session,
+    jsonify,
 )
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -1343,6 +1344,20 @@ def serve_output_file(output_foldername, file_path):
     else:
         logging.debug(f"File not found for serving: {full_file_path}")
         return "File not found", 404
+
+
+# Route to provide class labels for the viewer templates
+@app.route("/class_labels")
+def serve_class_labels():
+    config_path = os.path.join(app.root_path, "saved_model", "config.json")
+    try:
+        with open(config_path, "r", encoding="utf-8") as cfg:
+            data = json.load(cfg)
+        mapping = data.get("id2label", {})
+    except Exception as exc:
+        logging.error(f"Failed to load class labels: {exc}")
+        mapping = {}
+    return jsonify(mapping)
 
 
 # Static routes for serving threejs and other static files
