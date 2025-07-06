@@ -23,7 +23,7 @@
                             <i class="icon-eye"></i> مشاهده PCD
                         </a>
                     {% endif %}
-                    <a href="{{ url_for('download_file', filename=file) }}" class="btn-download">
+                    <a href="{{ url_for('download', output_foldername=output_foldername, file_path=file) }}" class="btn-download">
                         <i class="icon-download"></i> دریافت
                     </a>
                 </div>
