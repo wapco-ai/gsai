@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}کلاس‌های ADE20K{% endblock %}
+
+{% block content %}
+<h2>فهرست کلاس‌های تفکیک‌پذیری</h2>
+<ul class="class-list">
+  {% for idx, label in classes.items() %}
+    <li>{{ idx }} - {{ label }}</li>
+  {% endfor %}
+</ul>
+{% endblock %}

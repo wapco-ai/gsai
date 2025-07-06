@@ -1359,6 +1359,22 @@ def serve_class_labels():
         mapping = {}
     return jsonify(mapping)
 
+# صفحه نمایش کلاس‌های فارسی
+@app.route("/classes")
+def classes_view():
+    if not session.get("logged_in"):
+        flash("لطفاً ابتدا وارد شوید.")
+        return redirect(url_for("index"))
+
+    fa_path = os.path.join(app.root_path, "saved_model", "class_labels_fa.json")
+    try:
+        with open(fa_path, "r", encoding="utf-8") as cfg:
+            classes = json.load(cfg)
+    except Exception as exc:
+        logging.error(f"Failed to load Persian class labels: {exc}")
+        classes = {}
+    return render_template("classes.html", classes=classes)
+
 
 # Static routes for serving threejs and other static files
 @app.route("/static/threejs/build/<path:filename>")
