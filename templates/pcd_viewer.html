@@ -28,8 +28,8 @@
 
         let camera, scene, renderer, controls;  
         let pointCloud; // Store the point cloud object  
-        init();  
-        animate();  
+        init();
+        render();
 
         function init() {  
             // Renderer  
@@ -48,9 +48,10 @@
             scene.add(camera);  
 
             // Controls  
-            controls = new OrbitControls(camera, renderer.domElement);  
-            controls.enableDamping = true; // an animation loop is required when either damping or auto-rotation are enabled  
-            controls.dampingFactor = 0.05;  
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = false; // Disabled because there is no animation loop
+            controls.addEventListener('change', render); // Render on interaction
+            controls.dampingFactor = 0.05;
             controls.screenSpacePanning = false;  
             controls.minDistance = 1;  
             controls.maxDistance = 10;  
@@ -114,15 +115,9 @@
             render();  
         }  
 
-        function animate() {  
-            requestAnimationFrame(animate);  
-            controls.update(); // Required if controls.enableDamping or controls.autoRotate are set to true  
-            render();  
-        }  
-
-        function render() {  
-            renderer.render(scene, camera);  
-        }  
+        function render() {
+            renderer.render(scene, camera);
+        }
     </script>  
 </body>  
 </html>

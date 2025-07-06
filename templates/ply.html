@@ -28,7 +28,7 @@
         let camera, scene, renderer, controls;
 
         init();
-        animate();
+        render();
 
         function init() {
             scene = new THREE.Scene();
@@ -47,7 +47,7 @@
 
             controls = new OrbitControls(camera, renderer.domElement); // Use imported OrbitControls
             controls.addEventListener('change', render); // Render on interaction
-            controls.enableDamping = true; // Smooth camera movement
+            controls.enableDamping = false; // Damping disabled since no animation loop
             controls.dampingFactor = 0.25;
             controls.screenSpacePanning = false;
             controls.minDistance = 0.1;
@@ -131,12 +131,6 @@
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-            render();
-        }
-
-        function animate() {
-            requestAnimationFrame(animate);
-            controls.update();
             render();
         }
 
