@@ -91,4 +91,5 @@ metashape -r metashape_script.py --image_full_pipeline \
 ```
 
 The web interface performs similar commands internally when you upload files through the browser.
+When uploading a video or ZIP file you can now choose the point cloud formats using checkboxes for **PLY** and **PCD**.
 
