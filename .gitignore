@@ -1,5 +1,4 @@
 /outputs
-/saved_model
 /uploads
 /static/*
 !/static/css/
@@ -7,3 +6,5 @@
 /__pycache__
 
 *.docx
+*.h5
+*.db
