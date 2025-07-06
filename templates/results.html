@@ -1,167 +1,30 @@
-<!DOCTYPE html>  
-<html lang="fa">  
-<head>  
-    <meta charset="UTF-8">  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font/dist/font-face.css" rel="stylesheet">  
-    <title>نتایج پردازش و لینک‌های دانلود</title>  
-    <style>  
-        body {  
-            font-family: 'Vazir', Arial, sans-serif; /* Use a Persian-friendly font */  
-            text-align: right;  
-            direction: rtl;  
-            background-color: #f7f7f7;  
-            color: #333;  
-            line-height: 1.6;  
-            margin: 0;  
-            padding: 0;  
-        }  
+{% extends "base.html" %}
 
-        header {  
-            background-color: #0056b3; /* Darker blue for header */  
-            color: white;  
-            text-align: center;  
-            padding: 1rem 0; /* Increased padding for header */  
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */  
-        }  
+{% block title %}نتایج پردازش{% endblock %}
 
-        header h1 {  
-            margin: 0;  
-            font-size: 2.5rem; /* Increased font size */  
-            letter-spacing: 1px; /* Spacing for emphasis */  
-            text-transform: uppercase; /* Uppercase for emphasis */  
-        }  
+{% block head %}
+<style>
+ul { list-style: none; padding: 0; }
+ul li { border: 1px solid #ddd; padding: 10px; margin: 5px 0; border-radius: 5px; background: #f9f9f9; display: flex; justify-content: space-between; }
+ul li a { color: #007BFF; text-decoration: none; margin-left: 10px; }
+ul li a:hover { text-decoration: underline; }
+</style>
+{% endblock %}
 
-        main {  
-            max-width: 800px;  
-            margin: 0 auto;  
-            background: white;  
-            padding: 20px;  
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);  
-            border-radius: 10px;  
-        }  
-
-        h2 {  
-            color: #007BFF;  
-            font-size: 1.5rem;  
-            margin-bottom: 1rem;  
-            border-bottom: 2px solid #007BFF;  
-            padding-bottom: 0.5rem;  
-        }  
-
-        ul {  
-            list-style: none;  
-            padding: 0;  
-        }  
-
-        ul li {  
-            border: 1px solid #ddd;  
-            padding: 10px;  
-            margin: 5px 0;  
-            border-radius: 5px;  
-            display: flex;  
-            justify-content: space-between;  
-            align-items: center;  
-            background: #f9f9f9;  
-            transition: all 0.3s;  
-        }  
-
-        ul li:hover {  
-            background: #eef6ff;  
-            border-color: #007BFF;  
-        }  
-
-        ul li a {  
-            color: #007BFF;  
-            text-decoration: none;  
-            font-weight: bold;  
-            margin-left: 10px; /* Add some spacing between the links */  
-        }  
-
-        ul li a:hover {  
-            text-decoration: underline;  
-        }  
-
-        footer {  
-            text-align: center;  
-            margin-top: 20px;  
-            padding: 10px;  
-            font-size: 0.9rem;  
-            color: #666;  
-        }  
-
-        footer a {  
-            color: #007BFF;  
-            text-decoration: none;  
-        }  
-
-        footer a:hover {  
-            text-decoration: underline;  
-        }  
-
-        .btn {  
-            display: inline-block;  
-            text-decoration: none;  
-            color: white;  
-            background-color: #007BFF;  
-            padding: 10px 15px;  
-            border-radius: 5px;  
-            transition: all 0.2s;  
-            font-size: 0.95rem;  
-            font-weight: bold;  
-        }  
-
-        .btn:hover {  
-            background-color: #0056b3;  
-        }  
-
-        .file-actions {  
-            display: flex;  
-            gap: 10px; /* Add space between the actions */  
-        }  
-    </style>  
-</head>  
-<body>  
-
-<header>  
-    <h1>نتایج پردازش فایل</h1>  
-</header>  
-
-<main>  
-    <h2>پرونده‌های موجود برای دانلود</h2>  
-    <ul>  
-        <!-- Assuming "filename" is the directory name and "file" is the PLY file to view -->  
-        {% for file in file_paths %}
-        <li>
-            {{ file }}
-            {# Correct Download Link #}
-            <a href="{{ url_for('download', output_foldername=output_foldername, file_path=file) }}">دریافت</a>
-    
-            {# Example Viewer Links (ensure these match your app.py routes) #}
-            {% if file.lower().endswith('.ply') %}
-                <a href="{{ url_for('ply', output_foldername=output_foldername, file_path=file) }}" target="_blank">مشاهده PLY</a>
-            {% elif file.lower().endswith('.pcd') %}
-                <a href="{{ url_for('pcd_viewer', output_foldername=output_foldername, file_path=file) }}" target="_blank">مشاهده PCD</a>
-            {% endif %}
-            {# Add checks and links for _blended.png, _mask.png, etc. #}
-            {% if file.lower().endswith(('_blended.png', '_mask.png', '_colored_mask.png')) %}
-                 {# Assuming you have a generic image viewer route, or you might just make them downloadable #}
-                 <a href="{{ url_for('serve_output_file', output_foldername=output_foldername, file_path=file) }}" target="_blank">مشاهده تصویر</a>
-            {% endif %}
-             {% if file.lower().endswith('.obj') %}
-                  {# You might add an OBJ viewer link if you have one, or just make it downloadable #}
-                  <a href="{{ url_for('download', output_foldername=output_foldername, file_path=file) }}">دریافت OBJ</a>
-             {% endif %}
-        </li>
-    {% endfor %} 
-    </ul>  
-
-    <a href="{{ url_for('file_selection') }}" class="btn" style="margin-top:15px;">بازگشت به صفحه اصلی</a>  
-</main>  
-
-<footer>  
-    <p>© ۱۴۰۳ - برنامه پردازش سه‌بعدی. <a href="{{ url_for('file_selection') }}">خانه</a></p>  
-</footer>  
-
-</body>  
-</html>
+{% block content %}
+<h2>پرونده‌های موجود برای دانلود</h2>
+<ul>
+{% for file in file_paths %}
+    <li>
+        {{ file }}
+        {% if file.lower().endswith('.ply') %}
+            <a href="{{ url_for('ply', output_foldername=output_foldername, file_path=file) }}" target="_blank">مشاهده PLY</a>
+        {% elif file.lower().endswith('.pcd') %}
+            <a href="{{ url_for('pcd_viewer', output_foldername=output_foldername, file_path=file) }}" target="_blank">مشاهده PCD</a>
+        {% endif %}
+        <a href="{{ url_for('download', output_foldername=output_foldername, file_path=file) }}">دریافت</a>
+    </li>
+{% endfor %}
+</ul>
+<a href="{{ url_for('file_selection') }}" class="btn" style="margin-top:15px;">بازگشت به صفحه اصلی</a>
+{% endblock %}
