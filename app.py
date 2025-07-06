@@ -373,7 +373,7 @@ def video_upload():
                         "end_time": datetime.utcnow(),
                     },
                 )
-                proc = Process.query.filter_by(process_uuid=process_id).first()
+                proc = Process.query.get(process_id)
                 if proc:
                     proc.status = "failed"
                     proc.end_time = datetime.utcnow()
@@ -459,7 +459,7 @@ def video_upload():
                                     "end_time": datetime.utcnow(),
                                 },
                             )
-                            proc = Process.query.filter_by(process_uuid=process_id).first()
+                            proc = Process.query.get(process_id)
                             if proc:
                                 proc.status = "failed"
                                 proc.end_time = datetime.utcnow()
@@ -486,7 +486,7 @@ def video_upload():
                                     "end_time": datetime.utcnow(),
                                 },
                             )
-                            proc = Process.query.filter_by(process_uuid=process_id).first()
+                            proc = Process.query.get(process_id)
                             if proc:
                                 proc.status = "failed"
                                 proc.end_time = datetime.utcnow()
@@ -498,7 +498,7 @@ def video_upload():
                         logging.info(
                             f"Frame extraction completed. Found {len(extracted_image_files)} images."
                         )
-                        proc = Process.query.filter_by(process_uuid=process_id).first()
+                        proc = Process.query.get(process_id)
                         if proc:
                             proc.frame_count = len(extracted_image_files)
                             db.session.commit()
@@ -599,7 +599,7 @@ def video_upload():
                                     "end_time": datetime.utcnow(),
                                 },
                             )
-                            proc = Process.query.filter_by(process_uuid=process_id).first()
+                            proc = Process.query.get(process_id)
                             if proc:
                                 proc.status = "failed"
                                 proc.end_time = datetime.utcnow()
@@ -683,7 +683,7 @@ def video_upload():
                                     "end_time": datetime.utcnow(),
                                 },
                             )
-                            proc = Process.query.filter_by(process_uuid=process_id).first()
+                            proc = Process.query.get(process_id)
                             if proc:
                                 proc.status = "failed"
                                 proc.end_time = datetime.utcnow()
@@ -700,7 +700,7 @@ def video_upload():
                                 "end_time": datetime.utcnow(),
                             }
                         )
-                        proc = Process.query.filter_by(process_uuid=process_id).first()
+                        proc = Process.query.get(process_id)
                         if proc:
                             proc.status = "completed"
                             proc.end_time = datetime.utcnow()
@@ -721,7 +721,7 @@ def video_upload():
                                 "end_time": datetime.utcnow(),
                             },
                         )
-                        proc = Process.query.filter_by(process_uuid=process_id).first()
+                        proc = Process.query.get(process_id)
                         if proc:
                             proc.status = "failed"
                             proc.end_time = datetime.utcnow()
@@ -836,7 +836,7 @@ def zip_upload():
                                 "end_time": datetime.utcnow(),
                             },
                         )
-                        proc = Process.query.filter_by(process_uuid=process_id).first()
+                        proc = Process.query.get(process_id)
                         if proc:
                             proc.status = "failed"
                             proc.end_time = datetime.utcnow()
@@ -852,7 +852,7 @@ def zip_upload():
                         return  # Stop processing
 
                     logging.info(f"Extracted {extracted_files_count} images from ZIP.")
-                    proc = Process.query.filter_by(process_uuid=process_id).first()
+                    proc = Process.query.get(process_id)
                     if proc:
                         proc.frame_count = extracted_files_count
                         db.session.commit()
@@ -1027,7 +1027,7 @@ def zip_upload():
                                 "end_time": datetime.utcnow(),
                             },
                         )
-                        proc = Process.query.filter_by(process_uuid=process_id).first()
+                        proc = Process.query.get(process_id)
                         if proc:
                             proc.status = "failed"
                             proc.end_time = datetime.utcnow()
@@ -1044,7 +1044,7 @@ def zip_upload():
                             "end_time": datetime.utcnow(),
                         }
                     )
-                    proc = Process.query.filter_by(process_uuid=process_id).first()
+                    proc = Process.query.get(process_id)
                     if proc:
                         proc.status = "completed"
                         proc.end_time = datetime.utcnow()
@@ -1064,7 +1064,7 @@ def zip_upload():
                             "end_time": datetime.utcnow(),
                         }
                     )
-                    proc = Process.query.filter_by(process_uuid=process_id).first()
+                    proc = Process.query.get(process_id)
                     if proc:
                         proc.status = "failed"
                         proc.end_time = datetime.utcnow()
