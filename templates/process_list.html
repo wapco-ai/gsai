@@ -38,7 +38,7 @@
                     </td>
                     <td>
                         {% if p.status.lower() == 'completed' %}
-                            <a href="{{ url_for('results', process_id=p.id) }}" class="btn-small">مشاهده نتایج</a>
+                            <a href="{{ url_for('results', output_foldername=p.output_folder) }}" class="btn-small">مشاهده نتایج</a>
                         {% elif p.status.lower() == 'processing' %}
                             <a href="{{ url_for('processing', process_id=p.id) }}" class="btn-small">مشاهده پردازش</a>
                         {% endif %}
