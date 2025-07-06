@@ -609,7 +609,7 @@ def video_upload():
                             return  # Stop processing if no images for Metashape
 
                         logging.info(
-                            f"Starting geoSphereAi process with {len(blended_image_dir)} images from {images_to_process_dir}."
+                            f"Starting geoSphereAi process with {len(images_for_metashape)} images from {images_to_process_dir}."
                         )
                         update_process_state(process_id, 
                             {
@@ -624,7 +624,7 @@ def video_upload():
                             METASHAPE_SCRIPT_PATH,
                             "--image_full_pipeline",
                             "--image_dir",
-                            blended_image_dir,
+                            images_to_process_dir,
                             "--output_dir",
                             output_dir,
                         ]
@@ -935,12 +935,12 @@ def zip_upload():
                     # --- Final check before Metashape ---
                     images_for_metashape = [
                         f
-                        for f in os.listdir(blended_image_dir)
+                        for f in os.listdir(images_to_process_dir)
                         if allowed_file(f, app.config["ALLOWED_IMAGE_EXTENSIONS"])
                     ]
                     if not images_for_metashape:
                         logging.error(
-                            f"The directory designated for geoSphereAi ({blended_image_dir}) is empty or contains no valid images."
+                            f"The directory designated for geoSphereAi ({images_to_process_dir}) is empty or contains no valid images."
                         )
                         update_process_state(
                             process_id,
@@ -953,7 +953,7 @@ def zip_upload():
                         return  # Stop processing if no images for Metashape
 
                     logging.info(
-                        f"Starting geoSphereAi process with {len(images_for_metashape)} images from {blended_image_dir}."
+                        f"Starting geoSphereAi process with {len(images_for_metashape)} images from {images_to_process_dir}."
                     )
                     update_process_state(process_id, 
                         {
@@ -968,7 +968,7 @@ def zip_upload():
                         METASHAPE_SCRIPT_PATH,
                         "--image_full_pipeline",
                         "--image_dir",
-                        blended_image_dir,
+                        images_to_process_dir,
                         "--output_dir",
                         output_dir,
                     ]
