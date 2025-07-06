@@ -125,7 +125,7 @@
                 controls.update();
 
                 const filterContainer = document.getElementById('filterContainer');
-                const response = await fetch('/class_labels');
+                const response = await fetch('/class_labels?lang=fa');
                 const labels = await response.json();
                 for (const cls in groupObjects) {
                     const label = document.createElement('label');
