@@ -195,6 +195,24 @@ def extract_images_from_zip(zip_path, output_folder):
     return extracted_files_count
 
 
+# Helper function to create a ZIP archive from a directory
+def create_zip_from_dir(directory, zip_name="results.zip"):
+    zip_path = os.path.join(directory, zip_name)
+    try:
+        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+            for root, _, files in os.walk(directory):
+                for file in files:
+                    if file == zip_name:
+                        continue
+                    file_path = os.path.join(root, file)
+                    arcname = os.path.relpath(file_path, directory)
+                    zipf.write(file_path, arcname)
+        return zip_path
+    except Exception as e:
+        logging.error(f"Error creating zip file {zip_path}: {e}")
+        return None
+
+
 # Helper function to update process state both in-memory and in the database
 def update_process_state(process_id, updates=None, **kwargs):
     state = app.config["PROCESSING_STATES"].setdefault(process_id, {})
@@ -331,6 +349,8 @@ def video_upload():
 
             classify_images = request.form.get("classify_images") == "on"
             generate_preview = request.form.get("generate_preview") == "on"
+            export_ply = "export_ply" in request.form
+            export_pcd = "export_pcd" in request.form
 
             db_process = Process(
                 id=process_id,
@@ -395,6 +415,8 @@ def video_upload():
                 model_format,
                 classify_images,
                 generate_preview,
+                export_ply,
+                export_pcd,
             ):
                 with app.app_context():
                     try:
@@ -632,6 +654,10 @@ def video_upload():
                         ]
                         if generate_preview:
                             metashape_command.extend(["--preview_ratio", "0.1"])
+                        if export_ply:
+                            metashape_command.append("--export_ply")
+                        if export_pcd:
+                            metashape_command.append("--export_pcd")
 
                         logging.info(
                             f"Running geoSphereAi command: {' '.join(metashape_command)}"
@@ -711,6 +737,9 @@ def video_upload():
                             if proc.start_time:
                                 proc.duration = (proc.end_time - proc.start_time).total_seconds()
                             db.session.commit()
+
+                        # Create zip archive of outputs
+                        create_zip_from_dir(output_dir)
                         logging.info(f"Process {process_id} completed successfully.")
 
                     except Exception as e:
@@ -746,6 +775,8 @@ def video_upload():
                     model_format,
                     classify_images,
                     generate_preview,
+                    export_ply,
+                    export_pcd,
                 ),
             ).start()
 
@@ -798,6 +829,8 @@ def zip_upload():
 
         classify_images = request.form.get("classify_images") == "on"
         generate_preview = request.form.get("generate_preview") == "on"
+        export_ply = "export_ply" in request.form
+        export_pcd = "export_pcd" in request.form
 
         process_id = str(uuid.uuid4())
         db_process = Process(
@@ -822,7 +855,7 @@ def zip_upload():
             "output_foldername": process_uuid,
         }
 
-        def process_zip_task(process_id, zip_path, output_dir, classify_images, generate_preview):
+        def process_zip_task(process_id, zip_path, output_dir, classify_images, generate_preview, export_ply, export_pcd):
             with app.app_context():
                 try:
                     image_dir = os.path.join(output_dir, "extracted_images")
@@ -980,6 +1013,10 @@ def zip_upload():
                     ]
                     if generate_preview:
                         metashape_command.extend(["--preview_ratio", "0.1"])
+                    if export_ply:
+                        metashape_command.append("--export_ply")
+                    if export_pcd:
+                        metashape_command.append("--export_pcd")
 
                     logging.info(
                         f"Running Metashape command: {' '.join(metashape_command)}"
@@ -1059,6 +1096,8 @@ def zip_upload():
                         if proc.start_time:
                             proc.duration = (proc.end_time - proc.start_time).total_seconds()
                         db.session.commit()
+
+                    create_zip_from_dir(output_dir)
                     logging.info(f"Process {process_id} completed successfully.")
 
                 except Exception as e:
@@ -1085,7 +1124,15 @@ def zip_upload():
 
         Thread(
             target=process_zip_task,
-            args=(process_id, zip_path, output_dir, classify_images, generate_preview),
+            args=(
+                process_id,
+                zip_path,
+                output_dir,
+                classify_images,
+                generate_preview,
+                export_ply,
+                export_pcd,
+            ),
         ).start()
 
         return redirect(url_for("processing", process_id=process_id))
@@ -1157,6 +1204,7 @@ def results(output_foldername):
                     "_colored_mask.png",
                     "_blended.png",
                     ".obj",
+                    ".zip",
                 )
             ):  # Include .obj as a viewable/downloadable file
                 normalized_path = relative_path.replace("\\", "/")
