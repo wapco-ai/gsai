@@ -1349,11 +1349,18 @@ def serve_output_file(output_foldername, file_path):
 # Route to provide class labels for the viewer templates
 @app.route("/class_labels")
 def serve_class_labels():
-    config_path = os.path.join(app.root_path, "saved_model", "config.json")
+    lang = request.args.get("lang", "en")
+    if lang == "fa":
+        path = os.path.join(app.root_path, "saved_model", "class_labels_fa.json")
+        key = None
+    else:
+        path = os.path.join(app.root_path, "saved_model", "config.json")
+        key = "id2label"
+
     try:
-        with open(config_path, "r", encoding="utf-8") as cfg:
+        with open(path, "r", encoding="utf-8") as cfg:
             data = json.load(cfg)
-        mapping = data.get("id2label", {})
+        mapping = data if key is None else data.get(key, {})
     except Exception as exc:
         logging.error(f"Failed to load class labels: {exc}")
         mapping = {}
