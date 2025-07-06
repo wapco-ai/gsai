@@ -1,95 +1,100 @@
 
 {% extends "base.html" %}
 
-{% block title %}وضعیت پردازش - GeoSphereAI{% endblock %}
+{% block title %}وضعیت پردازش{% endblock %}
 
-{% block content %}
-
-<div class="container">
-    <h1>پردازش در حال انجام</h1>
-    <p>لطفاً صبور باشید. سیستم در حال پردازش فایل شما است. این فرآیند ممکن است چند دقیقه طول بکشد.</p>
-    
-    <!-- Status Container -->
-    <div class="status-container">
-        <div class="status-item">
-            <span class="status-label">وضعیت فعلی:</span>
-            <span class="status-value" id="status-text">در حال برقراری ارتباط با سرور...</span>
-        </div>
-        <div class="status-item">
-            <span class="status-label">پیشرفت:</span>
-            <span class="status-value" id="progress-text">0%</span>
-        </div>
-        <div class="status-item">
-            <span class="status-label">نام فایل:</span>
-            <span class="status-value" id="filename-text">{{ filename if filename else 'نامشخص' }}</span>
-        </div>
-    </div>
-    
-    <!-- Progress Bar -->
-    <div class="progress-container">
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress-bar"></div>
-        </div>
-        <div class="progress-percentage" id="progress-percentage">0%</div>
-    </div>
-    
-    <!-- Processing Details -->
-    <div class="processing-details">
-        <h3>جزئیات پردازش</h3>
-        <div class="processing-log" id="processing-log">
-            <div class="log-entry">در حال آماده‌سازی برای شروع پردازش...</div>
-        </div>
-    </div>
-    
-    <!-- Action Buttons -->
-    <div class="action-buttons">
-        <button type="button" class="btn btn-secondary" id="refresh-btn">🔄 بروزرسانی</button>
-        <button type="button" class="btn btn-danger" id="cancel-btn" style="display: none;">❌ لغو پردازش</button>
-    </div>
-    
-    <!-- Navigation Links -->
-    <div class="navigation-links">
-        <a href="{{ url_for('home') }}" class="back-link">← بازگشت به صفحه اصلی</a>
-        <a href="{{ url_for('file_selection') }}" class="back-link">← پردازش فایل جدید</a>
-    </div>
-</div>
-
+{% block head %}
 <style>
-/* Processing Page Specific Styles */
 .progress-container {
-    margin: 2rem 0;
-    background: #f8f9fa;
-    border-radius: 10px;
-    padding: 1.5rem;
+    max-width: 900px;
+    margin: 30px auto;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #007bff, #6610f2, #6f42c1, #e83e8c, #dc3545, #fd7e14, #ffc107, #28a745, #20c997, #17a2b8, #007bff);
+    background-size: 200% 100%;
+    animation: rainbow 3s linear infinite;
+}
+
+@keyframes rainbow {
+    0% { background-position: 0% 50%; }
+    100% { background-position: 200% 50%; }
+}
+
+.progress-header {
     text-align: center;
+    margin-bottom: 30px;
+}
+
+.progress-header h2 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 10px;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-subtitle {
+    font-size: 1.1rem;
+    color: #6c757d;
+    margin-bottom: 20px;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.progress-label {
+    font-weight: 600;
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+.progress-percentage {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #007bff;
+    text-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
 }
 
 .progress-bar {
-    width: 100%;
+    background: linear-gradient(90deg, #e9ecef 0%, #f8f9fa 100%);
     height: 20px;
-    background: #e9ecef;
-    border-radius: 10px;
+    border-radius: 25px;
     overflow: hidden;
-    margin-bottom: 1rem;
-    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #007bff, #0056b3);
-    width: 0%;
-    transition: width 0.5s ease;
+    margin: 20px 0;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #dee2e6;
     position: relative;
 }
 
-.progress-fill::after {
+.progress-bar::before {
     content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.3) 50%, 
+        transparent 100%);
     animation: shimmer 2s infinite;
 }
 
@@ -98,121 +103,84 @@
     100% { transform: translateX(100%); }
 }
 
-.progress-percentage {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #007bff;
-    margin-top: 0.5rem;
+.progress-fill {
+    background: linear-gradient(90deg, #007bff 0%, #0056b3 50%, #007bff 100%);
+    background-size: 200% 100%;
+    height: 100%;
+    width: 0%;
+    transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    border-radius: 25px;
+    position: relative;
+    animation: gradient-shift 3s ease-in-out infinite;
 }
 
-.processing-details {
-    background: white;
-    border: 1px solid #e9ecef;
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin: 2rem 0;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
 }
 
-.processing-details h3 {
-    margin-top: 0;
-    color: #0056b3;
-    border-bottom: 2px solid #e9ecef;
-    padding-bottom: 0.5rem;
+.status-card {
+    background: linear-gradient(135deg, #f8f9ff 0%, #e3f2fd 100%);
+    border: 2px solid #e3f2fd;
+    border-radius: 15px;
+    padding: 25px;
+    margin: 25px 0;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
 }
 
-.processing-log {
-    max-height: 200px;
-    overflow-y: auto;
-    background: #f8f9fa;
-    border-radius: 6px;
-    padding: 1rem;
-    font-family: 'Courier New', monospace;
-    font-size: 0.9rem;
-    line-height: 1.4;
+.status-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(0, 123, 255, 0.1) 0%, transparent 70%);
+    animation: pulse-bg 4s ease-in-out infinite;
 }
 
-.log-entry {
-    margin-bottom: 0.5rem;
-    padding: 0.25rem 0;
-    border-bottom: 1px solid #e9ecef;
-    color: #495057;
+@keyframes pulse-bg {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.05); opacity: 0.8; }
 }
 
-.log-entry:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-}
-
-.log-entry.success {
-    color: #28a745;
-    font-weight: bold;
-}
-
-.log-entry.error {
-    color: #dc3545;
-    font-weight: bold;
-}
-
-.log-entry.info {
-    color: #007bff;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-    margin: 2rem 0;
-    flex-wrap: wrap;
-}
-
-.btn-secondary {
-    background: #6c757d;
-    color: white;
-}
-
-.btn-secondary:hover {
-    background: #5a6268;
-}
-
-.btn-danger {
-    background: #dc3545;
-    color: white;
-}
-
-.btn-danger:hover {
-    background: #c82333;
-}
-
-/* Status indicators */
-.status-processing {
-    color: #856404;
-    animation: pulse 2s infinite;
-}
-
-.status-completed {
-    color: #155724;
-}
-
-.status-failed {
-    color: #721c24;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
-
-/* Loading animation */
-.loading {
+.status-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
     display: inline-block;
-    width: 20px;
-    height: 20px;
-    border: 3px solid #f3f3f3;
-    border-top: 3px solid #007bff;
+    animation: bounce 2s infinite;
+    position: relative;
+    z-index: 1;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(-8px); }
+    60% { transform: translateY(-4px); }
+}
+
+.status-message {
+    font-size: 1.2rem;
+    color: #495057;
+    margin: 20px 0;
+    font-weight: 500;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+}
+
+.loading-spinner {
+    display: none;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #007bff;
     border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-left: 10px;
+    width: 40px;
+    height: 40px;
+    animation: spin 1.5s linear infinite;
+    margin: 25px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes spin {
@@ -220,203 +188,296 @@
     100% { transform: rotate(360deg); }
 }
 
-/* Responsive design */
+.process-details {
+    background: #ffffff;
+    border-radius: 15px;
+    padding: 20px;
+    margin: 25px 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e9ecef;
+}
+
+.process-details h4 {
+    color: #007bff;
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.detail-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #f1f3f5;
+}
+
+.detail-item:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #495057;
+}
+
+.detail-value {
+    color: #6c757d;
+    font-family: 'Courier New', monospace;
+    background: #f8f9fa;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.error-state .progress-fill {
+    background: linear-gradient(90deg, #dc3545 0%, #c82333 50%, #dc3545 100%);
+    animation: error-pulse 2s infinite;
+}
+
+@keyframes error-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.error-state .status-card {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-color: #f5c6cb;
+}
+
+.error-state .status-icon {
+    color: #dc3545;
+}
+
+.success-state .progress-fill {
+    background: linear-gradient(90deg, #28a745 0%, #20c997 50%, #28a745 100%);
+}
+
+.success-state .status-card {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-color: #c3e6cb;
+}
+
+.success-state .status-icon {
+    color: #28a745;
+    animation: success-bounce 0.8s ease-out;
+}
+
+@keyframes success-bounce {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.actions-section {
+    text-align: center;
+    margin-top: 30px;
+}
+
+.back-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    margin: 0 10px;
+}
+
+.back-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    color: white;
+    text-decoration: none;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    .action-buttons {
-        flex-direction: column;
-        align-items: center;
+    .progress-container {
+        margin: 20px;
+        padding: 25px;
     }
     
-    .navigation-links {
-        flex-direction: column;
-        gap: 0.5rem;
+    .progress-header h2 {
+        font-size: 2rem;
     }
     
-    .progress-percentage {
-        font-size: 1.2rem;
+    .progress-info {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .status-card {
+        padding: 20px;
+    }
+    
+    .detail-item {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .actions-section {
+        margin-top: 20px;
+    }
+    
+    .back-link {
+        display: block;
+        margin: 10px 0;
+    }
+}
+
+/* Animation delays for smooth loading */
+.progress-container {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 </style>
-
 {% endblock %}
 
-{% block scripts %}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const processId = "{{ process_id }}";
-    const statusText = document.getElementById('status-text');
-    const progressText = document.getElementById('progress-text');
-    const progressBar = document.getElementById('progress-bar');
-    const progressPercentage = document.getElementById('progress-percentage');
-    const processingLog = document.getElementById('processing-log');
-    const filenameText = document.getElementById('filename-text');
-    const refreshBtn = document.getElementById('refresh-btn');
-    const cancelBtn = document.getElementById('cancel-btn');
+{% block content %}
+<div class="progress-container">
+    <div class="progress-header">
+        <h2>پردازش در حال انجام</h2>
+        <p class="progress-subtitle">سیستم در حال تبدیل فایل شما به مدل سه‌بعدی است</p>
+    </div>
     
-    let updateInterval;
-    let isCompleted = false;
-    let isFailed = false;
+    <div class="progress-info">
+        <span class="progress-label">پیشرفت:</span>
+        <span class="progress-percentage" id="progress-percentage">0%</span>
+    </div>
     
-    // Function to update progress
-    function updateProgress() {
-        if (isCompleted || isFailed) {
-            clearInterval(updateInterval);
-            return;
-        }
-        
-        fetch(`/progress/${processId}`)
-            .then(response => response.json())
-            .then(data => {
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-                
-                // Update status
-                statusText.textContent = data.message || 'در حال پردازش...';
-                statusText.className = `status-value status-${data.status}`;
-                
-                // Update progress
-                const progress = data.progress || 0;
-                progressText.textContent = `${progress}%`;
-                progressBar.style.width = `${progress}%`;
-                progressPercentage.textContent = `${progress}%`;
-                
-                // Update filename
-                if (data.filename) {
-                    filenameText.textContent = data.filename;
-                }
-                
-                // Add log entry
-                if (data.message && data.message !== statusText.dataset.lastMessage) {
-                    addLogEntry(data.message, data.status);
-                    statusText.dataset.lastMessage = data.message;
-                }
-                
-                // Handle completion
-                if (data.status === 'completed') {
-                    isCompleted = true;
-                    clearInterval(updateInterval);
-                    addLogEntry('پردازش با موفقیت انجام شد!', 'success');
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    
+    <div class="status-card">
+        <div class="status-icon" id="status-icon">⚙️</div>
+        <div class="status-message" id="status-message">در حال برقراری ارتباط با سرور...</div>
+    </div>
+    
+    <div class="process-details">
+        <h4>جزئیات پردازش</h4>
+        <div class="detail-item">
+            <span class="detail-label">شناسه پردازش:</span>
+            <span class="detail-value">{{ process_id }}</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">زمان شروع:</span>
+            <span class="detail-value" id="start-time">در حال تعیین...</span>
+        </div>
+        <div class="detail-item">
+            <span class="detail-label">وضعیت:</span>
+            <span class="detail-value" id="current-status">آماده‌سازی</span>
+        </div>
+    </div>
+    
+    <div class="loading-spinner" id="loading-spinner"></div>
+    
+    <div class="actions-section">
+        <a href="{{ url_for('home') }}" class="back-link">🏠 بازگشت به خانه</a>
+        <a href="{{ url_for('file_selection') }}" class="back-link">📁 فایل جدید</a>
+    </div>
+</div>
 
-                    const outputFolder = data.output_foldername || processId;
-                    // Show success message and redirect
-                    setTimeout(() => {
-                        window.location.href = `/results/${outputFolder}`;
-                    }, 3000);
-                }
-                
-                // Handle failure
-                if (data.status === 'failed') {
-                    isFailed = true;
-                    clearInterval(updateInterval);
-                    addLogEntry(`پردازش ناموفق: ${data.message}`, 'error');
-                    
-                    // Show retry options
-                    setTimeout(() => {
-                        if (confirm('پردازش ناموفق بود. آیا می‌خواهید دوباره تلاش کنید؟')) {
-                            window.location.href = '/file-selection';
-                        }
-                    }, 2000);
-                }
-                
-                // Show cancel button for long processes
-                if (progress > 10 && progress < 90 && data.status === 'processing') {
-                    cancelBtn.style.display = 'inline-block';
-                }
-                
-            })
-            .catch(error => {
-                console.error('Error fetching progress:', error);
-                addLogEntry(`خطا در دریافت وضعیت: ${error.message}`, 'error');
-                
-                // Retry after delay
+<script>
+const processId = '{{ process_id }}';
+let reconnectAttempts = 0;
+let currentProgress = 0;
+
+// Status icons mapping
+const statusIcons = {
+    'processing': '⚙️',
+    'extracting': '🎬',
+    'analyzing': '🔍',
+    'building': '🏗️',
+    'optimizing': '⚡',
+    'finalizing': '🎯',
+    'completed': '✅',
+    'failed': '❌'
+};
+
+function updateProgress() {
+    document.getElementById('loading-spinner').style.display = 'block';
+    
+    fetch(`/progress/${processId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('loading-spinner').style.display = 'none';
+            reconnectAttempts = 0; // Reset on successful connection
+            
+            if (data.status === 'not_found') {
+                showError("پردازش یافت نشد!");
+                return;
+            }
+            
+            // Update progress with smooth animation
+            const newProgress = data.progress || 0;
+            currentProgress = newProgress;
+            document.getElementById('progress-fill').style.width = newProgress + '%';
+            document.getElementById('progress-percentage').textContent = newProgress + '%';
+            
+            // Update status message and icon
+            const statusKey = data.status || 'processing';
+            const statusIcon = statusIcons[statusKey] || '⚙️';
+            document.getElementById('status-icon').textContent = statusIcon;
+            document.getElementById('status-message').textContent = data.message || 'در حال پردازش...';
+            document.getElementById('current-status').textContent = data.message || 'در حال پردازش...';
+            
+            // Handle different states
+            const container = document.querySelector('.progress-container');
+            container.classList.remove('error-state', 'success-state');
+            
+            if (data.status === 'completed') {
+                container.classList.add('success-state');
                 setTimeout(() => {
-                    if (!isCompleted && !isFailed) {
-                        updateProgress();
-                    }
-                }, 5000);
-            });
-    }
-    
-    // Function to add log entry
-    function addLogEntry(message, type = 'info') {
-        const logEntry = document.createElement('div');
-        logEntry.className = `log-entry ${type}`;
-        logEntry.textContent = `${new Date().toLocaleTimeString('fa-IR')}: ${message}`;
-        
-        processingLog.appendChild(logEntry);
-        processingLog.scrollTop = processingLog.scrollHeight;
-        
-        // Keep only last 50 entries
-        const entries = processingLog.querySelectorAll('.log-entry');
-        if (entries.length > 50) {
-            entries[0].remove();
-        }
-    }
-    
-    // Manual refresh
-    refreshBtn.addEventListener('click', function() {
-        this.disabled = true;
-        this.innerHTML = '🔄 در حال بروزرسانی...';
-        
-        updateProgress();
-        
-        setTimeout(() => {
-            this.disabled = false;
-            this.innerHTML = '🔄 بروزرسانی';
-        }, 2000);
-    });
-    
-    // Cancel process
-    cancelBtn.addEventListener('click', function() {
-        if (confirm('آیا از لغو پردازش اطمینان دارید؟')) {
-            fetch(`/api/cancel-process/${processId}`, {
-                method: 'POST'
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    addLogEntry('پردازش لغو شد', 'info');
-                    clearInterval(updateInterval);
-                    setTimeout(() => {
-                        window.location.href = '/file-selection';
-                    }, 2000);
-                } else {
-                    addLogEntry('خطا در لغو پردازش', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error cancelling process:', error);
-                addLogEntry(`خطا در لغو پردازش: ${error.message}`, 'error');
-            });
-        }
-    });
-    
-    // Start monitoring
-    addLogEntry('شروع نظارت بر پردازش...', 'info');
-    updateProgress();
-    updateInterval = setInterval(updateProgress, 2000);
-    
-    // Cleanup on page unload
-    window.addEventListener('beforeunload', function() {
-        if (updateInterval) {
-            clearInterval(updateInterval);
-        }
-    });
-    
-    // Handle visibility change (pause/resume when tab is hidden/shown)
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden) {
-            if (updateInterval) {
-                clearInterval(updateInterval);
+                    window.location.href = `/results/${data.output_foldername}`;
+                }, 2000);
+            } else if (data.status === 'failed') {
+                container.classList.add('error-state');
+                showError(data.message);
+            } else if (data.status === 'processing') {
+                setTimeout(updateProgress, 5000);
             }
-        } else {
-            if (!isCompleted && !isFailed) {
-                updateProgress();
-                updateInterval = setInterval(updateProgress, 2000);
+        })
+        .catch(error => {
+            document.getElementById('loading-spinner').style.display = 'none';
+            console.error('Connection error:', error);
+            
+            if (reconnectAttempts < 5) {
+                reconnectAttempts++;
+                document.getElementById('status-message').textContent = 
+                    `خطا در ارتباط... تلاش مجدد (${reconnectAttempts}/5)`;
+                setTimeout(updateProgress, 2000 * reconnectAttempts); // Exponential backoff
+            } else {
+                showError("ارتباط با سرور قطع شد. لطفاً صفحه را refresh کنید.");
             }
-        }
-    });
-});
+        });
+}
+
+function showError(message) {
+    const container = document.querySelector('.progress-container');
+    container.classList.add('error-state');
+    
+    document.getElementById('status-message').textContent = message;
+    document.getElementById('status-icon').textContent = '❌';
+    document.getElementById('current-status').textContent = 'خطا';
+}
+
+// Start the progress monitoring
+updateProgress();
+
+// Update start time with JavaScript
+document.getElementById('start-time').textContent = new Date().toLocaleString('fa-IR');
 </script>
 {% endblock %}
