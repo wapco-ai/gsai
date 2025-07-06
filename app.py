@@ -330,6 +330,7 @@ def video_upload():
             os.makedirs(output_dir, exist_ok=True)
 
             classify_images = request.form.get("classify_images") == "on"
+            generate_preview = request.form.get("generate_preview") == "on"
 
             db_process = Process(
                 id=process_id,
@@ -393,6 +394,7 @@ def video_upload():
                 crop_height_ratio,
                 model_format,
                 classify_images,
+                generate_preview,
             ):
                 with app.app_context():
                     try:
@@ -628,6 +630,8 @@ def video_upload():
                             "--output_dir",
                             output_dir,
                         ]
+                        if generate_preview:
+                            metashape_command.extend(["--preview_ratio", "0.1"])
 
                         logging.info(
                             f"Running geoSphereAi command: {' '.join(metashape_command)}"
@@ -741,6 +745,7 @@ def video_upload():
                     crop_height_ratio,
                     model_format,
                     classify_images,
+                    generate_preview,
                 ),
             ).start()
 
@@ -792,6 +797,7 @@ def zip_upload():
         os.makedirs(output_dir, exist_ok=True)
 
         classify_images = request.form.get("classify_images") == "on"
+        generate_preview = request.form.get("generate_preview") == "on"
 
         process_id = str(uuid.uuid4())
         db_process = Process(
@@ -816,7 +822,7 @@ def zip_upload():
             "output_foldername": process_uuid,
         }
 
-        def process_zip_task(process_id, zip_path, output_dir, classify_images):
+        def process_zip_task(process_id, zip_path, output_dir, classify_images, generate_preview):
             with app.app_context():
                 try:
                     image_dir = os.path.join(output_dir, "extracted_images")
@@ -972,6 +978,8 @@ def zip_upload():
                         "--output_dir",
                         output_dir,
                     ]
+                    if generate_preview:
+                        metashape_command.extend(["--preview_ratio", "0.1"])
 
                     logging.info(
                         f"Running Metashape command: {' '.join(metashape_command)}"
@@ -1077,7 +1085,7 @@ def zip_upload():
 
         Thread(
             target=process_zip_task,
-            args=(process_id, zip_path, output_dir, classify_images),
+            args=(process_id, zip_path, output_dir, classify_images, generate_preview),
         ).start()
 
         return redirect(url_for("processing", process_id=process_id))
