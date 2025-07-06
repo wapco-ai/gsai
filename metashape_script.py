@@ -4,6 +4,7 @@ metashape -r "D:\AI\3dRecognition\pycode\metashaspe-v2.py" --image_dir "D:\AI\3d
 python script.py --extract_frames "path/to/video.mp4" --image_dir "path/to/output_frames" --start_time 150 --end_time 180 --frame_interval 0.3 --crop_height_ratio 0.01
 python script.py --process_in_metashape --image_dir "path/to/images" --output_dir "path/to/output"
 metashape -r "D:\AI\3dRecognition\pycode\metashaspe-v3.py" --convert_to_point_cloud "D:\AI\3dRecognition\output_metashape\project.psx" --output_dir "D:\AI\3dRecognition\output_metashape\output"
+metashape -r metashape_script.py --image_full_pipeline --image_dir images --output_dir out --export_ply
 python metashape_script.py --video_full_pipeline "D:/AI/3dRecognition/torghabe/torghabe.mp4" --output_dir "D:/AI/3dRecognition/output_metashape/torghabe" --start_time 0 --end_time 240 --frame_interval 1 --crop_height_ratio 0.01
 metashape -r "D:\AI\3dRecognition\pycode\metashaspe-v3.py" --create_and_export_3d_model "D:\AI\3dRecognition\output_metashape\project.psx" --output_dir "D:\AI\3dRecognition\output_metashape" --model_format "obj"
 '''  
@@ -124,7 +125,7 @@ def process_in_metashape(image_dir, output_dir):
     doc.save(os.path.join(output_dir, "project.psx"))  
     print("Reconstruction completed ✓")  
 
-def convert_to_point_cloud(project_path, output_dir, preview_ratio=None):
+def convert_to_point_cloud(project_path, output_dir, preview_ratio=None, export_ply=True, export_pcd=True):
     import Metashape  
 
     #print(f"\nMetashape ver: {Metashape.app.version}")  
@@ -155,36 +156,40 @@ def convert_to_point_cloud(project_path, output_dir, preview_ratio=None):
             print("Failed to build dense cloud.")  
             return  # Exit if there's no dense point cloud  
 
-    # Export point cloud  
-    try:  
-        output_path = os.path.join(output_dir, "point_cloud.ply")  
-        chunk.exportPointCloud(
-            output_path,
-            format=Metashape.PointCloudFormatPLY,  # Point cloud format (PLY)
-            crs=chunk.crs,  # Coordinate Reference System
-            binary=True,
-            save_point_classification=True
-        )
-        print(f"ply Point cloud exported to {output_path}") 
-          
-        output_path = os.path.join(output_dir, "point_cloud.pcd")
-        chunk.exportPointCloud(
-            output_path,
-            format=Metashape.PointCloudFormatPCD,  # Point cloud format (pcd)
-            crs=chunk.crs,  # Coordinate Reference System
-            binary=True
-        )
-        print(f"pcd Point cloud exported to {output_path}")
+    # Export point cloud
+    try:
+        if export_ply:
+            output_path = os.path.join(output_dir, "point_cloud.ply")
+            chunk.exportPointCloud(
+                output_path,
+                format=Metashape.PointCloudFormatPLY,  # Point cloud format (PLY)
+                crs=chunk.crs,  # Coordinate Reference System
+                binary=True,
+                save_point_classification=True
+            )
+            print(f"ply Point cloud exported to {output_path}")
+
+        if export_pcd:
+            output_path = os.path.join(output_dir, "point_cloud.pcd")
+            chunk.exportPointCloud(
+                output_path,
+                format=Metashape.PointCloudFormatPCD,  # Point cloud format (pcd)
+                crs=chunk.crs,  # Coordinate Reference System
+                binary=True
+            )
+            print(f"pcd Point cloud exported to {output_path}")
 
         if preview_ratio:
-            ply_path = os.path.join(output_dir, "point_cloud.ply")
-            preview_path = os.path.join(output_dir, "point_cloud_preview.ply")
-            if os.path.exists(ply_path):
-                downsample_point_cloud(ply_path, preview_path, preview_ratio)
-            pcd_path = os.path.join(output_dir, "point_cloud.pcd")
-            preview_pcd = os.path.join(output_dir, "point_cloud_preview.pcd")
-            if os.path.exists(pcd_path):
-                downsample_point_cloud(pcd_path, preview_pcd, preview_ratio)
+            if export_ply:
+                ply_path = os.path.join(output_dir, "point_cloud.ply")
+                preview_path = os.path.join(output_dir, "point_cloud_preview.ply")
+                if os.path.exists(ply_path):
+                    downsample_point_cloud(ply_path, preview_path, preview_ratio)
+            if export_pcd:
+                pcd_path = os.path.join(output_dir, "point_cloud.pcd")
+                preview_pcd = os.path.join(output_dir, "point_cloud_preview.pcd")
+                if os.path.exists(pcd_path):
+                    downsample_point_cloud(pcd_path, preview_pcd, preview_ratio)
     
     except Exception as e:  
         print(f"Error exporting point cloud: {e}") 
@@ -251,6 +256,10 @@ def create_and_export_3d_model(project_path, output_dir, model_format="obj"):
 
 if __name__ == "__main__":
     preview_ratio = float(sys.argv[sys.argv.index("--preview_ratio") + 1]) if "--preview_ratio" in sys.argv else None
+    export_ply = "--export_ply" in sys.argv
+    export_pcd = "--export_pcd" in sys.argv
+    if not export_ply and not export_pcd:
+        export_ply = export_pcd = True
     if "--extract_frames" in sys.argv:  
         # Extract frames from video  
         video_path = sys.argv[sys.argv.index("--extract_frames") + 1]  
@@ -271,8 +280,8 @@ if __name__ == "__main__":
     if "--convert_to_point_cloud" in sys.argv:  
         # Convert to point cloud directly  
         project_path = sys.argv[sys.argv.index("--convert_to_point_cloud") + 1]  
-        output_dir = sys.argv[sys.argv.index("--output_dir") + 1]  
-        convert_to_point_cloud(project_path, output_dir)  
+        output_dir = sys.argv[sys.argv.index("--output_dir") + 1]
+        convert_to_point_cloud(project_path, output_dir, preview_ratio, export_ply, export_pcd)
     
     if "--create_and_export_3d_model" in sys.argv:  
         project_path = sys.argv[sys.argv.index("--create_and_export_3d_model") + 1]  
@@ -287,8 +296,8 @@ if __name__ == "__main__":
         process_in_metashape(image_dir, output_dir)
         
         # Convert to point cloud  
-        project_path = os.path.join(output_dir, "project.psx")  
-        convert_to_point_cloud(project_path, output_dir, preview_ratio)
+        project_path = os.path.join(output_dir, "project.psx")
+        convert_to_point_cloud(project_path, output_dir, preview_ratio, export_ply, export_pcd)
         
     if "--video_full_pipeline" in sys.argv:  
         # Run the full pipeline (extract frames → process in Metashape → export point cloud)  
@@ -319,5 +328,5 @@ if __name__ == "__main__":
         process_in_metashape(image_dir, metashape_output_dir)  
 
         # Convert to point cloud  
-        project_path = os.path.join(metashape_output_dir, "project.psx")  
-        convert_to_point_cloud(project_path, metashape_output_dir, preview_ratio)
+        project_path = os.path.join(metashape_output_dir, "project.psx")
+        convert_to_point_cloud(project_path, metashape_output_dir, preview_ratio, export_ply, export_pcd)
