@@ -66,7 +66,7 @@
     // const pcdFilePath = '/static/{{ filename }}/{{ file_path }}';  
     var pcdFilePath = "{{ url_for('serve_output_file', output_foldername=output_foldername, file_path=file_path) }}";
 
-    loader.load(pcdFilePath, function (points) {
+    loader.load(pcdFilePath, async function (points) {
         const geometry = points.geometry;
         geometry.rotateX(0);
         geometry.rotateY(0);
@@ -75,28 +75,28 @@
         const total = geometry.getAttribute('position').count;
 
         const colAttr = geometry.getAttribute('color');
-        const colorGroups = {};
+        const classGroups = {};
+        let colorScale = 1;
 
         if (colAttr) {
             const col = colAttr.array;
+            if (col[0] > 1) colorScale = 255;
             for (let i = 0; i < total; i++) {
-                const r = col[i * 3];
-                const g = col[i * 3 + 1];
-                const b = col[i * 3 + 2];
-                const hex = new THREE.Color(r, g, b).getHexString();
-                if (!colorGroups[hex]) {
-                    colorGroups[hex] = [];
+                const classId = Math.round(colorScale === 255 ?
+                    col[i * 3 + 1] : col[i * 3 + 1] * 255);
+                if (!classGroups[classId]) {
+                    classGroups[classId] = [];
                 }
-                colorGroups[hex].push(i);
+                classGroups[classId].push(i);
             }
         } else {
-            colorGroups['ffffff'] = Array.from({length: total}, (_, i) => i);
+            classGroups[0] = Array.from({length: total}, (_, i) => i);
 
         }
 
         const groupObjects = {};
-        for (const hex in colorGroups) {
-            const idx = new Uint32Array(colorGroups[hex]);
+        for (const cls in classGroups) {
+            const idx = new Uint32Array(classGroups[cls]);
             const g = new THREE.BufferGeometry();
             g.setAttribute('position', geometry.getAttribute('position'));
             if (colAttr) {
@@ -107,13 +107,13 @@
             if (colAttr) {
                 materialOpts.vertexColors = true;
             } else {
-                materialOpts.color = '#' + hex;
+                materialOpts.color = '#ffffff';
 
             }
             const material = new THREE.PointsMaterial(materialOpts);
             const pts = new THREE.Points(g, material);
             scene.add(pts);
-            groupObjects[hex] = pts;
+            groupObjects[cls] = pts;
         }
 
         const bbox = new THREE.Box3().setFromBufferAttribute(geometry.getAttribute('position'));
@@ -128,27 +128,34 @@
 
         const gui = new GUI();
         gui.add({size:0.01}, 'size', 0.001, 0.1).onChange(value => {
-            for(const hex in groupObjects){ groupObjects[hex].material.size = value; }
+            for(const id in groupObjects){ groupObjects[id].material.size = value; }
             render();
         }).name('Point Size');
 
         const filterContainer = document.getElementById('filterContainer');
-        for (const hex in groupObjects) {
+        const response = await fetch('/class_labels');
+        const labels = await response.json();
+        for (const cls in groupObjects) {
             const label = document.createElement('label');
             label.style.display = 'block';
             const cb = document.createElement('input');
             cb.type = 'checkbox';
             cb.checked = true;
-            cb.onchange = () => { groupObjects[hex].visible = cb.checked; render(); };
+            cb.onchange = () => { groupObjects[cls].visible = cb.checked; render(); };
             const swatch = document.createElement('span');
             swatch.style.display = 'inline-block';
             swatch.style.width = '12px';
             swatch.style.height = '12px';
-            swatch.style.backgroundColor = '#' + hex;
+            const sample = classGroups[cls][0];
+            const r = colAttr.array[sample * 3] / colorScale;
+            const gVal = colAttr.array[sample * 3 + 1] / colorScale;
+            const b = colAttr.array[sample * 3 + 2] / colorScale;
+            swatch.style.backgroundColor = '#' + new THREE.Color(r, gVal, b).getHexString();
             swatch.style.margin = '0 4px';
             label.appendChild(cb);
             label.appendChild(swatch);
-            label.appendChild(document.createTextNode('#' + hex));
+            const name = labels[cls] || ('Class ' + cls);
+            label.appendChild(document.createTextNode(name));
             filterContainer.appendChild(label);
         }
 
