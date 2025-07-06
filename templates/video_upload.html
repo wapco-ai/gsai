@@ -1,286 +1,59 @@
-<!DOCTYPE html>
-<html lang="fa">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font/dist/font-face.css" rel="stylesheet">
-    <title>بارگذاری و پردازش ویدئو</title>
-    <style>
-        body {
-            font-family: 'Vazir', Arial, sans-serif;
-            /* Persian-friendly font */
-            text-align: right;
-            direction: rtl;
-            background-color: #f8f9fa;
-            /* Light background for a clean look */
-            color: #333;
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
+{% block title %}بارگذاری و پردازش ویدئو{% endblock %}
 
-        header {
-            background-color: #0056b3;
-            /* Darker blue for header */
-            color: white;
-            text-align: center;
-            padding: 1rem 0;
-            /* Increased padding for header */
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            /* Subtle shadow */
-        }
+{% block head %}
+<style>
+.form-group { display: flex; flex-direction: column; margin-bottom: 1rem; }
+.form-group label { font-weight: bold; margin-bottom: 0.3rem; }
+.form-group input[type="file"],
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+</style>
+{% endblock %}
 
-        header h1 {
-            margin: 0;
-            font-size: 2.5rem;
-            /* Increased font size */
-            letter-spacing: 1px;
-            /* Spacing for emphasis */
-            text-transform: uppercase;
-            /* Uppercase for emphasis */
-        }
-
-        main {
-            max-width: 800px;
-            /* Maximum width for main content */
-            margin: 2rem auto;
-            /* Centered with margin */
-            background: white;
-            padding: 30px;
-            /* Increased padding for spaciousness */
-            border-radius: 10px;
-            /* Rounded corners */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            /* Enhanced shadow */
-        }
-
-        h2 {
-            color: #007BFF;
-            /* Subtitle color */
-            font-size: 1.8rem;
-            /* Subtitle size */
-            margin-bottom: 1rem;
-            /* Space below subtitle */
-            border-bottom: 2px solid #007BFF;
-            /* Bottom border */
-            padding-bottom: 0.5rem;
-            /* Padding below border */
-            text-align: center;
-            /* Center subtitle */
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            /* Stack elements vertically */
-            gap: 1.5rem;
-            /* Space between elements */
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            /* Stack label and input vertically */
-            gap: 0.4rem;
-            /* Space between label and input */
-        }
-
-        .form-group label {
-            font-weight: bold;
-            /* Bold labels */
-            color: #555;
-            /* Darker gray for labels */
-        }
-
-        .form-group input[type="file"],
-        .form-group input[type="text"],
-        .form-group input[type="number"],
-        .form-group select {
-            padding: 15px;
-            /* Padding for inputs */
-            font-size: 1rem;
-            /* Font size for inputs */
-            border: 2px solid #007BFF;
-            /* Blue border for inputs */
-            border-radius: 5px;
-            /* Rounded corners */
-            transition: border-color 0.3s ease;
-            /* Smooth border change */
-        }
-
-        .form-group input[type="file"]:focus,
-        .form-group input[type="text"]:focus,
-        .form-group input[type="number"]:focus,
-        .form-group select:focus {
-            border-color: #0056b3;
-            /* Darker border on focus */
-            outline: none;
-            /* Remove default outline */
-        }
-
-        .form-group input[type="submit"] {
-            padding: 15px;
-            /* Padding for button */
-            font-size: 1.1rem;
-            /* Button font size */
-            border: none;
-            /* No border */
-            border-radius: 5px;
-            /* Rounded corners */
-            background-image: linear-gradient(90deg, #007BFF, #0056b3);
-            /* Gradient background */
-            color: white;
-            /* Button text color */
-            cursor: pointer;
-            /* Pointer on hover */
-            transition: background-color 0.3s ease, transform 0.3s;
-            /* Smooth transitions */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            /* Shadow for depth */
-        }
-
-        .form-group input[type="submit"]:hover {
-            background-color: #0056b3;
-            /* Darker blue on hover */
-            transform: scale(1.05);
-            /* Slight zoom effect */
-        }
-
-        .form-errors {
-            background-color: #fbc2c4;
-            /* Light background for errors */
-            color: #842029;
-            /* Error text color */
-            border: 1px solid #f5c2c7;
-            /* Border for error box */
-            padding: 10px;
-            /* Inner padding */
-            margin-bottom: 1rem;
-            /* Space below */
-            border-radius: 5px;
-            /* Rounded corners for error box */
-        }
-
-        footer {
-            text-align: center;
-            /* Center footer text */
-            margin-top: 20px;
-            /* Space above footer */
-            padding: 10px;
-            /* Padding for footer */
-            font-size: 0.9rem;
-            /* Font size */
-            color: #666;
-            /* Text color */
-        }
-
-        footer a {
-            color: #007BFF;
-            /* Link color */
-            text-decoration: none;
-            /* No underline */
-            font-weight: bold;
-            /* Bold links */
-        }
-
-        footer a:hover {
-            text-decoration: underline;
-            /* Underline link on hover */
-        }
-
-        ul {
-            list-style-type: none;
-            /* No bullets */
-            padding: 0;
-            /* Remove padding */
-            margin: 0;
-            /* Remove margin */
-        }
-
-        li {
-            margin: 5px 0;
-            /* Space between list items */
-        }
-    </style>
-</head>
-
-<body>
-
-    <header>
-        <h1>بارگذاری و پردازش ویدئو</h1>
-    </header>
-
-    <main>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <div class="form-errors">
-            <ul>
-                {% for message in messages %}
-                <li>{{ message }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-        {% endif %}
-        {% endwith %}
-
-        <h2>فرم بارگذاری و تنظیمات</h2>
-        <form action="/video-upload" method="post" enctype="multipart/form-data">
-            <!-- File Upload -->
-            <div class="form-group">
-                <label for="video">انتخاب ویدئو:</label>
-                <input type="file" id="video" name="video" accept="video/*" required>
-            </div>
-
-            <!-- Start Time -->
-            <div class="form-group">
-                <label for="start_time">زمان شروع پردازش (ثانیه):</label>
-                <input type="number" id="start_time" name="start_time" value="0" min="0" step="1">
-            </div>
-
-            <!-- End Time -->
-            <div class="form-group">
-                <label for="end_time">زمان پایان پردازش (ثانیه):</label>
-                <input type="number" id="end_time" name="end_time" placeholder="بدون محدودیت">
-            </div>
-
-            <!-- Frame Interval -->
-            <div class="form-group">
-                <label for="frame_interval">فاصله زمانی بین فریم‌ها (ثانیه):</label>
-                <input type="number" id="frame_interval" name="frame_interval" value="1" min="0.1" step="0.1">
-            </div>
-            
-            <div class="form-check mb-3">
-                <input type="checkbox" class="form-check-input" id="classifyImages" name="classify_images">
-                <label class="form-check-label" for="classifyImages">انجام طبقه‌بندی تصویر (با استفاده از Segformer)</label>
-              </div>
-            <!-- Crop Height Ratio -->
-            <div class="form-group">
-                <label for="crop_height_ratio">درصد برش ارتفاع (0 تا 1):</label>
-                <input type="text" id="crop_height_ratio" name="crop_height_ratio" value="0.1" pattern="[0-1](\.\d+)?">
-            </div>
-
-            <!-- Model Format -->
-            <div class="form-group">
-                <label for="model_format">قالب سه‌بعدی خروجی:</label>
-                <select id="model_format" name="model_format">
-                    <option value="obj">OBJ</option>
-                    <option value="ply">PLY</option>
-                    <option value="fbx">FBX</option>
-                </select>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="form-group">
-                <input type="submit" value="بارگذاری و پردازش">
-            </div>
-        </form>
-    </main>
-
-    <footer>
-        <p>© ۱۴۰۳ - برنامه پردازش سه‌بعدی. <a href="/">خانه</a></p>
-    </footer>
-
-</body>
-
-</html>
+{% block content %}
+<h2>بارگذاری و پردازش ویدئو</h2>
+<form action="/video-upload" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label for="video">انتخاب ویدئو:</label>
+        <input type="file" id="video" name="video" accept="video/*" required>
+    </div>
+    <div class="form-group">
+        <label for="start_time">زمان شروع پردازش (ثانیه):</label>
+        <input type="number" id="start_time" name="start_time" value="0" min="0" step="1">
+    </div>
+    <div class="form-group">
+        <label for="end_time">زمان پایان پردازش (ثانیه):</label>
+        <input type="number" id="end_time" name="end_time" placeholder="بدون محدودیت">
+    </div>
+    <div class="form-group">
+        <label for="frame_interval">فاصله زمانی بین فریم‌ها (ثانیه):</label>
+        <input type="number" id="frame_interval" name="frame_interval" value="1" min="0.1" step="0.1">
+    </div>
+    <div class="form-group">
+        <input type="checkbox" id="classifyImages" name="classify_images">
+        <label for="classifyImages">انجام طبقه‌بندی تصویر (Segformer)</label>
+    </div>
+    <div class="form-group">
+        <label for="crop_height_ratio">درصد برش ارتفاع (0 تا 1):</label>
+        <input type="text" id="crop_height_ratio" name="crop_height_ratio" value="0.1" pattern="[0-1](\.\d+)?">
+    </div>
+    <div class="form-group">
+        <label for="model_format">قالب سه‌بعدی خروجی:</label>
+        <select id="model_format" name="model_format">
+            <option value="obj">OBJ</option>
+            <option value="ply">PLY</option>
+            <option value="fbx">FBX</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <input type="submit" class="btn" value="بارگذاری و پردازش">
+    </div>
+</form>
+{% endblock %}

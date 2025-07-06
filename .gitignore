@@ -1,7 +1,9 @@
 /outputs
 /saved_model
 /uploads
-/static
+/static/*
+!/static/css/
+!/static/css/style.css
 /__pycache__
 
 *.docx

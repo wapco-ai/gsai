@@ -1,138 +1,93 @@
-<!DOCTYPE html>
-<html lang="fa">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font/dist/font-face.css" rel="stylesheet">
-    <title>وضعیت پردازش</title>
-    <style>
-        body {
-            font-family: 'Vazir', Arial, sans-serif;
-            text-align: right;
-            direction: rtl;
-            background-color: #f7f7f7;
-            margin: 0;
-            padding: 20px;
-        }
+{% block title %}وضعیت پردازش{% endblock %}
 
-        .progress-container {
-            max-width: 800px;
-            margin: 50px auto;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-        }
+{% block head %}
+<style>
+.progress-container {
+    max-width: 800px;
+    margin: 50px auto;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+}
+.progress-bar {
+    background-color: #f0f0f0;
+    height: 30px;
+    border-radius: 15px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+.progress-fill {
+    background-color: #007bff;
+    height: 100%;
+    width: 0%;
+    transition: width 0.3s ease;
+}
+.status-message { text-align: center; margin: 20px 0; }
+.loading-spinner {
+    display: none;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 2s linear infinite;
+    margin: 20px auto;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
+{% endblock %}
 
-        .progress-bar {
-            background-color: #f0f0f0;
-            height: 30px;
-            border-radius: 15px;
-            overflow: hidden;
-            margin: 20px 0;
-        }
-
-        .progress-fill {
-            background-color: #007bff;
-            height: 100%;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .status-message {
-            text-align: center;
-            font-size: 1.2em;
-            color: #555;
-            margin: 20px 0;
-        }
-
-        .loading-spinner {
-            display: none;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 2s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <div class="progress-container">
-        <h1>در حال پردازش هوش مصنوعی...</h1>
-        <div class="progress-bar">
-            <div class="progress-fill" id="progress-fill"></div>
-        </div>
-        <div class="status-message" id="status-message">در حال برقراری ارتباط با سرور...</div>
-        <div class="loading-spinner" id="loading-spinner"></div>
+{% block content %}
+<div class="progress-container">
+    <h2>در حال پردازش...</h2>
+    <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
     </div>
+    <div class="status-message" id="status-message">در حال برقراری ارتباط با سرور...</div>
+    <div class="loading-spinner" id="loading-spinner"></div>
+</div>
 
-    <script>
-        const processId = '{{ process_id }}';
-        let reconnectAttempts = 0;
-
-        function updateProgress() {
-            document.getElementById('loading-spinner').style.display = 'block';
-
-            fetch(`/progress/${processId}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('loading-spinner').style.display = 'none';
-
-                    if (data.status === 'not_found') {
-                        showError("پردازش یافت نشد!");
-                        return;
-                    }
-
-                    // Update progress bar  
-                    document.getElementById('progress-fill').style.width = data.progress + '%';
-                    document.getElementById('status-message').textContent = data.message;
-
-                    // Handle complete/failure  
-                    if (data.status === 'completed') {
-                        window.location.href = `/results/${data.output_foldername}`;
-                    } else if (data.status === 'failed') {
-                        showError(data.message);
-                    }
-
-                    // Continue polling unless complete/failed  
-                    if (data.status === 'processing') {
-                        setTimeout(updateProgress, 5000);
-                    }
-                })
-                .catch(error => {
-                    document.getElementById('loading-spinner').style.display = 'none';
-                    if (reconnectAttempts < 5) {
-                        reconnectAttempts++;
-                        setTimeout(updateProgress, 2000);
-                    } else {
-                        showError("ارتباط با سرور قطع شد.");
-                    }
-                });
-        }
-
-        function showError(message) {
-            document.getElementById('status-message').textContent = message;
-            document.getElementById('progress-fill').style.backgroundColor = '#dc3545';
-        }
-
-        // Start polling  
-        updateProgress();   
-    </script>
-</body>
-
-</html>
-
+<script>
+const processId = '{{ process_id }}';
+let reconnectAttempts = 0;
+function updateProgress() {
+    document.getElementById('loading-spinner').style.display = 'block';
+    fetch(`/progress/${processId}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('loading-spinner').style.display = 'none';
+            if (data.status === 'not_found') {
+                showError("پردازش یافت نشد!");
+                return;
+            }
+            document.getElementById('progress-fill').style.width = data.progress + '%';
+            document.getElementById('status-message').textContent = data.message;
+            if (data.status === 'completed') {
+                window.location.href = `/results/${data.output_foldername}`;
+            } else if (data.status === 'failed') {
+                showError(data.message);
+            }
+            if (data.status === 'processing') {
+                setTimeout(updateProgress, 5000);
+            }
+        })
+        .catch(error => {
+            document.getElementById('loading-spinner').style.display = 'none';
+            if (reconnectAttempts < 5) {
+                reconnectAttempts++;
+                setTimeout(updateProgress, 2000);
+            } else {
+                showError("ارتباط با سرور قطع شد.");
+            }
+        });
+}
+function showError(message) {
+    document.getElementById('status-message').textContent = message;
+    document.getElementById('progress-fill').style.backgroundColor = '#dc3545';
+}
+updateProgress();
+</script>
+{% endblock %}

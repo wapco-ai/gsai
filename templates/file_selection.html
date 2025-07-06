@@ -1,130 +1,18 @@
-<!DOCTYPE html>  
-<html lang="fa">  
-<head>  
-    <meta charset="UTF-8">  
-    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font/dist/font-face.css" rel="stylesheet">  
-    <title>انتخاب نوع فایل</title>  
-    <style>  
-        body {  
-            font-family: 'Vazir', Arial, sans-serif;  
-            text-align: right;  
-            direction: rtl;  
-            background-color: #f7f7f7;  
-            color: #333;  
-            max-width: 600px;  
-            margin: 2rem auto;  
-            padding: 20px;  
-            border-radius: 8px;  
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  
-        }  
+{% extends "base.html" %}
 
-        h1 {  
-            text-align: center;  
-            color: #007BFF;  
-            margin-bottom: 1.5rem;  
-            font-size: 1.8rem; /* Increased font size */  
-        }  
+{% block title %}انتخاب نوع فایل{% endblock %}
 
-        form {  
-            display: flex;  
-            flex-direction: column;  
-            gap: 1rem;  
-            background: white;  
-            padding: 2rem; /* Increased padding for spaciousness */  
-            border-radius: 8px;  
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);  
-        }  
-
-        label {  
-            display: flex;  
-            align-items: center;  
-            padding: 12px; /* Slightly increased padding */  
-            border: 1px solid #ccc;  
-            border-radius: 5px;  
-            background-color: #f0f0f0;  
-            transition: background-color 0.3s ease, border-color 0.3s ease;  
-            cursor: pointer; /* Change cursor to pointer */  
-        }  
-
-        label:hover {  
-            background-color: #e0e0e0;  
-            border-color: #007BFF;  
-        }  
-
-        input[type="radio"] {  
-            accent-color: #007BFF; /* Modern radio button color */  
-            margin-left: 10px;  
-        }  
-
-        .btn {  
-            background-color: #007BFF;  
-            color: white;  
-            padding: 12px; /* Slightly increased padding */  
-            border: none;  
-            border-radius: 5px;  
-            font-size: 1rem; /* Font size for button */  
-            cursor: pointer;  
-            transition: background-color 0.3s ease;  
-            margin-top: 10px; /* Margin to separate from radio buttons */  
-        }  
-
-        .btn:hover {  
-            background-color: #0056b3;  
-        }  
-
-        .logout-link {  
-            display: block;  
-            text-align: center;  
-            margin-top: 20px;  
-            color: #007BFF;  
-            font-weight: bold;  
-            text-decoration: none;  
-            transition: color 0.3s ease;  
-        }  
-
-        .logout-link:hover {  
-            color: #0056b3; /* Darker color on hover */  
-        }  
-
-        ul {  
-            list-style-type: none; /* Remove default list styles */  
-            padding: 0;  
-            margin: 1rem 0; /* Margin for spacing around messages */  
-            background: #f9f9f9;  
-            border: 1px solid #d9d9d9;  
-            border-radius: 5px;  
-            padding: 10px;  
-        }  
-
-        li {  
-            color: #d9534f; /* Change the color of messages */  
-            margin: 5px 0; /* Space between messages */  
-        }  
-    </style>  
-</head>  
-<body>  
-    <h1>انتخاب نوع فایل برای بارگذاری</h1>  
-    
-    {% with messages = get_flashed_messages() %}  
-        {% if messages %}  
-            <ul>  
-            {% for message in messages %}  
-                <li>{{ message }}</li>  
-            {% endfor %}  
-            </ul>  
-        {% endif %}  
-    {% endwith %}  
-    
-    <form action="/file_selection" method="POST">  
-        <label>  
-            <input type="radio" name="file_type" value="video"> ویدئو  
-        </label>  
-        <label>  
-            <input type="radio" name="file_type" value="zip"> فایل ZIP حاوی تصاویر  
-        </label>  
-        <button type="submit" class="btn">ادامه</button>  
-    </form>
-    <a href="{{ url_for('process_list') }}" class="logout-link">مشاهده پردازش‌ها</a>
-    <a href="{{ url_for('logout') }}" class="logout-link">خروج</a> <!-- Logout link -->
-</body>
-</html>
+{% block content %}
+<h2>انتخاب نوع فایل برای بارگذاری</h2>
+<form action="/file_selection" method="POST">
+    <label>
+        <input type="radio" name="file_type" value="video"> ویدئو
+    </label>
+    <label>
+        <input type="radio" name="file_type" value="zip"> فایل ZIP حاوی تصاویر
+    </label>
+    <button type="submit" class="btn">ادامه</button>
+</form>
+<a href="{{ url_for('process_list') }}" class="btn" style="margin-top:10px;">مشاهده پردازش‌ها</a>
+<a href="{{ url_for('logout') }}" class="btn" style="margin-top:10px;">خروج</a>
+{% endblock %}
