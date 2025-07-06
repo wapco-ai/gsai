@@ -18,7 +18,6 @@ import uuid
 import json
 from threading import Thread
 import sys  # Import sys to get the python executable
-import sqlite3
 from flask_sqlalchemy import SQLAlchemy
 
 if sys.platform.startswith("win"):
@@ -104,38 +103,22 @@ METASHAPE_SCRIPT_PATH = os.path.join(
 os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
 os.makedirs(app.config["OUTPUT_FOLDER"], exist_ok=True)
 
-# Database setup
-DB_PATH = os.path.join(app.root_path, "users.db")
+# User model and initialization
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    password = db.Column(db.String(200), nullable=False)
 
 
-def get_db_connection():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
+def init_users():
+    with app.app_context():
+        db.create_all()
+        if not User.query.filter_by(username="wapco").first():
+            user = User(username="wapco", password=generate_password_hash("wapco"))
+            db.session.add(user)
+            db.session.commit()
 
-
-def init_db():
-    conn = get_db_connection()
-    conn.execute(
-        """
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            username TEXT UNIQUE NOT NULL,
-            password TEXT NOT NULL
-        )
-        """
-    )
-    cur = conn.execute("SELECT id FROM users WHERE username=?", ("wapco",))
-    if cur.fetchone() is None:
-        conn.execute(
-            "INSERT INTO users (username, password) VALUES (?, ?)",
-            ("wapco", generate_password_hash("wapco")),
-        )
-    conn.commit()
-    conn.close()
-
-
-init_db()
+init_users()
 
 # Setup logging
 logging.basicConfig(
@@ -234,13 +217,8 @@ def index():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-        conn = get_db_connection()
-        user = conn.execute(
-            "SELECT * FROM users WHERE username=?",
-            (username,),
-        ).fetchone()
-        conn.close()
-        if user and check_password_hash(user["password"], password):
+        user = User.query.filter_by(username=username).first()
+        if user and check_password_hash(user.password, password):
             session["logged_in"] = True
             session["username"] = username
             flash("ورود با موفقیت انجام شد.")
@@ -1314,4 +1292,5 @@ def serve_static(filename):
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
+        init_users()
     app.run(debug=False)
