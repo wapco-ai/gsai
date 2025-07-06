@@ -19,6 +19,7 @@ import json
 from threading import Thread
 import sys  # Import sys to get the python executable
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 if sys.platform.startswith("win"):
     import winreg
@@ -67,6 +68,7 @@ app.config["ALLOWED_ZIP_EXTENSIONS"] = {"zip"}
 app.config["PROCESSING_STATES"] = {}
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+app.secret_key = "your_secret_key"
 db = SQLAlchemy(app)
 
 
