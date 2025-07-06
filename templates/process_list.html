@@ -1,51 +1,51 @@
-<!DOCTYPE html>
-<html lang="fa">
-<head>
-    <meta charset="UTF-8">
-    <title>لیست پردازش‌ها</title>
-    <style>
-        table {width: 100%; border-collapse: collapse;}
-        th, td {border: 1px solid #ccc; padding: 8px; text-align: center;}
-        th {background-color: #f0f0f0;}
-        .pagination {margin-top: 20px; text-align: center;}
-        .pagination a {margin: 0 5px; text-decoration: none;}
-    </style>
-</head>
-<body>
-    <h1>لیست پردازش‌ها</h1>
-    <table>
-        <tr>
-            <th>نام فایل</th>
-            <th>کاربر</th>
-            <th>تعداد فریم/تصویر</th>
-            <th>زمان شروع</th>
-            <th>زمان پایان</th>
-            <th>مدت‌زمان (ثانیه)</th>
-            <th>وضعیت</th>
-        </tr>
-        {% for p in processes %}
-        <tr>
-            <td>{{ p.filename }}</td>
-            <td>{{ p.user }}</td>
-            <td>{{ p.frame_count }}</td>
-            <td>{{ p.start_time }}</td>
-            <td>{{ p.end_time or '-' }}</td>
-            <td>{% if p.duration %}{{ '%.1f'|format(p.duration) }}{% else %}-{% endif %}</td>
-            <td>{{ p.status }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    {% if pagination.pages > 1 %}
-    <div class="pagination">
-        {% if pagination.has_prev %}
-            <a href="{{ url_for('process_list', page=pagination.prev_num) }}">&laquo; قبلی</a>
-        {% endif %}
-        صفحه {{ pagination.page }} از {{ pagination.pages }}
-        {% if pagination.has_next %}
-            <a href="{{ url_for('process_list', page=pagination.next_num) }}">بعدی &raquo;</a>
-        {% endif %}
-    </div>
+{% extends "base.html" %}
+
+{% block title %}لیست پردازش‌ها{% endblock %}
+
+{% block head %}
+<style>
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #f0f0f0; }
+    .pagination { margin-top: 20px; text-align: center; }
+    .pagination a { margin: 0 5px; text-decoration: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1>لیست پردازش‌ها</h1>
+<table>
+    <tr>
+        <th>نام فایل</th>
+        <th>کاربر</th>
+        <th>تعداد فریم/تصویر</th>
+        <th>زمان شروع</th>
+        <th>زمان پایان</th>
+        <th>مدت‌زمان (ثانیه)</th>
+        <th>وضعیت</th>
+    </tr>
+    {% for p in processes %}
+    <tr>
+        <td>{{ p.filename }}</td>
+        <td>{{ p.user }}</td>
+        <td>{{ p.frame_count }}</td>
+        <td>{{ p.start_time }}</td>
+        <td>{{ p.end_time or '-' }}</td>
+        <td>{% if p.duration %}{{ '%.1f'|format(p.duration) }}{% else %}-{% endif %}</td>
+        <td>{{ p.status }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% if pagination.pages > 1 %}
+<div class="pagination">
+    {% if pagination.has_prev %}
+        <a href="{{ url_for('process_list', page=pagination.prev_num) }}">&laquo; قبلی</a>
     {% endif %}
-    <a href="{{ url_for('file_selection') }}">بازگشت</a>
-</body>
-</html>
+    صفحه {{ pagination.page }} از {{ pagination.pages }}
+    {% if pagination.has_next %}
+        <a href="{{ url_for('process_list', page=pagination.next_num) }}">بعدی &raquo;</a>
+    {% endif %}
+</div>
+{% endif %}
+<a href="{{ url_for('file_selection') }}" class="btn" style="margin-top:15px;">بازگشت</a>
+{% endblock %}
