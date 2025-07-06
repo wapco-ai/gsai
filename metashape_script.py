@@ -47,7 +47,7 @@ def extract_frames(video_path, output_dir, start_time=0, end_time=None, frame_in
                 crop_pixels = int(height * crop_height_ratio)
                 cropped_frame = frame[:-crop_pixels, :, :] if crop_pixels > 0 else frame
                 output_filename = os.path.join(output_dir, f"frame_{i:04d}.jpg")
-                cv2.imwrite(output_filename, cropped_frame)  
+                cv2.imwrite(output_filename, cropped_frame)
                 pbar.update(1)  
             else:  
                 print(f"Warning: Could not read frame {i}")  
