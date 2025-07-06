@@ -1,4 +1,5 @@
 /outputs
+/instance/*
 /uploads
 /static/*
 !/static/css/
