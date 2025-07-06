@@ -67,6 +67,12 @@ python app.py
 
 Visit `http://localhost:5000` in a browser to access the web interface.
 
+## Database
+
+All application data, including user accounts and process records, is stored in a
+single SQLite file named `app.db` in the project directory. On first run the
+application creates a default user `wapco` with password `wapco`.
+
 ## Usage examples
 
 Processing a directory of images from the command line:
