@@ -15,11 +15,11 @@
                 <h3 class="file-name">{{ file }}</h3>
                 <div class="file-actions">
                     {% if file.lower().endswith('.ply') %}
-                        <a href="{{ url_for('view_ply', filename=file) }}" class="btn-viewer" target="_blank">
+                        <a href="{{ url_for('ply', output_foldername=output_foldername, file_path=file) }}" class="btn-viewer" target="_blank">
                             <i class="icon-eye"></i> مشاهده PLY
                         </a>
                     {% elif file.lower().endswith('.pcd') %}
-                        <a href="{{ url_for('view_pcd', filename=file) }}" class="btn-viewer" target="_blank">
+                        <a href="{{ url_for('pcd_viewer', output_foldername=output_foldername, file_path=file) }}" class="btn-viewer" target="_blank">
                             <i class="icon-eye"></i> مشاهده PCD
                         </a>
                     {% endif %}
