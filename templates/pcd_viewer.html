@@ -73,6 +73,7 @@
         geometry.center();
 
         const total = geometry.getAttribute('position').count;
+
         const colAttr = geometry.getAttribute('color');
         const colorGroups = {};
 
@@ -90,6 +91,7 @@
             }
         } else {
             colorGroups['ffffff'] = Array.from({length: total}, (_, i) => i);
+
         }
 
         const groupObjects = {};
@@ -106,6 +108,7 @@
                 materialOpts.vertexColors = true;
             } else {
                 materialOpts.color = '#' + hex;
+
             }
             const material = new THREE.PointsMaterial(materialOpts);
             const pts = new THREE.Points(g, material);
