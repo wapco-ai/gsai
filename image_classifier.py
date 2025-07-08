@@ -29,7 +29,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # Model and feature extractor paths
 # Assuming the model will be saved in a 'saved_model' directory relative to this script
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_NAME = "nvidia/segformer-b4-finetuned-ade-512-512"
+MODEL_NAME = "nvidia/segformer-b2-finetuned-ade-512-512"
 MODEL_DIR = os.path.join(BASE_DIR, "saved_model")
 
 # Global variables to hold the loaded model and feature extractor
