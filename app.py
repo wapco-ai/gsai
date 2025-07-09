@@ -1165,7 +1165,14 @@ def process_list():
 
     page = request.args.get("page", 1, type=int)
     pagination = Process.query.order_by(Process.start_time.desc()).paginate(page=page, per_page=10)
-    return render_template("process_list.html", processes=pagination.items, pagination=pagination)
+
+    processes = []
+    for proc in pagination.items:
+        upload_dir = os.path.join(app.config["UPLOAD_FOLDER"], proc.process_uuid)
+        proc.has_upload = os.path.exists(upload_dir)
+        processes.append(proc)
+
+    return render_template("process_list.html", processes=processes, pagination=pagination)
 
 
 # Route to delete uploaded files for a given process
@@ -1212,12 +1219,22 @@ def reprocess(process_id):
         return redirect(url_for("process_list"))
 
     new_id = str(uuid.uuid4())
+    new_process_uuid = str(uuid.uuid4())
     output_dir = os.path.join(app.config["OUTPUT_FOLDER"], new_id)
     os.makedirs(output_dir, exist_ok=True)
 
+    # Copy original uploaded file to a new directory for this reprocess
+    new_upload_dir = os.path.join(app.config["UPLOAD_FOLDER"], new_process_uuid)
+    os.makedirs(new_upload_dir, exist_ok=True)
+    try:
+        shutil.copy(file_path, os.path.join(new_upload_dir, orig.filename))
+        file_path = os.path.join(new_upload_dir, orig.filename)
+    except Exception as exc:
+        logging.error(f"Failed to copy upload for reprocess: {exc}")
+
     db_process = Process(
         id=new_id,
-        process_uuid=orig.process_uuid,
+        process_uuid=new_process_uuid,
         filename=orig.filename,
         user=session.get("username", "unknown"),
         frame_count=0,
