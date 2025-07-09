@@ -703,10 +703,17 @@ ul.process-list li {
     border-radius: 4px;
     display: inline-block;
     transition: background 0.3s ease;
+    margin-right: 4px;
 }
 
 .btn-small:hover {
     background: #0056b3;
+}
+
+.btn-small.disabled {
+    background: #6c757d;
+    pointer-events: none;
+    opacity: 0.6;
 }
 
 /* Pagination Styles */
