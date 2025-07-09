@@ -18,6 +18,7 @@
 </head>
 <body>
     <!-- Header Navigation -->
+    {% if not hide_nav %}
     <header class="main-header">
         <nav class="main-nav">
             <div class="nav-container">
@@ -45,6 +46,7 @@
             </div>
         </nav>
     </header>
+    {% endif %}
 
     <!-- Main Content -->
     <main class="main-content">
@@ -52,6 +54,7 @@
     </main>
 
     <!-- Footer -->
+    {% if not hide_nav %}
     <footer class="main-footer">
         <div class="footer-container">
             <div class="footer-content">
@@ -67,6 +70,7 @@
             </div>
         </div>
     </footer>
+    {% endif %}
 
     <script>
         function toggleMobileMenu() {
