@@ -268,7 +268,7 @@ def index():
         else:
             flash("نام کاربری یا کلمه عبور اشتباه است.")
             return redirect(request.url)
-    return render_template("index.html")
+    return render_template("index.html", hide_nav=True)
 
 
 
