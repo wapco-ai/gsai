@@ -269,7 +269,7 @@ def index():
         else:
             flash("نام کاربری یا کلمه عبور اشتباه است.")
             return redirect(request.url)
-    return render_template("index.html")
+    return render_template("index.html", hide_nav=True)
 
 
 
@@ -1165,7 +1165,139 @@ def process_list():
 
     page = request.args.get("page", 1, type=int)
     pagination = Process.query.order_by(Process.start_time.desc()).paginate(page=page, per_page=10)
-    return render_template("process_list.html", processes=pagination.items, pagination=pagination)
+
+    processes = []
+    for proc in pagination.items:
+        upload_dir = os.path.join(app.config["UPLOAD_FOLDER"], proc.process_uuid)
+        proc.has_upload = os.path.exists(upload_dir)
+        processes.append(proc)
+
+    return render_template("process_list.html", processes=processes, pagination=pagination)
+
+
+# Route to delete uploaded files for a given process
+@app.route("/delete-upload/<process_id>")
+def delete_upload(process_id):
+    if not session.get("logged_in"):
+        flash("لطفاً ابتدا وارد شوید.")
+        return redirect(url_for("index"))
+
+    proc = Process.query.get(process_id)
+    if not proc:
+        flash("پردازش مورد نظر یافت نشد.")
+        return redirect(url_for("process_list"))
+
+    upload_dir = os.path.join(app.config["UPLOAD_FOLDER"], proc.process_uuid)
+    try:
+        if os.path.exists(upload_dir):
+            shutil.rmtree(upload_dir)
+            flash("فایل آپلود شده حذف شد.")
+        else:
+            flash("فایلی برای حذف یافت نشد.")
+    except Exception as exc:
+        logging.error(f"Failed to delete upload for {process_id}: {exc}")
+        flash("خطا در حذف فایل آپلود شده.")
+
+    return redirect(url_for("process_list"))
+
+
+# Route to start a new processing using the original uploaded file
+@app.route("/reprocess/<process_id>")
+def reprocess(process_id):
+    if not session.get("logged_in"):
+        flash("لطفاً ابتدا وارد شوید.")
+        return redirect(url_for("index"))
+
+    orig = Process.query.get(process_id)
+    if not orig:
+        flash("پردازش مورد نظر یافت نشد.")
+        return redirect(url_for("process_list"))
+
+    file_path = os.path.join(app.config["UPLOAD_FOLDER"], orig.process_uuid, orig.filename)
+    if not os.path.exists(file_path):
+        flash("فایل آپلود شده در دسترس نیست.")
+        return redirect(url_for("process_list"))
+
+    new_id = str(uuid.uuid4())
+    new_process_uuid = str(uuid.uuid4())
+    output_dir = os.path.join(app.config["OUTPUT_FOLDER"], new_id)
+    os.makedirs(output_dir, exist_ok=True)
+
+    # Copy original uploaded file to a new directory for this reprocess
+    new_upload_dir = os.path.join(app.config["UPLOAD_FOLDER"], new_process_uuid)
+    os.makedirs(new_upload_dir, exist_ok=True)
+    try:
+        shutil.copy(file_path, os.path.join(new_upload_dir, orig.filename))
+        file_path = os.path.join(new_upload_dir, orig.filename)
+    except Exception as exc:
+        logging.error(f"Failed to copy upload for reprocess: {exc}")
+
+    db_process = Process(
+        id=new_id,
+        process_uuid=new_process_uuid,
+        filename=orig.filename,
+        user=session.get("username", "unknown"),
+        frame_count=0,
+        start_time=datetime.utcnow(),
+        status="processing",
+        output_folder=new_id,
+    )
+    db.session.add(db_process)
+    db.session.commit()
+
+    def reprocess_task(process_id, file_path, filename, output_dir):
+        with app.app_context():
+            try:
+                if filename.lower().endswith(".zip"):
+                    image_dir = os.path.join(output_dir, "re_images")
+                    os.makedirs(image_dir, exist_ok=True)
+                    count = extract_images_from_zip(file_path, image_dir)
+                    update_process_state(process_id, progress=10, message=f"استخراج {count} تصویر از ZIP")
+                    cmd = [
+                        METASHAPE_EXECUTABLE,
+                        "-r",
+                        METASHAPE_SCRIPT_PATH,
+                        "--image_full_pipeline",
+                        "--image_dir",
+                        image_dir,
+                        "--output_dir",
+                        output_dir,
+                        "--export_ply",
+                        "--export_pcd",
+                    ]
+                else:
+                    cmd = [
+                        METASHAPE_EXECUTABLE,
+                        "-r",
+                        METASHAPE_SCRIPT_PATH,
+                        "--video_full_pipeline",
+                        file_path,
+                        "--output_dir",
+                        output_dir,
+                        "--frame_interval",
+                        "1",
+                        "--crop_height_ratio",
+                        "0.1",
+                        "--export_ply",
+                        "--export_pcd",
+                    ]
+
+                process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                for line in iter(process.stdout.readline, b""):
+                    logging.info(f"Reprocess {process_id}: {line.decode().strip()}")
+                process.wait()
+                if process.returncode != 0:
+                    err = process.stderr.read().decode().strip()
+                    update_process_state(process_id, status="failed", message=err, end_time=datetime.utcnow())
+                else:
+                    update_process_state(process_id, status="completed", progress=100, end_time=datetime.utcnow())
+            except Exception as exc:
+                logging.error(f"Reprocess error {process_id}: {exc}")
+                update_process_state(process_id, status="failed", message=str(exc), end_time=datetime.utcnow())
+
+    Thread(target=reprocess_task, args=(new_id, file_path, orig.filename, output_dir)).start()
+
+    return redirect(url_for("processing", process_id=new_id))
 
 
 # Route to delete uploaded files for a given process
