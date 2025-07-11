@@ -84,8 +84,8 @@ def extract_frames(video_path, output_dir, start_time=0, end_time=None, frame_in
 # Metashape Processing Functions  
 # --------------------------  
 
-def process_in_metashape(image_dir, output_dir):  
-    import Metashape  
+def process_in_metashape(image_dir, output_dir, reference_preselection_mode="source"):
+    import Metashape
     
     #print(f"\nMetashape ver: {Metashape.app.version}")  
     
@@ -98,13 +98,20 @@ def process_in_metashape(image_dir, output_dir):
     print(f"Loaded {len(chunk.cameras)} images")  
 
     # Camera alignment  
-    chunk.matchPhotos(  
-        downscale=2,  
-        generic_preselection=True,  
-        reference_preselection=False,
-        keypoint_limit=1000000,  
-        tiepoint_limit=100000  
-    )  
+    mode_map = {
+        "source": Metashape.ReferencePreselectionSource,
+        "estimated": Metashape.ReferencePreselectionEstimated,
+        "sequential": Metashape.ReferencePreselectionSequential,
+    }
+    ref_mode = mode_map.get(reference_preselection_mode, Metashape.ReferencePreselectionSource)
+    chunk.matchPhotos(
+        downscale=2,
+        generic_preselection=True,
+        reference_preselection=True,
+        reference_preselection_mode=ref_mode,
+        keypoint_limit=1000000,
+        tiepoint_limit=100000
+    )
     chunk.alignCameras()  
 
     # Build depth maps  
@@ -260,6 +267,11 @@ if __name__ == "__main__":
     export_pcd = "--export_pcd" in sys.argv
     if not export_ply and not export_pcd:
         export_ply = export_pcd = True
+    reference_preselection_mode = (
+        sys.argv[sys.argv.index("--reference_preselection_mode") + 1]
+        if "--reference_preselection_mode" in sys.argv
+        else "source"
+    )
     if "--extract_frames" in sys.argv:  
         # Extract frames from video  
         video_path = sys.argv[sys.argv.index("--extract_frames") + 1]  
@@ -271,11 +283,11 @@ if __name__ == "__main__":
 
         extract_frames(video_path, image_dir, start_time, end_time, frame_interval, crop_height_ratio)  
 
-    if "--process_in_metashape" in sys.argv:  
-        # Process images in Metashape  
-        image_dir = sys.argv[sys.argv.index("--image_dir") + 1]  
-        output_dir = sys.argv[sys.argv.index("--output_dir") + 1]  
-        process_in_metashape(image_dir, output_dir)  
+    if "--process_in_metashape" in sys.argv:
+        # Process images in Metashape
+        image_dir = sys.argv[sys.argv.index("--image_dir") + 1]
+        output_dir = sys.argv[sys.argv.index("--output_dir") + 1]
+        process_in_metashape(image_dir, output_dir, reference_preselection_mode)
 
     if "--convert_to_point_cloud" in sys.argv:  
         # Convert to point cloud directly  
@@ -289,11 +301,11 @@ if __name__ == "__main__":
         model_format = sys.argv[sys.argv.index("--model_format") + 1] if "--model_format" in sys.argv else "obj"  
         create_and_export_3d_model(project_path, output_dir, model_format)
     
-    if "--image_full_pipeline" in sys.argv:  
-        # Process images in Metashape  
-        image_dir = sys.argv[sys.argv.index("--image_dir") + 1]  
-        output_dir = sys.argv[sys.argv.index("--output_dir") + 1]  
-        process_in_metashape(image_dir, output_dir)
+    if "--image_full_pipeline" in sys.argv:
+        # Process images in Metashape
+        image_dir = sys.argv[sys.argv.index("--image_dir") + 1]
+        output_dir = sys.argv[sys.argv.index("--output_dir") + 1]
+        process_in_metashape(image_dir, output_dir, reference_preselection_mode)
         
         # Convert to point cloud  
         project_path = os.path.join(output_dir, "project.psx")
@@ -325,7 +337,7 @@ if __name__ == "__main__":
 
         # Process in Metashape  
         metashape_output_dir = os.path.join(output_base_dir, "project")  
-        process_in_metashape(image_dir, metashape_output_dir)  
+        process_in_metashape(image_dir, metashape_output_dir, reference_preselection_mode)
 
         # Convert to point cloud  
         project_path = os.path.join(metashape_output_dir, "project.psx")

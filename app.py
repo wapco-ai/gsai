@@ -392,6 +392,7 @@ def video_upload():
             crop_height_ratio_str = request.form.get("crop_height_ratio", "0.1")
             model_format = request.form.get("model_format", "obj")
             segformer_model = request.form.get("segformer_model", DEFAULT_SEGFORMER_MODEL)
+            preselection_mode = request.form.get("preselection_mode", "source")
 
             try:
                 start_time = float(start_time_str)
@@ -431,6 +432,7 @@ def video_upload():
                 generate_preview,
                 export_ply,
                 export_pcd,
+                preselection_mode,
             ):
                 with app.app_context():
                     try:
@@ -668,6 +670,10 @@ def video_upload():
                             "--output_dir",
                             output_dir,
                         ]
+                        metashape_command.extend([
+                            "--reference_preselection_mode",
+                            preselection_mode,
+                        ])
                         if generate_preview:
                             metashape_command.extend(["--preview_ratio", "0.1"])
                         if export_ply:
@@ -794,6 +800,7 @@ def video_upload():
                     generate_preview,
                     export_ply,
                     export_pcd,
+                    preselection_mode,
                 ),
             ).start()
 
@@ -849,6 +856,7 @@ def zip_upload():
         export_ply = "export_ply" in request.form
         export_pcd = "export_pcd" in request.form
         segformer_model = request.form.get("segformer_model", DEFAULT_SEGFORMER_MODEL)
+        preselection_mode = request.form.get("preselection_mode", "source")
 
         process_id = str(uuid.uuid4())
         db_process = Process(
@@ -873,7 +881,7 @@ def zip_upload():
             "output_foldername": process_uuid,
         }
 
-        def process_zip_task(process_id, zip_path, output_dir, classify_images, generate_preview, export_ply, export_pcd, segformer_model):
+        def process_zip_task(process_id, zip_path, output_dir, classify_images, generate_preview, export_ply, export_pcd, segformer_model, preselection_mode):
             with app.app_context():
                 try:
                     image_dir = os.path.join(output_dir, "extracted_images")
@@ -1031,6 +1039,10 @@ def zip_upload():
                         "--output_dir",
                         output_dir,
                     ]
+                    metashape_command.extend([
+                        "--reference_preselection_mode",
+                        preselection_mode,
+                    ])
                     if generate_preview:
                         metashape_command.extend(["--preview_ratio", "0.1"])
                     if export_ply:
@@ -1153,6 +1165,7 @@ def zip_upload():
                 export_ply,
                 export_pcd,
                 segformer_model,
+                preselection_mode,
             ),
         ).start()
 
@@ -1264,7 +1277,7 @@ def reprocess(process_id):
     db.session.add(db_process)
     db.session.commit()
 
-    def reprocess_task(process_id, file_path, filename, output_dir):
+    def reprocess_task(process_id, file_path, filename, output_dir, preselection_mode):
         with app.app_context():
             try:
                 if filename.lower().endswith(".zip"):
@@ -1281,6 +1294,8 @@ def reprocess(process_id):
                         image_dir,
                         "--output_dir",
                         output_dir,
+                        "--reference_preselection_mode",
+                        preselection_mode,
                         "--export_ply",
                         "--export_pcd",
                     ]
@@ -1297,6 +1312,8 @@ def reprocess(process_id):
                         "1",
                         "--crop_height_ratio",
                         "0.1",
+                        "--reference_preselection_mode",
+                        preselection_mode,
                         "--export_ply",
                         "--export_pcd",
                     ]
@@ -1314,7 +1331,11 @@ def reprocess(process_id):
                 logging.error(f"Reprocess error {process_id}: {exc}")
                 update_process_state(process_id, status="failed", message=str(exc), end_time=datetime.utcnow())
 
-    Thread(target=reprocess_task, args=(new_id, file_path, orig.filename, output_dir)).start()
+    preselection_mode = request.args.get("preselection_mode", "source")
+    Thread(
+        target=reprocess_task,
+        args=(new_id, file_path, orig.filename, output_dir, preselection_mode),
+    ).start()
 
     return redirect(url_for("processing", process_id=new_id))
 
