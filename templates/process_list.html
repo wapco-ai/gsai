@@ -39,11 +39,19 @@
                     <td>
                         <div class="file-actions">
                             {% if p.status.lower() == 'completed' %}
-                                <a href="{{ url_for('results', output_foldername=p.output_folder) }}" class="btn-small">مشاهده نتایج</a>
-                                <a href="{{ url_for('delete_upload', process_id=p.id) }}" class="btn-small{% if not p.has_upload %} disabled{% endif %}" onclick="return confirm('آیا از حذف فایل مطمئن هستید؟');">حذف فایل</a>
-                                <a href="{{ url_for('reprocess', process_id=p.id) }}" class="btn-small">پردازش مجدد</a>
+                                <a href="{{ url_for('results', output_foldername=p.output_folder) }}" class="btn-small icon-btn" title="مشاهده نتایج">
+                                    <i class="icon-eye"></i>
+                                </a>
+                                <a href="{{ url_for('delete_upload', process_id=p.id) }}" class="btn-small icon-btn{% if not p.has_upload %} disabled{% endif %}" title="حذف فایل" onclick="return confirm('آیا از حذف فایل مطمئن هستید؟');">
+                                    <i class="icon-trash"></i>
+                                </a>
+                                <a href="{{ url_for('reprocess', process_id=p.id) }}" class="btn-small icon-btn" title="پردازش مجدد">
+                                    <i class="icon-refresh"></i>
+                                </a>
                             {% elif p.status.lower() == 'processing' %}
-                                <a href="{{ url_for('processing', process_id=p.id) }}" class="btn-small">مشاهده پردازش</a>
+                                <a href="{{ url_for('processing', process_id=p.id) }}" class="btn-small icon-btn" title="مشاهده پردازش">
+                                    <i class="icon-eye"></i>
+                                </a>
                             {% endif %}
                         </div>
                     </td>
