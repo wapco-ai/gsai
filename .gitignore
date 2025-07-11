@@ -1,4 +1,5 @@
 /outputs
+/saved_model
 /instance/*
 /uploads
 /static/*
