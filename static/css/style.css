@@ -695,25 +695,28 @@ ul.process-list li {
 
 /* Small Buttons */
 .btn-small {
-    padding: 6px 12px;
+    padding: 6px 14px;
     font-size: 0.875em;
-    background: #007bff;
-    color: white;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    color: #ffffff;
     text-decoration: none;
-    border-radius: 4px;
+    border-radius: 25px;
     display: inline-block;
-    transition: background 0.3s ease;
-    margin-right: 4px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    margin-left: 4px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
 .btn-small:hover {
-    background: #0056b3;
+    background: linear-gradient(135deg, #0056b3 0%, #00408d 100%);
+    transform: translateY(-2px);
 }
 
 .btn-small.disabled {
     background: #6c757d;
     pointer-events: none;
     opacity: 0.6;
+    box-shadow: none;
 }
 
 /* Pagination Styles */
