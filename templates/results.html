@@ -15,16 +15,16 @@
                 <h3 class="file-name">{{ file }}</h3>
                 <div class="file-actions">
                     {% if file.lower().endswith('.ply') %}
-                        <a href="{{ url_for('ply', output_foldername=output_foldername, file_path=file) }}" class="btn-viewer" target="_blank">
-                            <i class="icon-eye"></i> مشاهده PLY
+                        <a href="{{ url_for('ply', output_foldername=output_foldername, file_path=file) }}" class="btn-viewer icon-btn" target="_blank" title="مشاهده PLY">
+                            <i class="icon-eye"></i>
                         </a>
                     {% elif file.lower().endswith('.pcd') %}
-                        <a href="{{ url_for('pcd_viewer', output_foldername=output_foldername, file_path=file) }}" class="btn-viewer" target="_blank">
-                            <i class="icon-eye"></i> مشاهده PCD
+                        <a href="{{ url_for('pcd_viewer', output_foldername=output_foldername, file_path=file) }}" class="btn-viewer icon-btn" target="_blank" title="مشاهده PCD">
+                            <i class="icon-eye"></i>
                         </a>
                     {% endif %}
-                    <a href="{{ url_for('download', output_foldername=output_foldername, file_path=file) }}" class="btn-download">
-                        <i class="icon-download"></i> دریافت
+                    <a href="{{ url_for('download', output_foldername=output_foldername, file_path=file) }}" class="btn-download icon-btn" title="دریافت">
+                        <i class="icon-download"></i>
                     </a>
                 </div>
             </div>
