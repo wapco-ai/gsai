@@ -23,6 +23,16 @@ import sys  # Import sys to get the python executable
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
+SEGFORMER_MODELS = [
+    ("nvidia/segformer-b0-finetuned-ade-512-512", "B0 – فوق‌سبک و سریع (مناسب پردازش بلادرنگ)"),
+    ("nvidia/segformer-b1-finetuned-ade-512-512", "B1 – سبک با تعادل سرعت/دقت"),
+    ("nvidia/segformer-b2-finetuned-ade-512-512", "B2 – تعادل بهتر بین سرعت و دقت"),
+    ("nvidia/segformer-b3-finetuned-ade-512-512", "B3 – دقت بالا (برای پروژه‌های سنگین‌تر)"),
+    ("nvidia/segformer-b4-finetuned-ade-512-512", "B4 – بسیار دقیق (نیازمند GPU قوی)"),
+    ("nvidia/segformer-b5-finetuned-ade-640-640", "B5 – بیشترین دقت (کندتر، ابعاد ورودی 640²)"),
+]
+DEFAULT_SEGFORMER_MODEL = SEGFORMER_MODELS[2][0]
+
 if sys.platform.startswith("win"):
     import winreg
 else:
@@ -381,6 +391,7 @@ def video_upload():
             frame_interval_str = request.form.get("frame_interval", "1")
             crop_height_ratio_str = request.form.get("crop_height_ratio", "0.1")
             model_format = request.form.get("model_format", "obj")
+            segformer_model = request.form.get("segformer_model", DEFAULT_SEGFORMER_MODEL)
 
             try:
                 start_time = float(start_time_str)
@@ -415,6 +426,7 @@ def video_upload():
                 frame_interval,
                 crop_height_ratio,
                 model_format,
+                segformer_model,
                 classify_images,
                 generate_preview,
                 export_ply,
@@ -553,7 +565,9 @@ def video_upload():
                                 # classify_images_in_folder returns a list of paths to blended images
                                 blended_image_paths = (
                                     image_classifier.classify_images_in_folder(
-                                        image_dir, blended_image_dir
+                                        image_dir,
+                                        blended_image_dir,
+                                        segformer_model,
                                     )
                                 )
 
@@ -775,6 +789,7 @@ def video_upload():
                     frame_interval,
                     crop_height_ratio,
                     model_format,
+                    segformer_model,
                     classify_images,
                     generate_preview,
                     export_ply,
@@ -784,7 +799,7 @@ def video_upload():
 
             return redirect(url_for("processing", process_id=process_id))
 
-    return render_template("video_upload.html")
+    return render_template("video_upload.html", segformer_models=SEGFORMER_MODELS)
 
 
 # ZIP upload page
@@ -833,6 +848,7 @@ def zip_upload():
         generate_preview = request.form.get("generate_preview") == "on"
         export_ply = "export_ply" in request.form
         export_pcd = "export_pcd" in request.form
+        segformer_model = request.form.get("segformer_model", DEFAULT_SEGFORMER_MODEL)
 
         process_id = str(uuid.uuid4())
         db_process = Process(
@@ -857,7 +873,7 @@ def zip_upload():
             "output_foldername": process_uuid,
         }
 
-        def process_zip_task(process_id, zip_path, output_dir, classify_images, generate_preview, export_ply, export_pcd):
+        def process_zip_task(process_id, zip_path, output_dir, classify_images, generate_preview, export_ply, export_pcd, segformer_model):
             with app.app_context():
                 try:
                     image_dir = os.path.join(output_dir, "extracted_images")
@@ -920,7 +936,9 @@ def zip_upload():
                         try:
                             blended_image_paths = (
                                 image_classifier.classify_images_in_folder(
-                                    image_dir, blended_image_dir
+                                    image_dir,
+                                    blended_image_dir,
+                                    segformer_model,
                                 )
                             )
 
@@ -1134,12 +1152,13 @@ def zip_upload():
                 generate_preview,
                 export_ply,
                 export_pcd,
+                segformer_model,
             ),
         ).start()
 
         return redirect(url_for("processing", process_id=process_id))
 
-    return render_template("zip_upload.html")
+    return render_template("zip_upload.html", segformer_models=SEGFORMER_MODELS)
 
 
 # New processing page route

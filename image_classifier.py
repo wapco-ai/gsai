@@ -29,45 +29,61 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # Model and feature extractor paths
 # Assuming the model will be saved in a 'saved_model' directory relative to this script
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-MODEL_NAME = "nvidia/segformer-b2-finetuned-ade-512-512"
-MODEL_DIR = os.path.join(BASE_DIR, "saved_model")
+MODELS_BASE_DIR = os.path.join(BASE_DIR, "saved_model")
+DEFAULT_MODEL_NAME = "nvidia/segformer-b2-finetuned-ade-512-512"
+
+os.makedirs(MODELS_BASE_DIR, exist_ok=True)
+
+import re
+
+def get_model_dir(model_name: str) -> str:
+    match = re.search(r"segformer-(b\d)", model_name.lower())
+    sub = match.group(1) if match else model_name.replace("/", "_")
+    return os.path.join(MODELS_BASE_DIR, sub)
 
 # Global variables to hold the loaded model and feature extractor
 model = None
 feature_extractor = None
+loaded_model_name = None
 
-def load_model_and_feature_extractor():
+def load_model_and_feature_extractor(model_name: str = DEFAULT_MODEL_NAME):
     """Loads the Segformer model and feature extractor."""
-    global model, feature_extractor
+    global model, feature_extractor, loaded_model_name
+
+    if loaded_model_name != model_name:
+        model = None
+        feature_extractor = None
+        loaded_model_name = model_name
+
+    model_dir = get_model_dir(model_name)
 
     if model is None or feature_extractor is None:
         logging.info("📦 Loading Segformer model and feature extractor...")
         try:
-            if not os.path.exists(MODEL_DIR):
+            if not os.path.exists(model_dir):
                 logging.info("⬇ Model not found locally. Downloading...")
-                # Specify from_pt=True to load PyTorch weights
-                # Specify a cache_dir if you want to control where models are downloaded
-                model = TFSegformerForSemanticSegmentation.from_pretrained(MODEL_NAME, from_pt=True)
-                model.save_pretrained(MODEL_DIR)
+                model = TFSegformerForSemanticSegmentation.from_pretrained(model_name, from_pt=True)
+                os.makedirs(model_dir, exist_ok=True)
+                model.save_pretrained(model_dir)
                 logging.info("✅ Model downloaded and saved.")
             else:
                 logging.info("📦 Loading model from local path...")
-                model = TFSegformerForSemanticSegmentation.from_pretrained(MODEL_DIR)
+                model = TFSegformerForSemanticSegmentation.from_pretrained(model_dir)
                 logging.info("✅ Model loaded from local path.")
 
             # Try loading the feature extractor from the same local directory as the model
-            if os.path.exists(MODEL_DIR):
+            if os.path.exists(model_dir):
                 try:
-                    feature_extractor = SegformerFeatureExtractor.from_pretrained(MODEL_DIR)
+                    feature_extractor = SegformerFeatureExtractor.from_pretrained(model_dir)
                     logging.info("✅ Feature extractor loaded from local path.")
                 except Exception as e:
                     logging.warning(
                         f"Could not load feature extractor from local path: {e}. Falling back to Hugging Face hub."
                     )
-                    feature_extractor = SegformerFeatureExtractor.from_pretrained(MODEL_NAME)
+                    feature_extractor = SegformerFeatureExtractor.from_pretrained(model_name)
                     logging.info("✅ Feature extractor downloaded and loaded.")
             else:
-                feature_extractor = SegformerFeatureExtractor.from_pretrained(MODEL_NAME)
+                feature_extractor = SegformerFeatureExtractor.from_pretrained(model_name)
                 logging.info("✅ Feature extractor downloaded and loaded.")
 
         except Exception as e:
@@ -76,10 +92,10 @@ def load_model_and_feature_extractor():
             feature_extractor = None
             raise
 
-def classify_image(image_path):
+def classify_image(image_path, model_name: str = DEFAULT_MODEL_NAME):
     """Classifies a single image and returns the predicted segmentation mask (numpy array)."""
-    if model is None or feature_extractor is None:
-        load_model_and_feature_extractor()
+    if model is None or feature_extractor is None or loaded_model_name != model_name:
+        load_model_and_feature_extractor(model_name)
 
     try:
         image = Image.open(image_path).convert("RGB")
@@ -371,16 +387,16 @@ def create_colored_mask_and_blend(original_image_path, raw_mask, blended_output_
 
 
 # Helper for parallel processing
-def process_single_image(image_path, blended_output_folder):
+def process_single_image(image_path, blended_output_folder, model_name):
     """Classify a single image and return the blended output path."""
-    predicted_mask = classify_image(image_path)
+    predicted_mask = classify_image(image_path, model_name)
     if predicted_mask is not None:
         return create_colored_mask_and_blend(image_path, predicted_mask, blended_output_folder)
     return None
 
 
 # --- Modify classify_images_in_folder again to use create_colored_mask_and_blend ---
-def classify_images_in_folder(image_folder, blended_output_folder):
+def classify_images_in_folder(image_folder, blended_output_folder, model_name: str = DEFAULT_MODEL_NAME):
     """
     Classifies all images in a folder, generates and saves blended images,
     and returns paths to the blended images.
@@ -404,7 +420,7 @@ def classify_images_in_folder(image_folder, blended_output_folder):
 
     # Load model and feature extractor once before processing all images
     try:
-        load_model_and_feature_extractor()
+        load_model_and_feature_extractor(model_name)
     except Exception:
         logging.error("Failed to load classification model. Skipping classification and blending.")
         return [] # Return empty list on model load failure
@@ -417,7 +433,7 @@ def classify_images_in_folder(image_folder, blended_output_folder):
 
     with ThreadPoolExecutor(max_workers=num_workers) as executor:
         futures = {
-            executor.submit(process_single_image, path, blended_output_folder): path
+            executor.submit(process_single_image, path, blended_output_folder, model_name): path
             for path in image_paths
         }
         with tqdm(total=len(futures), desc="Classifying and Blending Images") as pbar:
