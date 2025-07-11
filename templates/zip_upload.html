@@ -46,10 +46,20 @@
                         <span class="toggle-text">انجام طبقه‌بندی تصویر (Segformer)</span>
                         <span class="toggle-description">برای تشخیص و جداسازی اجزای مختلف تصاویر</span>
                     </span>
-                    <input type="checkbox" class="toggle-input" id="classify_images" name="classify_images">
-                    <span class="toggle-switch"></span>
-                </label>
+                <input type="checkbox" class="toggle-input" id="classify_images" name="classify_images">
+                <span class="toggle-switch"></span>
+            </label>
+        </div>
+        <div class="input-group" id="segformer-model-group" style="display:none;">
+            <label for="segformer_model">انتخاب مدل SegFormer</label>
+            <div class="select-container">
+                <select name="segformer_model" id="segformer_model" class="modern-select">
+                    {% for val, label in segformer_models %}
+                    <option value="{{ val }}" {% if loop.first %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
             </div>
+        </div>
 
             <div class="toggle-group">
                 <label class="toggle-label" for="generate_preview">
@@ -102,6 +112,14 @@
 document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('zip');
     const fileLabel = document.querySelector('.file-label');
+    const classifyCheckbox = document.getElementById('classify_images');
+    const modelGroup = document.getElementById('segformer-model-group');
+
+    function toggleModelSelect() {
+        modelGroup.style.display = classifyCheckbox.checked ? 'block' : 'none';
+    }
+    classifyCheckbox.addEventListener('change', toggleModelSelect);
+    toggleModelSelect();
     
     // Drag and drop events
     ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
