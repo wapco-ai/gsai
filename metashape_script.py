@@ -139,12 +139,12 @@ def process_in_metashape(
     }
     ref_mode = mode_map.get(reference_preselection_mode, Metashape.ReferencePreselectionSource)
     chunk.matchPhotos(
-        downscale=2,
+        downscale=1,
         generic_preselection=True,
         reference_preselection=True,
         reference_preselection_mode=ref_mode,
-        keypoint_limit=1000000,
-        tiepoint_limit=100000
+        keypoint_limit=50000,
+        tiepoint_limit=5000
     )
     chunk.alignCameras()  
 
