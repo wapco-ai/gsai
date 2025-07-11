@@ -393,6 +393,7 @@ def video_upload():
             model_format = request.form.get("model_format", "obj")
             segformer_model = request.form.get("segformer_model", DEFAULT_SEGFORMER_MODEL)
             preselection_mode = request.form.get("preselection_mode", "source")
+            sensor_type = request.form.get("sensor_type", "Frame")
 
             try:
                 start_time = float(start_time_str)
@@ -433,6 +434,7 @@ def video_upload():
                 export_ply,
                 export_pcd,
                 preselection_mode,
+                sensor_type,
             ):
                 with app.app_context():
                     try:
@@ -673,6 +675,8 @@ def video_upload():
                         metashape_command.extend([
                             "--reference_preselection_mode",
                             preselection_mode,
+                            "--sensor_type",
+                            sensor_type,
                         ])
                         if generate_preview:
                             metashape_command.extend(["--preview_ratio", "0.1"])
@@ -801,6 +805,7 @@ def video_upload():
                     export_ply,
                     export_pcd,
                     preselection_mode,
+                    sensor_type,
                 ),
             ).start()
 
@@ -857,6 +862,7 @@ def zip_upload():
         export_pcd = "export_pcd" in request.form
         segformer_model = request.form.get("segformer_model", DEFAULT_SEGFORMER_MODEL)
         preselection_mode = request.form.get("preselection_mode", "source")
+        sensor_type = request.form.get("sensor_type", "Frame")
 
         process_id = str(uuid.uuid4())
         db_process = Process(
@@ -881,7 +887,18 @@ def zip_upload():
             "output_foldername": process_uuid,
         }
 
-        def process_zip_task(process_id, zip_path, output_dir, classify_images, generate_preview, export_ply, export_pcd, segformer_model, preselection_mode):
+        def process_zip_task(
+            process_id,
+            zip_path,
+            output_dir,
+            classify_images,
+            generate_preview,
+            export_ply,
+            export_pcd,
+            segformer_model,
+            preselection_mode,
+            sensor_type,
+        ):
             with app.app_context():
                 try:
                     image_dir = os.path.join(output_dir, "extracted_images")
@@ -1042,6 +1059,8 @@ def zip_upload():
                     metashape_command.extend([
                         "--reference_preselection_mode",
                         preselection_mode,
+                        "--sensor_type",
+                        sensor_type,
                     ])
                     if generate_preview:
                         metashape_command.extend(["--preview_ratio", "0.1"])
@@ -1166,6 +1185,7 @@ def zip_upload():
                 export_pcd,
                 segformer_model,
                 preselection_mode,
+                sensor_type,
             ),
         ).start()
 
@@ -1277,7 +1297,14 @@ def reprocess(process_id):
     db.session.add(db_process)
     db.session.commit()
 
-    def reprocess_task(process_id, file_path, filename, output_dir, preselection_mode):
+    def reprocess_task(
+        process_id,
+        file_path,
+        filename,
+        output_dir,
+        preselection_mode,
+        sensor_type,
+    ):
         with app.app_context():
             try:
                 if filename.lower().endswith(".zip"):
@@ -1296,6 +1323,8 @@ def reprocess(process_id):
                         output_dir,
                         "--reference_preselection_mode",
                         preselection_mode,
+                        "--sensor_type",
+                        sensor_type,
                         "--export_ply",
                         "--export_pcd",
                     ]
@@ -1314,6 +1343,8 @@ def reprocess(process_id):
                         "0.1",
                         "--reference_preselection_mode",
                         preselection_mode,
+                        "--sensor_type",
+                        sensor_type,
                         "--export_ply",
                         "--export_pcd",
                     ]
@@ -1332,9 +1363,17 @@ def reprocess(process_id):
                 update_process_state(process_id, status="failed", message=str(exc), end_time=datetime.utcnow())
 
     preselection_mode = request.args.get("preselection_mode", "source")
+    sensor_type = request.args.get("sensor_type", "Frame")
     Thread(
         target=reprocess_task,
-        args=(new_id, file_path, orig.filename, output_dir, preselection_mode),
+        args=(
+            new_id,
+            file_path,
+            orig.filename,
+            output_dir,
+            preselection_mode,
+            sensor_type,
+        ),
     ).start()
 
     return redirect(url_for("processing", process_id=new_id))
