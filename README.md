@@ -103,3 +103,13 @@ metashape -r metashape_script.py --image_full_pipeline \
 
 The video and ZIP upload pages expose this setting through a dropdown labeled **حالت پیش‌انتخاب مرجع**.
 
+Use `--sensor_type` to select the camera model. Allowed values are `Frame`, `Fisheye`, `Spherical`, and `Cylindrical`:
+
+```bash
+metashape -r metashape_script.py --image_full_pipeline \
+    --image_dir path/to/images --output_dir outputs/run1 \
+    --sensor_type Fisheye
+```
+
+The documentation for Metashape (user guide and Python API) is available in `static/docs/`.
+

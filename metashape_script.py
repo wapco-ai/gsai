@@ -84,7 +84,12 @@ def extract_frames(video_path, output_dir, start_time=0, end_time=None, frame_in
 # Metashape Processing Functions  
 # --------------------------  
 
-def process_in_metashape(image_dir, output_dir, reference_preselection_mode="source"):
+def process_in_metashape(
+    image_dir,
+    output_dir,
+    reference_preselection_mode="source",
+    sensor_type="Frame",
+):
     import Metashape
     
     #print(f"\nMetashape ver: {Metashape.app.version}")  
@@ -92,10 +97,39 @@ def process_in_metashape(image_dir, output_dir, reference_preselection_mode="sou
     doc = Metashape.Document()  
     chunk = doc.addChunk()  
 
-    # Add images  
-    chunk.addPhotos([os.path.join(image_dir, f) for f in os.listdir(image_dir)   
-                   if f.lower().endswith(('.jpg', '.jpeg', '.png', '.tif', '.tiff', '.JPG', '.JPEG', '.PNG', '.TIF', '.TIFF'))])  
-    print(f"Loaded {len(chunk.cameras)} images")  
+    # Add images
+    chunk.addPhotos(
+        [
+            os.path.join(image_dir, f)
+            for f in os.listdir(image_dir)
+            if f.lower().endswith(
+                (
+                    ".jpg",
+                    ".jpeg",
+                    ".png",
+                    ".tif",
+                    ".tiff",
+                    ".JPG",
+                    ".JPEG",
+                    ".PNG",
+                    ".TIF",
+                    ".TIFF",
+                )
+            )
+        ]
+    )
+    print(f"Loaded {len(chunk.cameras)} images")
+
+    # Set sensor type for all sensors
+    type_map = {
+        "Frame": Metashape.Sensor.Type.Frame,
+        "Fisheye": Metashape.Sensor.Type.Fisheye,
+        "Spherical": Metashape.Sensor.Type.Spherical,
+        "Cylindrical": Metashape.Sensor.Type.Cylindrical,
+    }
+    sensor_enum = type_map.get(sensor_type, Metashape.Sensor.Type.Frame)
+    for sensor in chunk.sensors:
+        sensor.type = sensor_enum
 
     # Camera alignment  
     mode_map = {
@@ -272,6 +306,11 @@ if __name__ == "__main__":
         if "--reference_preselection_mode" in sys.argv
         else "source"
     )
+    sensor_type = (
+        sys.argv[sys.argv.index("--sensor_type") + 1]
+        if "--sensor_type" in sys.argv
+        else "Frame"
+    )
     if "--extract_frames" in sys.argv:  
         # Extract frames from video  
         video_path = sys.argv[sys.argv.index("--extract_frames") + 1]  
@@ -287,7 +326,9 @@ if __name__ == "__main__":
         # Process images in Metashape
         image_dir = sys.argv[sys.argv.index("--image_dir") + 1]
         output_dir = sys.argv[sys.argv.index("--output_dir") + 1]
-        process_in_metashape(image_dir, output_dir, reference_preselection_mode)
+        process_in_metashape(
+            image_dir, output_dir, reference_preselection_mode, sensor_type
+        )
 
     if "--convert_to_point_cloud" in sys.argv:  
         # Convert to point cloud directly  
@@ -305,7 +346,9 @@ if __name__ == "__main__":
         # Process images in Metashape
         image_dir = sys.argv[sys.argv.index("--image_dir") + 1]
         output_dir = sys.argv[sys.argv.index("--output_dir") + 1]
-        process_in_metashape(image_dir, output_dir, reference_preselection_mode)
+        process_in_metashape(
+            image_dir, output_dir, reference_preselection_mode, sensor_type
+        )
         
         # Convert to point cloud  
         project_path = os.path.join(output_dir, "project.psx")
@@ -337,7 +380,9 @@ if __name__ == "__main__":
 
         # Process in Metashape  
         metashape_output_dir = os.path.join(output_base_dir, "project")  
-        process_in_metashape(image_dir, metashape_output_dir, reference_preselection_mode)
+        process_in_metashape(
+            image_dir, metashape_output_dir, reference_preselection_mode, sensor_type
+        )
 
         # Convert to point cloud  
         project_path = os.path.join(metashape_output_dir, "project.psx")
