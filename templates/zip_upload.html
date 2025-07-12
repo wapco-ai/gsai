@@ -9,7 +9,7 @@
     <p>فایل ZIP حاوی تصاویر را انتخاب کنید و تنظیمات مورد نظر را اعمال کنید.</p>
     
     <!-- نمایش پیام‌های خطا -->
-    {% with messages = get_flashed_messages() %}
+    <!-- {% with messages = get_flashed_messages() %}
     {% if messages %}
     <div class="alert alert-error">
         <div class="alert-icon">⚠️</div>
@@ -22,7 +22,7 @@
         </div>
     </div>
     {% endif %}
-    {% endwith %}
+    {% endwith %} -->
     
     <form action="/zip-upload" method="POST" enctype="multipart/form-data">
         <!-- بخش آپلود فایل ZIP -->
