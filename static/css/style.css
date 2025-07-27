@@ -829,6 +829,10 @@ ul.process-list li {
     content: "🔄 ";
 }
 
+.icon-delete::before {
+    content: "❌ ";
+}
+
 /* Navigation Links Enhancement */
 .navigation-links {
     margin-top: 2rem;
