@@ -1621,6 +1621,9 @@ def gallery(output_foldername):
 
     output_dir = os.path.join(app.config["OUTPUT_FOLDER"], output_foldername)
     frames_dir = os.path.join(output_dir, "frames")
+    if not os.path.isdir(frames_dir):
+        # For image ZIP uploads the extracted files live in 'extracted_images'
+        frames_dir = os.path.join(output_dir, "extracted_images")
     blended_dir = os.path.join(output_dir, "blended_images")
 
     frames = []
