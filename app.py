@@ -1470,6 +1470,12 @@ def results(output_foldername):
                 )
             ):  # Include .obj as a viewable/downloadable file
                 normalized_path = relative_path.replace("\\", "/")
+                # Exclude results.zip and files in blended_images from the list
+                if (
+                    normalized_path.lower() == "results.zip"
+                    or normalized_path.startswith("blended_images/")
+                ):
+                    continue
                 file_paths.append(normalized_path)
 
     logging.info(f"Found {len(file_paths)} relevant files in results directory.")
