@@ -4,7 +4,7 @@ import numpy as np
 import tensorflow as tf
 from transformers import (
     TFSegformerForSemanticSegmentation,
-    SegformerFeatureExtractor,
+    SegformerImageProcessor
 )
 import logging
 from tqdm import tqdm
@@ -46,8 +46,12 @@ model = None
 feature_extractor = None
 loaded_model_name = None
 
+
 def load_model_and_feature_extractor(model_name: str = DEFAULT_MODEL_NAME):
-    """Loads the Segformer model and feature extractor."""
+    """
+    Loads the Segformer model and feature extractor.
+    Tries to load from local directory if available; otherwise downloads from HuggingFace and saves locally.
+    """
     global model, feature_extractor, loaded_model_name
 
     if loaded_model_name != model_name:
@@ -56,41 +60,39 @@ def load_model_and_feature_extractor(model_name: str = DEFAULT_MODEL_NAME):
         loaded_model_name = model_name
 
     model_dir = get_model_dir(model_name)
+    os.makedirs(model_dir, exist_ok=True)
 
-    if model is None or feature_extractor is None:
-        logging.info("📦 Loading Segformer model and feature extractor...")
-        try:
-            if not os.path.exists(model_dir):
-                logging.info("⬇ Model not found locally. Downloading...")
-                model = TFSegformerForSemanticSegmentation.from_pretrained(model_name, from_pt=True)
-                os.makedirs(model_dir, exist_ok=True)
-                model.save_pretrained(model_dir)
-                logging.info("✅ Model downloaded and saved.")
-            else:
-                logging.info("📦 Loading model from local path...")
-                model = TFSegformerForSemanticSegmentation.from_pretrained(model_dir)
-                logging.info("✅ Model loaded from local path.")
+    logging.info("📦 Loading Segformer model and feature extractor...")
 
-            # Try loading the feature extractor from the same local directory as the model
-            if os.path.exists(model_dir):
-                try:
-                    feature_extractor = SegformerFeatureExtractor.from_pretrained(model_dir)
-                    logging.info("✅ Feature extractor loaded from local path.")
-                except Exception as e:
-                    logging.warning(
-                        f"Could not load feature extractor from local path: {e}. Falling back to Hugging Face hub."
-                    )
-                    feature_extractor = SegformerFeatureExtractor.from_pretrained(model_name)
-                    logging.info("✅ Feature extractor downloaded and loaded.")
-            else:
-                feature_extractor = SegformerFeatureExtractor.from_pretrained(model_name)
-                logging.info("✅ Feature extractor downloaded and loaded.")
+    try:
+        # ---- Load or Download Model ----
+        tf_model_path = os.path.join(model_dir, "tf_model.h5")
+        if os.path.exists(tf_model_path):
+            logging.info("📦 Found model locally. Loading from disk...")
+            model = TFSegformerForSemanticSegmentation.from_pretrained(model_dir)
+        else:
+            logging.info("⬇ Model not found locally. Downloading from Hugging Face...")
+            model = TFSegformerForSemanticSegmentation.from_pretrained(model_name, from_pt=True)
+            model.save_pretrained(model_dir)
+            logging.info("✅ Model downloaded and saved locally.")
 
-        except Exception as e:
-            logging.error(f"Error loading model or feature extractor: {e}")
-            model = None
-            feature_extractor = None
-            raise
+        # ---- Load or Download Feature Extractor ----
+        preprocessor_path = os.path.join(model_dir, "preprocessor_config.json")
+        if os.path.exists(preprocessor_path):
+            logging.info("📦 Found feature extractor locally.")
+            feature_extractor = SegformerImageProcessor.from_pretrained(model_dir)
+        else:
+            logging.warning("⚠️ Feature extractor not found locally. Downloading from Hugging Face...")
+            feature_extractor = SegformerImageProcessor.from_pretrained(model_name)
+            feature_extractor.save_pretrained(model_dir)
+            logging.info("✅ Feature extractor downloaded and saved locally.")
+
+    except Exception as e:
+        logging.error(f"❌ Error loading model or feature extractor: {e}")
+        model = None
+        feature_extractor = None
+        raise
+
 
 def classify_image(image_path, model_name: str = DEFAULT_MODEL_NAME):
     """Classifies a single image and returns the predicted segmentation mask (numpy array)."""
