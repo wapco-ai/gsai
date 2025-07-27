@@ -26,6 +26,9 @@
 
 
         let camera, scene, renderer, controls;
+        let raycaster = new THREE.Raycaster();
+        let mouse = new THREE.Vector2();
+        let labels = {};
 
         init();
         render();
@@ -109,6 +112,7 @@
                     }
                     const material = new THREE.PointsMaterial(materialOpts);
                     const pts = new THREE.Points(g, material);
+                    pts.userData.classId = parseInt(cls);
                     scene.add(pts);
                     groupObjects[cls] = pts;
                 }
@@ -126,7 +130,7 @@
 
                 const filterContainer = document.getElementById('filterContainer');
                 const response = await fetch('/class_labels?lang=fa');
-                const labels = await response.json();
+                labels = await response.json();
                 for (const cls in groupObjects) {
                     const label = document.createElement('label');
                     label.style.display = 'block';
@@ -150,6 +154,22 @@
                     label.appendChild(document.createTextNode(name));
                     filterContainer.appendChild(label);
                 }
+
+                renderer.domElement.addEventListener('click', event => {
+                    const rect = renderer.domElement.getBoundingClientRect();
+                    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+                    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+                    raycaster.setFromCamera(mouse, camera);
+                    const intersects = raycaster.intersectObjects(Object.values(groupObjects));
+                    const info = document.getElementById('infoBox');
+                    if (intersects.length > 0) {
+                        const clsId = intersects[0].object.userData.classId;
+                        const name = labels[clsId] || ('Class ' + clsId);
+                        info.textContent = 'کلاس: ' + name;
+                    } else {
+                        info.textContent = '';
+                    }
+                });
 
                 render();
 
@@ -182,6 +202,11 @@
     </script>
 
     <div id="filterContainer" style="position:absolute; top:10px; left:10px; z-index:100; background:rgba(255,255,255,0.8); padding:5px; font-family:sans-serif;"></div>
+    <div id="infoBox" style="position:absolute; top:10px; right:10px; z-index:100; background:rgba(0,0,0,0.6); color:#fff; padding:5px; font-family:sans-serif;"></div>
+    <div id="helpBox" style="position:absolute; bottom:10px; left:10px; z-index:100; background:rgba(255,255,255,0.8); padding:5px; font-family:sans-serif; max-width:300px;">
+        راهنمای مشاهده ابر نقاط: تنها کلاس‌های موجود در ابر نقاط بارگذاری می‌شوند.
+        برای مشاهده نام کلاس هر نقطه روی آن کلیک کنید.
+    </div>
 
     <div id="info" style="position: absolute; top: 10px; width: 100%; text-align: center; z-index: 90; color: white;">
          <a href="{{ url_for('results', output_foldername=output_foldername) }}" style="color: white; text-decoration: none;">Back to Results</a>
