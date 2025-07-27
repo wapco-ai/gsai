@@ -1253,6 +1253,37 @@ def delete_upload(process_id):
     return redirect(url_for("process_list"))
 
 
+# Route to completely delete a process and all related files
+@app.route("/delete-process/<process_id>")
+def delete_process(process_id):
+    if not session.get("logged_in"):
+        flash("لطفاً ابتدا وارد شوید.")
+        return redirect(url_for("index"))
+
+    proc = Process.query.get(process_id)
+    if not proc:
+        flash("پردازش مورد نظر یافت نشد.")
+        return redirect(url_for("process_list"))
+
+    upload_dir = os.path.join(app.config["UPLOAD_FOLDER"], proc.process_uuid)
+    output_dir = os.path.join(app.config["OUTPUT_FOLDER"], proc.output_folder)
+
+    try:
+        if os.path.exists(upload_dir):
+            shutil.rmtree(upload_dir)
+        if os.path.exists(output_dir):
+            shutil.rmtree(output_dir)
+
+        db.session.delete(proc)
+        db.session.commit()
+        flash("پروژه و فایل‌های مرتبط حذف شد.")
+    except Exception as exc:
+        logging.error(f"Failed to delete process {process_id}: {exc}")
+        flash("خطا در حذف پروژه.")
+
+    return redirect(url_for("process_list"))
+
+
 # Route to start a new processing using the original uploaded file
 @app.route("/reprocess/<process_id>")
 def reprocess(process_id):

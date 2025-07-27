@@ -73,6 +73,10 @@ All application data, including user accounts and process records, is stored in 
 single SQLite file named `app.db` in the project directory. On first run the
 application creates a default user `wapco` with password `wapco`.
 
+Completed processes can be removed from the **Previous Processes** page.
+Click the trash icon labeled **حذف پروژه** to delete a project along with its
+attachments and analysis folder.
+
 ## Usage examples
 
 Processing a directory of images from the command line:
