@@ -10,6 +10,12 @@
 
     <div class="button-group">
         <a href="{{ url_for('gallery', output_foldername=output_foldername) }}" class="btn">مشاهده گالری</a>
+        <a href="{{ url_for('download_pointcloud_zip', output_foldername=output_foldername) }}" class="btn btn-download">
+            <i class="icon-download"></i>دانلود همه ابرنقاط
+        </a>
+        <a href="{{ url_for('download_images_zip', output_foldername=output_foldername) }}" class="btn btn-download">
+            <i class="icon-download"></i>دانلود همه تصاویر
+        </a>
     </div>
 
     <div class="results-grid">
@@ -20,15 +26,16 @@
                 <div class="file-actions">
                     {% if file.lower().endswith('.ply') %}
                         <a href="{{ url_for('ply', output_foldername=output_foldername, file_path=file) }}" class="btn btn-viewer" target="_blank" title="مشاهده PLY">
-                            <i class="icon-eye"></i>
-                        مشاهده
+                            <i class="icon-eye"></i>مشاهده
                         </a>
                     {% elif file.lower().endswith('.pcd') %}
                         <a href="{{ url_for('pcd_viewer', output_foldername=output_foldername, file_path=file) }}" class="btn btn-viewer" target="_blank" title="مشاهده PCD">
-                            <i class="icon-eye"></i>
-                        مشاهده
+                            <i class="icon-eye"></i>مشاهده
                         </a>
                     {% endif %}
+                    <a href="{{ url_for('download', output_foldername=output_foldername, file_path=file) }}" class="btn btn-download" title="دانلود">
+                        <i class="icon-download"></i>دانلود
+                    </a>
                 </div>
             </div>
         </div>
