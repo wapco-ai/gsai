@@ -224,6 +224,23 @@ def create_zip_from_dir(directory, zip_name="results.zip"):
         logging.error(f"Error creating zip file {zip_path}: {e}")
         return None
 
+# Helper to create zip containing only specific extensions
+def create_filtered_zip(directory, extensions, zip_name):
+    zip_path = os.path.join(directory, zip_name)
+    try:
+        with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as zipf:
+            for root, _, files in os.walk(directory):
+                for file in files:
+                    if not any(file.lower().endswith(ext) for ext in extensions):
+                        continue
+                    file_path = os.path.join(root, file)
+                    arcname = os.path.relpath(file_path, directory)
+                    zipf.write(file_path, arcname)
+        return zip_path
+    except Exception as e:
+        logging.error(f"Error creating filtered zip {zip_path}: {e}")
+        return None
+
 
 # Helper function to update process state both in-memory and in the database
 def update_process_state(process_id, updates=None, **kwargs):
@@ -1505,6 +1522,44 @@ def download(output_foldername, file_path):
         return redirect(url_for("results", output_foldername=output_foldername))
 
 
+# Download all point clouds as zip
+@app.route("/download_pointcloud_zip/<output_foldername>")
+def download_pointcloud_zip(output_foldername):
+    if not session.get("logged_in"):
+        flash("لطفاً ابتدا وارد شوید.")
+        return redirect(url_for("index"))
+
+    output_dir = os.path.join(app.config["OUTPUT_FOLDER"], output_foldername)
+    zip_path = create_filtered_zip(
+        output_dir,
+        [".ply", ".pcd", ".obj"],
+        "pointclouds.zip",
+    )
+    if zip_path and os.path.exists(zip_path):
+        return send_from_directory(output_dir, "pointclouds.zip", as_attachment=True)
+    flash("فایل فشرده ابر نقاط یافت نشد.")
+    return redirect(url_for("results", output_foldername=output_foldername))
+
+
+# Download all images as zip
+@app.route("/download_images_zip/<output_foldername>")
+def download_images_zip(output_foldername):
+    if not session.get("logged_in"):
+        flash("لطفاً ابتدا وارد شوید.")
+        return redirect(url_for("index"))
+
+    output_dir = os.path.join(app.config["OUTPUT_FOLDER"], output_foldername)
+    zip_path = create_filtered_zip(
+        output_dir,
+        [".jpg", ".jpeg", ".png"],
+        "images.zip",
+    )
+    if zip_path and os.path.exists(zip_path):
+        return send_from_directory(output_dir, "images.zip", as_attachment=True)
+    flash("فایل فشرده تصاویر یافت نشد.")
+    return redirect(url_for("results", output_foldername=output_foldername))
+
+
 # New route for displaying PLY files
 @app.route("/ply/<output_foldername>/<path:file_path>")
 def ply(output_foldername, file_path):
@@ -1555,6 +1610,33 @@ def pcd_viewer(output_foldername, file_path):
     else:
         flash("pcd file not found.")
         return redirect(url_for("results", output_foldername=output_foldername))
+
+
+# Gallery route to display frames and blended images
+@app.route("/gallery/<output_foldername>")
+def gallery(output_foldername):
+    if not session.get("logged_in"):
+        flash("لطفاً ابتدا وارد شوید.")
+        return redirect(url_for("index"))
+
+    output_dir = os.path.join(app.config["OUTPUT_FOLDER"], output_foldername)
+    frames_dir = os.path.join(output_dir, "frames")
+    blended_dir = os.path.join(output_dir, "blended_images")
+
+    frames = []
+    if os.path.isdir(frames_dir):
+        frames = [f for f in os.listdir(frames_dir) if allowed_file(f, app.config["ALLOWED_IMAGE_EXTENSIONS"])]
+
+    blended = []
+    if os.path.isdir(blended_dir):
+        blended = [f for f in os.listdir(blended_dir) if allowed_file(f, app.config["ALLOWED_IMAGE_EXTENSIONS"])]
+
+    return render_template(
+        "gallery.html",
+        output_foldername=output_foldername,
+        frames=frames,
+        blended_images=blended,
+    )
 
 
 # Static route for serving files within the output folder (e.g., for viewers)

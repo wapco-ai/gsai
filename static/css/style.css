@@ -801,13 +801,13 @@ ul.process-list li {
 
 /* Icon based buttons */
 .icon-btn {
-    width: 32px;
-    height: 32px;
-    padding: 6px;
+    width: 48px;
+    height: 48px;
+    padding: 10px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-size: 1rem;
+    font-size: 1.25rem;
 }
 
 /* Icon placeholders (you can replace with actual icons) */
@@ -841,4 +841,17 @@ ul.process-list li {
 
 .navigation-links .back-link {
     margin-left: 1rem;
+}
+
+/* Gallery Grid */
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.gallery-grid img {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
 }

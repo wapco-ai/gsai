@@ -6,8 +6,14 @@
 {% block content %}
 <div class="container">
     <h2>نتایج پردازش</h2>
-    <p>پردازش با موفقیت کامل شد. فایل‌های زیر برای دانلود آماده هستند:</p>
-    
+    <p>پردازش با موفقیت کامل شد.</p>
+
+    <div class="button-group">
+        <a href="{{ url_for('download_pointcloud_zip', output_foldername=output_foldername) }}" class="btn">دانلود ابر نقاط (ZIP)</a>
+        <a href="{{ url_for('download_images_zip', output_foldername=output_foldername) }}" class="btn">دانلود تصاویر (ZIP)</a>
+        <a href="{{ url_for('gallery', output_foldername=output_foldername) }}" class="btn">مشاهده گالری</a>
+    </div>
+
     <div class="results-grid">
         {% for file in file_paths %}
         <div class="result-item">
@@ -23,9 +29,6 @@
                             <i class="icon-eye"></i>
                         </a>
                     {% endif %}
-                    <a href="{{ url_for('download', output_foldername=output_foldername, file_path=file) }}" class="btn-download icon-btn" title="دریافت">
-                        <i class="icon-download"></i>
-                    </a>
                 </div>
             </div>
         </div>

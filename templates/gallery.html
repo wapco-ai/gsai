@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}گالری نتایج{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>گالری تصاویر</h2>
+
+    <h3>فریم‌ها</h3>
+    <div class="gallery-grid">
+        {% for img in frames %}
+        <img src="{{ url_for('serve_output_file', output_foldername=output_foldername, file_path='frames/' + img) }}" alt="frame">
+        {% endfor %}
+    </div>
+
+    <h3>تصاویر طبقه‌بندی‌شده</h3>
+    <div class="gallery-grid">
+        {% for img in blended_images %}
+        <img src="{{ url_for('serve_output_file', output_foldername=output_foldername, file_path='blended_images/' + img) }}" alt="blended">
+        {% endfor %}
+    </div>
+
+    <div class="navigation-links">
+        <a href="{{ url_for('results', output_foldername=output_foldername) }}" class="back-link">بازگشت به نتایج</a>
+    </div>
+</div>
+{% endblock %}
