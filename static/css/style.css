@@ -639,7 +639,8 @@ ul.process-list li {
     background: white;
     box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     border-radius: 8px;
-    overflow: hidden;
+    /* allow table to grow if actions are wide */
+    overflow: visible;
 }
 
 .process-table th,
@@ -697,19 +698,19 @@ ul.process-list li {
 .btn-small {
     padding: 6px 14px;
     font-size: 0.875em;
-    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
-    color: #ffffff;
+    background: none;
+    color: #007bff;
     text-decoration: none;
     border-radius: 25px;
     display: inline-block;
-    transition: background 0.3s ease, transform 0.2s ease;
-    margin-left: 4px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: color 0.3s ease;
+    margin-right: 4px;
+    margin-left: 0;
+    box-shadow: none;
 }
 
 .btn-small:hover {
-    background: linear-gradient(135deg, #0056b3 0%, #00408d 100%);
-    transform: translateY(-2px);
+    color: #0056b3;
 }
 
 .btn-small.disabled {
@@ -770,35 +771,32 @@ ul.process-list li {
 .file-actions {
     display: flex;
     gap: 0.5rem;
-    flex-wrap: nowrap; /* keep actions on a single row */
+    flex-wrap: wrap; /* allow wrapping on small screens */
+    justify-content: flex-end;
 }
-
 .btn-viewer {
-    background: #28a745;
-    color: white;
+    background: none;
+    color: #28a745;
     padding: 8px 16px;
     text-decoration: none;
     border-radius: 4px;
     font-size: 0.875em;
-    transition: background 0.3s ease;
+    transition: color 0.3s ease;
 }
-
 .btn-viewer:hover {
-    background: #218838;
+    color: #1e7e34;
 }
-
 .btn-download {
-    background: #007bff;
-    color: white;
+    background: none;
+    color: #007bff;
     padding: 8px 16px;
     text-decoration: none;
     border-radius: 4px;
     font-size: 0.875em;
-    transition: background 0.3s ease;
+    transition: color 0.3s ease;
 }
-
 .btn-download:hover {
-    background: #0056b3;
+    color: #0056b3;
 }
 
 /* Icon based buttons */
