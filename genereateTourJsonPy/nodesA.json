@@ -1,0 +1,8831 @@
+[
+    {
+        "id": "1",
+        "panorama": "http://localhost:8000/motor/GS__1430.jpg",
+        "name": "GS__1430",
+        "links": [
+            {
+                "nodeId": "2"
+            }
+        ],
+        "gps": [
+            "59.51335819444444",
+            "36.338064111111116",
+            1048.46
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "2",
+        "panorama": "http://localhost:8000/motor/GS__1431.jpg",
+        "name": "GS__1431",
+        "links": [
+            {
+                "nodeId": "1"
+            },
+            {
+                "nodeId": "3"
+            }
+        ],
+        "gps": [
+            "59.51355319444444",
+            "36.338033",
+            1048.76
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "3",
+        "panorama": "http://localhost:8000/motor/GS__1432.jpg",
+        "name": "GS__1432",
+        "links": [
+            {
+                "nodeId": "2"
+            },
+            {
+                "nodeId": "4"
+            }
+        ],
+        "gps": [
+            "59.51366180555556",
+            "36.33801480555556",
+            1048.94
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "4",
+        "panorama": "http://localhost:8000/motor/GS__1433.jpg",
+        "name": "GS__1433",
+        "links": [
+            {
+                "nodeId": "3"
+            },
+            {
+                "nodeId": "5"
+            }
+        ],
+        "gps": [
+            "59.51372438888889",
+            "36.33802169444445",
+            1048.77
+        ],
+        "sphereCorrection": {
+            "pan": "-82deg"
+        }
+    },
+    {
+        "id": "5",
+        "panorama": "http://localhost:8000/motor/GS__1434.jpg",
+        "name": "GS__1434",
+        "links": [
+            {
+                "nodeId": "4"
+            },
+            {
+                "nodeId": "6"
+            }
+        ],
+        "gps": [
+            "59.513826305555554",
+            "36.33800661111111",
+            1048.43
+        ],
+        "sphereCorrection": {
+            "pan": "-100deg"
+        }
+    },
+    {
+        "id": "6",
+        "panorama": "http://localhost:8000/motor/GS__1435.jpg",
+        "name": "GS__1435",
+        "links": [
+            {
+                "nodeId": "5"
+            },
+            {
+                "nodeId": "7"
+            }
+        ],
+        "gps": [
+            "59.513934194444445",
+            "36.33799011111111",
+            1048.02
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "7",
+        "panorama": "http://localhost:8000/motor/GS__1436.jpg",
+        "name": "GS__1436",
+        "links": [
+            {
+                "nodeId": "6"
+            },
+            {
+                "nodeId": "8"
+            }
+        ],
+        "gps": [
+            "59.51402838888889",
+            "36.33797311111111",
+            1047.66
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "8",
+        "panorama": "http://localhost:8000/motor/GS__1437.jpg",
+        "name": "GS__1437",
+        "links": [
+            {
+                "nodeId": "7"
+            },
+            {
+                "nodeId": "9"
+            }
+        ],
+        "gps": [
+            "59.5141245",
+            "36.33794888888889",
+            1048.14
+        ],
+        "sphereCorrection": {
+            "pan": "-107deg"
+        }
+    },
+    {
+        "id": "9",
+        "panorama": "http://localhost:8000/motor/GS__1438.jpg",
+        "name": "GS__1438",
+        "links": [
+            {
+                "nodeId": "8"
+            },
+            {
+                "nodeId": "10"
+            }
+        ],
+        "gps": [
+            "59.51423211111111",
+            "36.337929",
+            1048.32
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "10",
+        "panorama": "http://localhost:8000/motor/GS__1439.jpg",
+        "name": "GS__1439",
+        "links": [
+            {
+                "nodeId": "9"
+            },
+            {
+                "nodeId": "11"
+            }
+        ],
+        "gps": [
+            "59.51432611111111",
+            "36.337904111111115",
+            1048.48
+        ],
+        "sphereCorrection": {
+            "pan": "-108deg"
+        }
+    },
+    {
+        "id": "11",
+        "panorama": "http://localhost:8000/motor/GS__1440.jpg",
+        "name": "GS__1440",
+        "links": [
+            {
+                "nodeId": "10"
+            },
+            {
+                "nodeId": "12"
+            }
+        ],
+        "gps": [
+            "59.5144365",
+            "36.33787788888889",
+            1048.95
+        ],
+        "sphereCorrection": {
+            "pan": "-106deg"
+        }
+    },
+    {
+        "id": "12",
+        "panorama": "http://localhost:8000/motor/GS__1441.jpg",
+        "name": "GS__1441",
+        "links": [
+            {
+                "nodeId": "11"
+            },
+            {
+                "nodeId": "13"
+            }
+        ],
+        "gps": [
+            "59.5145245",
+            "36.33786088888889",
+            1048.71
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "13",
+        "panorama": "http://localhost:8000/motor/GS__1442.jpg",
+        "name": "GS__1442",
+        "links": [
+            {
+                "nodeId": "12"
+            },
+            {
+                "nodeId": "14"
+            }
+        ],
+        "gps": [
+            "59.51461069444444",
+            "36.33784719444445",
+            1048.34
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "14",
+        "panorama": "http://localhost:8000/motor/GS__1443.jpg",
+        "name": "GS__1443",
+        "links": [
+            {
+                "nodeId": "13"
+            },
+            {
+                "nodeId": "15"
+            }
+        ],
+        "gps": [
+            "59.5147065",
+            "36.33783230555556",
+            1048.46
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "15",
+        "panorama": "http://localhost:8000/motor/GS__1444.jpg",
+        "name": "GS__1444",
+        "links": [
+            {
+                "nodeId": "14"
+            },
+            {
+                "nodeId": "16"
+            }
+        ],
+        "gps": [
+            "59.51480380555556",
+            "36.33780838888889",
+            1049.2
+        ],
+        "sphereCorrection": {
+            "pan": "-107deg"
+        }
+    },
+    {
+        "id": "16",
+        "panorama": "http://localhost:8000/motor/GS__1445.jpg",
+        "name": "GS__1445",
+        "links": [
+            {
+                "nodeId": "15"
+            },
+            {
+                "nodeId": "17"
+            },
+            {
+                "nodeId": "398"
+            }
+        ],
+        "gps": [
+            "59.51492788888889",
+            "36.33777669444445",
+            1049.17
+        ],
+        "sphereCorrection": {
+            "pan": "-108deg"
+        }
+    },
+    {
+        "id": "17",
+        "panorama": "http://localhost:8000/motor/GS__1446.jpg",
+        "name": "GS__1446",
+        "links": [
+            {
+                "nodeId": "16"
+            },
+            {
+                "nodeId": "18"
+            },
+            {
+                "nodeId": "398"
+            }
+        ],
+        "gps": [
+            "59.515043694444444",
+            "36.33774738888889",
+            1049.15
+        ],
+        "sphereCorrection": {
+            "pan": "-107deg"
+        }
+    },
+    {
+        "id": "18",
+        "panorama": "http://localhost:8000/motor/GS__1447.jpg",
+        "name": "GS__1447",
+        "links": [
+            {
+                "nodeId": "17"
+            },
+            {
+                "nodeId": "19"
+            }
+        ],
+        "gps": [
+            "59.51515561111111",
+            "36.337731805555556",
+            1048.72
+        ],
+        "sphereCorrection": {
+            "pan": "-100deg"
+        }
+    },
+    {
+        "id": "19",
+        "panorama": "http://localhost:8000/motor/GS__1448.jpg",
+        "name": "GS__1448",
+        "links": [
+            {
+                "nodeId": "18"
+            },
+            {
+                "nodeId": "20"
+            }
+        ],
+        "gps": [
+            "59.51529411111111",
+            "36.337703000000005",
+            1048.62
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "20",
+        "panorama": "http://localhost:8000/motor/GS__1449.jpg",
+        "name": "GS__1449",
+        "links": [
+            {
+                "nodeId": "19"
+            },
+            {
+                "nodeId": "21"
+            }
+        ],
+        "gps": [
+            "59.5154025",
+            "36.33768480555556",
+            1048.35
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "21",
+        "panorama": "http://localhost:8000/motor/GS__1450.jpg",
+        "name": "GS__1450",
+        "links": [
+            {
+                "nodeId": "20"
+            },
+            {
+                "nodeId": "22"
+            }
+        ],
+        "gps": [
+            "59.51551188888889",
+            "36.337665694444446",
+            1048.14
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "22",
+        "panorama": "http://localhost:8000/motor/GS__1451.jpg",
+        "name": "GS__1451",
+        "links": [
+            {
+                "nodeId": "21"
+            },
+            {
+                "nodeId": "23"
+            }
+        ],
+        "gps": [
+            "59.51569611111111",
+            "36.337632500000005",
+            1048.07
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "23",
+        "panorama": "http://localhost:8000/motor/GS__1452.jpg",
+        "name": "GS__1452",
+        "links": [
+            {
+                "nodeId": "22"
+            },
+            {
+                "nodeId": "24"
+            }
+        ],
+        "gps": [
+            "59.51580769444445",
+            "36.33762061111111",
+            1047.55
+        ],
+        "sphereCorrection": {
+            "pan": "-98deg"
+        }
+    },
+    {
+        "id": "24",
+        "panorama": "http://localhost:8000/motor/GS__1453.jpg",
+        "name": "GS__1453",
+        "links": [
+            {
+                "nodeId": "23"
+            },
+            {
+                "nodeId": "25"
+            }
+        ],
+        "gps": [
+            "59.515929",
+            "36.33760161111111",
+            1046.94
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "25",
+        "panorama": "http://localhost:8000/motor/GS__1454.jpg",
+        "name": "GS__1454",
+        "links": [
+            {
+                "nodeId": "24"
+            },
+            {
+                "nodeId": "26"
+            }
+        ],
+        "gps": [
+            "59.51607338888889",
+            "36.337573694444444",
+            1046.62
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "26",
+        "panorama": "http://localhost:8000/motor/GS__1455.jpg",
+        "name": "GS__1455",
+        "links": [
+            {
+                "nodeId": "25"
+            },
+            {
+                "nodeId": "27"
+            }
+        ],
+        "gps": [
+            "59.516192805555555",
+            "36.33755088888889",
+            1046.46
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "27",
+        "panorama": "http://localhost:8000/motor/GS__1456.jpg",
+        "name": "GS__1456",
+        "links": [
+            {
+                "nodeId": "26"
+            },
+            {
+                "nodeId": "28"
+            }
+        ],
+        "gps": [
+            "59.51635061111111",
+            "36.337518",
+            1046.35
+        ],
+        "sphereCorrection": {
+            "pan": "-105deg"
+        }
+    },
+    {
+        "id": "28",
+        "panorama": "http://localhost:8000/motor/GS__1457.jpg",
+        "name": "GS__1457",
+        "links": [
+            {
+                "nodeId": "27"
+            },
+            {
+                "nodeId": "29"
+            }
+        ],
+        "gps": [
+            "59.516492694444445",
+            "36.337489805555556",
+            1046.03
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "29",
+        "panorama": "http://localhost:8000/motor/GS__1458.jpg",
+        "name": "GS__1458",
+        "links": [
+            {
+                "nodeId": "28"
+            },
+            {
+                "nodeId": "30"
+            }
+        ],
+        "gps": [
+            "59.5165885",
+            "36.33746419444444",
+            1046.37
+        ],
+        "sphereCorrection": {
+            "pan": "-108deg"
+        }
+    },
+    {
+        "id": "30",
+        "panorama": "http://localhost:8000/motor/GS__1459.jpg",
+        "name": "GS__1459",
+        "links": [
+            {
+                "nodeId": "29"
+            },
+            {
+                "nodeId": "31"
+            },
+            {
+                "nodeId": "357"
+            }
+        ],
+        "gps": [
+            "59.5167081",
+            "36.33743761111111",
+            1046.59
+        ],
+        "sphereCorrection": {
+            "pan": "-105deg"
+        }
+    },
+    {
+        "id": "31",
+        "panorama": "http://localhost:8000/motor/GS__1460.jpg",
+        "name": "GS__1460",
+        "links": [
+            {
+                "nodeId": "30"
+            },
+            {
+                "nodeId": "32"
+            }
+        ],
+        "gps": [
+            "59.5168365",
+            "36.337418694444445",
+            1046.65
+        ],
+        "sphereCorrection": {
+            "pan": "-100deg"
+        }
+    },
+    {
+        "id": "32",
+        "panorama": "http://localhost:8000/motor/GS__1461.jpg",
+        "name": "GS__1461",
+        "links": [
+            {
+                "nodeId": "31"
+            },
+            {
+                "nodeId": "33"
+            }
+        ],
+        "gps": [
+            "59.5169418",
+            "36.337417",
+            1046.54
+        ],
+        "sphereCorrection": {
+            "pan": "-91deg"
+        }
+    },
+    {
+        "id": "33",
+        "panorama": "http://localhost:8000/motor/GS__1462.jpg",
+        "name": "GS__1462",
+        "links": [
+            {
+                "nodeId": "32"
+            },
+            {
+                "nodeId": "34"
+            }
+        ],
+        "gps": [
+            "59.5170875",
+            "36.337392388888894",
+            1046.45
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "34",
+        "panorama": "http://localhost:8000/motor/GS__1463.jpg",
+        "name": "GS__1463",
+        "links": [
+            {
+                "nodeId": "33"
+            },
+            {
+                "nodeId": "35"
+            }
+        ],
+        "gps": [
+            "59.517209799999996",
+            "36.337372388888895",
+            1046.74
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "35",
+        "panorama": "http://localhost:8000/motor/GS__1464.jpg",
+        "name": "GS__1464",
+        "links": [
+            {
+                "nodeId": "34"
+            },
+            {
+                "nodeId": "36"
+            }
+        ],
+        "gps": [
+            "59.517461499999996",
+            "36.33734319444444",
+            1041.91
+        ],
+        "sphereCorrection": {
+            "pan": "-98deg"
+        }
+    },
+    {
+        "id": "36",
+        "panorama": "http://localhost:8000/motor/GS__1465.jpg",
+        "name": "GS__1465",
+        "links": [
+            {
+                "nodeId": "35"
+            },
+            {
+                "nodeId": "37"
+            }
+        ],
+        "gps": [
+            "59.5175319",
+            "36.33733738888889",
+            1041.83
+        ],
+        "sphereCorrection": {
+            "pan": "-96deg"
+        }
+    },
+    {
+        "id": "37",
+        "panorama": "http://localhost:8000/motor/GS__1466.jpg",
+        "name": "GS__1466",
+        "links": [
+            {
+                "nodeId": "36"
+            },
+            {
+                "nodeId": "38"
+            }
+        ],
+        "gps": [
+            "59.5176727",
+            "36.33731319444445",
+            1041.86
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "38",
+        "panorama": "http://localhost:8000/motor/GS__1467.jpg",
+        "name": "GS__1467",
+        "links": [
+            {
+                "nodeId": "37"
+            },
+            {
+                "nodeId": "39"
+            }
+        ],
+        "gps": [
+            "59.5177695",
+            "36.337288694444446",
+            1042.16
+        ],
+        "sphereCorrection": {
+            "pan": "-107deg"
+        }
+    },
+    {
+        "id": "39",
+        "panorama": "http://localhost:8000/motor/GS__1468.jpg",
+        "name": "GS__1468",
+        "links": [
+            {
+                "nodeId": "38"
+            },
+            {
+                "nodeId": "40"
+            }
+        ],
+        "gps": [
+            "59.5178644",
+            "36.33726330555556",
+            1042.59
+        ],
+        "sphereCorrection": {
+            "pan": "-108deg"
+        }
+    },
+    {
+        "id": "40",
+        "panorama": "http://localhost:8000/motor/GS__1469.jpg",
+        "name": "GS__1469",
+        "links": [
+            {
+                "nodeId": "39"
+            },
+            {
+                "nodeId": "41"
+            }
+        ],
+        "gps": [
+            "59.5179752",
+            "36.33723988888889",
+            1042.53
+        ],
+        "sphereCorrection": {
+            "pan": "-105deg"
+        }
+    },
+    {
+        "id": "41",
+        "panorama": "http://localhost:8000/motor/GS__1470.jpg",
+        "name": "GS__1470",
+        "links": [
+            {
+                "nodeId": "40"
+            },
+            {
+                "nodeId": "42"
+            }
+        ],
+        "gps": [
+            "59.5180854",
+            "36.33721519444445",
+            1042.59
+        ],
+        "sphereCorrection": {
+            "pan": "-106deg"
+        }
+    },
+    {
+        "id": "42",
+        "panorama": "http://localhost:8000/motor/GS__1471.jpg",
+        "name": "GS__1471",
+        "links": [
+            {
+                "nodeId": "41"
+            },
+            {
+                "nodeId": "43"
+            }
+        ],
+        "gps": [
+            "59.5181756",
+            "36.337200305555555",
+            1042.32
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "43",
+        "panorama": "http://localhost:8000/motor/GS__1472.jpg",
+        "name": "GS__1472",
+        "links": [
+            {
+                "nodeId": "42"
+            },
+            {
+                "nodeId": "44"
+            }
+        ],
+        "gps": [
+            "59.5182537",
+            "36.33719038888889",
+            1041.97
+        ],
+        "sphereCorrection": {
+            "pan": "-99deg"
+        }
+    },
+    {
+        "id": "44",
+        "panorama": "http://localhost:8000/motor/GS__1473.jpg",
+        "name": "GS__1473",
+        "links": [
+            {
+                "nodeId": "43"
+            },
+            {
+                "nodeId": "45"
+            },
+            {
+                "nodeId": "340"
+            }
+        ],
+        "gps": [
+            "59.5183983",
+            "36.33716638888889",
+            1041.54
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "45",
+        "panorama": "http://localhost:8000/motor/GS__1474.jpg",
+        "name": "GS__1474",
+        "links": [
+            {
+                "nodeId": "44"
+            },
+            {
+                "nodeId": "46"
+            }
+        ],
+        "gps": [
+            "59.518529",
+            "36.3371395",
+            1041.38
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "46",
+        "panorama": "http://localhost:8000/motor/GS__1475.jpg",
+        "name": "GS__1475",
+        "links": [
+            {
+                "nodeId": "45"
+            },
+            {
+                "nodeId": "47"
+            }
+        ],
+        "gps": [
+            "59.5186444",
+            "36.33711669444445",
+            1040.98
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "47",
+        "panorama": "http://localhost:8000/motor/GS__1476.jpg",
+        "name": "GS__1476",
+        "links": [
+            {
+                "nodeId": "46"
+            },
+            {
+                "nodeId": "48"
+            }
+        ],
+        "gps": [
+            "59.5187676",
+            "36.3370915",
+            1041.0
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "48",
+        "panorama": "http://localhost:8000/motor/GS__1477.jpg",
+        "name": "GS__1477",
+        "links": [
+            {
+                "nodeId": "47"
+            },
+            {
+                "nodeId": "49"
+            }
+        ],
+        "gps": [
+            "59.5188893",
+            "36.33707119444445",
+            1040.81
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "49",
+        "panorama": "http://localhost:8000/motor/GS__1478.jpg",
+        "name": "GS__1478",
+        "links": [
+            {
+                "nodeId": "48"
+            },
+            {
+                "nodeId": "50"
+            }
+        ],
+        "gps": [
+            "59.5190078",
+            "36.337050500000004",
+            1040.38
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "50",
+        "panorama": "http://localhost:8000/motor/GS__1479.jpg",
+        "name": "GS__1479",
+        "links": [
+            {
+                "nodeId": "49"
+            },
+            {
+                "nodeId": "51"
+            }
+        ],
+        "gps": [
+            "59.519123199999996",
+            "36.337031305555556",
+            1040.12
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "51",
+        "panorama": "http://localhost:8000/motor/GS__1480.jpg",
+        "name": "GS__1480",
+        "links": [
+            {
+                "nodeId": "50"
+            },
+            {
+                "nodeId": "52"
+            }
+        ],
+        "gps": [
+            "59.5192431",
+            "36.337010194444446",
+            1039.9
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "52",
+        "panorama": "http://localhost:8000/motor/GS__1481.jpg",
+        "name": "GS__1481",
+        "links": [
+            {
+                "nodeId": "51"
+            },
+            {
+                "nodeId": "53"
+            }
+        ],
+        "gps": [
+            "59.5193547",
+            "36.336993694444445",
+            1039.73
+        ],
+        "sphereCorrection": {
+            "pan": "-100deg"
+        }
+    },
+    {
+        "id": "53",
+        "panorama": "http://localhost:8000/motor/GS__1482.jpg",
+        "name": "GS__1482",
+        "links": [
+            {
+                "nodeId": "52"
+            },
+            {
+                "nodeId": "54"
+            }
+        ],
+        "gps": [
+            "59.51945061111111",
+            "36.33697461111112",
+            1039.72
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "54",
+        "panorama": "http://localhost:8000/motor/GS__1483.jpg",
+        "name": "GS__1483",
+        "links": [
+            {
+                "nodeId": "53"
+            },
+            {
+                "nodeId": "55"
+            }
+        ],
+        "gps": [
+            "59.51959519444444",
+            "36.336947611111114",
+            1039.62
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "55",
+        "panorama": "http://localhost:8000/motor/GS__1484.jpg",
+        "name": "GS__1484",
+        "links": [
+            {
+                "nodeId": "54"
+            },
+            {
+                "nodeId": "56"
+            }
+        ],
+        "gps": [
+            "59.51975711111111",
+            "36.3369215",
+            1039.41
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "56",
+        "panorama": "http://localhost:8000/motor/GS__1485.jpg",
+        "name": "GS__1485",
+        "links": [
+            {
+                "nodeId": "55"
+            },
+            {
+                "nodeId": "57"
+            }
+        ],
+        "gps": [
+            "59.51987",
+            "36.33690030555556",
+            1039.09
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "57",
+        "panorama": "http://localhost:8000/motor/GS__1486.jpg",
+        "name": "GS__1486",
+        "links": [
+            {
+                "nodeId": "56"
+            },
+            {
+                "nodeId": "58"
+            }
+        ],
+        "gps": [
+            "59.51996738888889",
+            "36.336882",
+            1038.93
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "58",
+        "panorama": "http://localhost:8000/motor/GS__1487.jpg",
+        "name": "GS__1487",
+        "links": [
+            {
+                "nodeId": "57"
+            },
+            {
+                "nodeId": "59"
+            }
+        ],
+        "gps": [
+            "59.52006869444445",
+            "36.336884500000004",
+            1038.76
+        ],
+        "sphereCorrection": {
+            "pan": "-88deg"
+        }
+    },
+    {
+        "id": "59",
+        "panorama": "http://localhost:8000/motor/GS__1488.jpg",
+        "name": "GS__1488",
+        "links": [
+            {
+                "nodeId": "58"
+            },
+            {
+                "nodeId": "60"
+            }
+        ],
+        "gps": [
+            "59.52013930555555",
+            "36.3369355",
+            1038.95
+        ],
+        "sphereCorrection": {
+            "pan": "-48deg"
+        }
+    },
+    {
+        "id": "60",
+        "panorama": "http://localhost:8000/motor/GS__1489.jpg",
+        "name": "GS__1489",
+        "links": [
+            {
+                "nodeId": "59"
+            },
+            {
+                "nodeId": "61"
+            }
+        ],
+        "gps": [
+            "59.52016911111111",
+            "36.33701061111111",
+            1039.5
+        ],
+        "sphereCorrection": {
+            "pan": "-18deg"
+        }
+    },
+    {
+        "id": "61",
+        "panorama": "http://localhost:8000/motor/GS__1490.jpg",
+        "name": "GS__1490",
+        "links": [
+            {
+                "nodeId": "60"
+            },
+            {
+                "nodeId": "62"
+            }
+        ],
+        "gps": [
+            "59.52020511111111",
+            "36.33712811111111",
+            1039.66
+        ],
+        "sphereCorrection": {
+            "pan": "-14deg"
+        }
+    },
+    {
+        "id": "62",
+        "panorama": "http://localhost:8000/motor/GS__1491.jpg",
+        "name": "GS__1491",
+        "links": [
+            {
+                "nodeId": "61"
+            },
+            {
+                "nodeId": "63"
+            }
+        ],
+        "gps": [
+            "59.520230805555556",
+            "36.337216805555556",
+            1039.67
+        ],
+        "sphereCorrection": {
+            "pan": "-13deg"
+        }
+    },
+    {
+        "id": "63",
+        "panorama": "http://localhost:8000/motor/GS__1492.jpg",
+        "name": "GS__1492",
+        "links": [
+            {
+                "nodeId": "62"
+            },
+            {
+                "nodeId": "64"
+            }
+        ],
+        "gps": [
+            "59.52025388888889",
+            "36.33729588888889",
+            1039.95
+        ],
+        "sphereCorrection": {
+            "pan": "-13deg"
+        }
+    },
+    {
+        "id": "64",
+        "panorama": "http://localhost:8000/motor/GS__1493.jpg",
+        "name": "GS__1493",
+        "links": [
+            {
+                "nodeId": "63"
+            },
+            {
+                "nodeId": "65"
+            }
+        ],
+        "gps": [
+            "59.520277694444445",
+            "36.33738080555556",
+            1041.05
+        ],
+        "sphereCorrection": {
+            "pan": "-13deg"
+        }
+    },
+    {
+        "id": "65",
+        "panorama": "http://localhost:8000/motor/GS__1494.jpg",
+        "name": "GS__1494",
+        "links": [
+            {
+                "nodeId": "64"
+            },
+            {
+                "nodeId": "66"
+            },
+            {
+                "nodeId": "193"
+            },
+            {
+                "nodeId": "194"
+            }
+        ],
+        "gps": [
+            "59.520303999999996",
+            "36.33747638888889",
+            1041.26
+        ],
+        "sphereCorrection": {
+            "pan": "-12deg"
+        }
+    },
+    {
+        "id": "66",
+        "panorama": "http://localhost:8000/motor/GS__1495.jpg",
+        "name": "GS__1495",
+        "links": [
+            {
+                "nodeId": "65"
+            },
+            {
+                "nodeId": "67"
+            }
+        ],
+        "gps": [
+            "59.52033080555555",
+            "36.337567500000006",
+            1041.67
+        ],
+        "sphereCorrection": {
+            "pan": "-13deg"
+        }
+    },
+    {
+        "id": "67",
+        "panorama": "http://localhost:8000/motor/GS__1496.jpg",
+        "name": "GS__1496",
+        "links": [
+            {
+                "nodeId": "66"
+            },
+            {
+                "nodeId": "68"
+            }
+        ],
+        "gps": [
+            "59.520361305555554",
+            "36.33766338888889",
+            1043.77
+        ],
+        "sphereCorrection": {
+            "pan": "-14deg"
+        }
+    },
+    {
+        "id": "68",
+        "panorama": "http://localhost:8000/motor/GS__1497.jpg",
+        "name": "GS__1497",
+        "links": [
+            {
+                "nodeId": "67"
+            },
+            {
+                "nodeId": "69"
+            }
+        ],
+        "gps": [
+            "59.52038361111111",
+            "36.33777011111111",
+            1044.26
+        ],
+        "sphereCorrection": {
+            "pan": "-10deg"
+        }
+    },
+    {
+        "id": "69",
+        "panorama": "http://localhost:8000/motor/GS__1498.jpg",
+        "name": "GS__1498",
+        "links": [
+            {
+                "nodeId": "68"
+            },
+            {
+                "nodeId": "70"
+            }
+        ],
+        "gps": [
+            "59.52040380555555",
+            "36.3378685",
+            1043.96
+        ],
+        "sphereCorrection": {
+            "pan": "-9deg"
+        }
+    },
+    {
+        "id": "70",
+        "panorama": "http://localhost:8000/motor/GS__1499.jpg",
+        "name": "GS__1499",
+        "links": [
+            {
+                "nodeId": "69"
+            },
+            {
+                "nodeId": "71"
+            }
+        ],
+        "gps": [
+            "59.52042888888889",
+            "36.337953500000005",
+            1044.0
+        ],
+        "sphereCorrection": {
+            "pan": "-13deg"
+        }
+    },
+    {
+        "id": "71",
+        "panorama": "http://localhost:8000/motor/GS__1500.jpg",
+        "name": "GS__1500",
+        "links": [
+            {
+                "nodeId": "70"
+            },
+            {
+                "nodeId": "72"
+            }
+        ],
+        "gps": [
+            "59.52044738888889",
+            "36.33802819444445",
+            1044.02
+        ],
+        "sphereCorrection": {
+            "pan": "-11deg"
+        }
+    },
+    {
+        "id": "72",
+        "panorama": "http://localhost:8000/motor/GS__1501.jpg",
+        "name": "GS__1501",
+        "links": [
+            {
+                "nodeId": "71"
+            },
+            {
+                "nodeId": "73"
+            },
+            {
+                "nodeId": "204"
+            }
+        ],
+        "gps": [
+            "59.520470805555554",
+            "36.33811580555556",
+            1043.47
+        ],
+        "sphereCorrection": {
+            "pan": "-12deg"
+        }
+    },
+    {
+        "id": "73",
+        "panorama": "http://localhost:8000/motor/GS__1502.jpg",
+        "name": "GS__1502",
+        "links": [
+            {
+                "nodeId": "72"
+            },
+            {
+                "nodeId": "74"
+            }
+        ],
+        "gps": [
+            "59.52049519444444",
+            "36.33819311111111",
+            1043.24
+        ],
+        "sphereCorrection": {
+            "pan": "-14deg"
+        }
+    },
+    {
+        "id": "74",
+        "panorama": "http://localhost:8000/motor/GS__1503.jpg",
+        "name": "GS__1503",
+        "links": [
+            {
+                "nodeId": "73"
+            },
+            {
+                "nodeId": "75"
+            }
+        ],
+        "gps": [
+            "59.520519888888884",
+            "36.338277805555556",
+            1044.72
+        ],
+        "sphereCorrection": {
+            "pan": "-13deg"
+        }
+    },
+    {
+        "id": "75",
+        "panorama": "http://localhost:8000/motor/GS__1504.jpg",
+        "name": "GS__1504",
+        "links": [
+            {
+                "nodeId": "74"
+            },
+            {
+                "nodeId": "76"
+            }
+        ],
+        "gps": [
+            "59.52055080555555",
+            "36.33836030555556",
+            1045.84
+        ],
+        "sphereCorrection": {
+            "pan": "-17deg"
+        }
+    },
+    {
+        "id": "76",
+        "panorama": "http://localhost:8000/motor/GS__1505.jpg",
+        "name": "GS__1505",
+        "links": [
+            {
+                "nodeId": "75"
+            },
+            {
+                "nodeId": "77"
+            }
+        ],
+        "gps": [
+            "59.52058",
+            "36.3384695",
+            1046.24
+        ],
+        "sphereCorrection": {
+            "pan": "-12deg"
+        }
+    },
+    {
+        "id": "77",
+        "panorama": "http://localhost:8000/motor/GS__1506.jpg",
+        "name": "GS__1506",
+        "links": [
+            {
+                "nodeId": "76"
+            },
+            {
+                "nodeId": "78"
+            }
+        ],
+        "gps": [
+            "59.52060438888889",
+            "36.338545805555555",
+            1046.29
+        ],
+        "sphereCorrection": {
+            "pan": "-14deg"
+        }
+    },
+    {
+        "id": "78",
+        "panorama": "http://localhost:8000/motor/GS__1507.jpg",
+        "name": "GS__1507",
+        "links": [
+            {
+                "nodeId": "77"
+            },
+            {
+                "nodeId": "79"
+            },
+            {
+                "nodeId": "303"
+            }
+        ],
+        "gps": [
+            "59.520634305555554",
+            "36.33865638888889",
+            1044.75
+        ],
+        "sphereCorrection": {
+            "pan": "-12deg"
+        }
+    },
+    {
+        "id": "79",
+        "panorama": "http://localhost:8000/motor/GS__1508.jpg",
+        "name": "GS__1508",
+        "links": [
+            {
+                "nodeId": "78"
+            },
+            {
+                "nodeId": "80"
+            },
+            {
+                "nodeId": "303"
+            }
+        ],
+        "gps": [
+            "59.52065161111111",
+            "36.33873311111111",
+            1043.58
+        ],
+        "sphereCorrection": {
+            "pan": "-10deg"
+        }
+    },
+    {
+        "id": "80",
+        "panorama": "http://localhost:8000/motor/GS__1509.jpg",
+        "name": "GS__1509",
+        "links": [
+            {
+                "nodeId": "79"
+            },
+            {
+                "nodeId": "81"
+            }
+        ],
+        "gps": [
+            "59.52067411111111",
+            "36.338824305555555",
+            1043.32
+        ],
+        "sphereCorrection": {
+            "pan": "-11deg"
+        }
+    },
+    {
+        "id": "81",
+        "panorama": "http://localhost:8000/motor/GS__1510.jpg",
+        "name": "GS__1510",
+        "links": [
+            {
+                "nodeId": "80"
+            },
+            {
+                "nodeId": "82"
+            }
+        ],
+        "gps": [
+            "59.52070719444444",
+            "36.33893561111111",
+            1043.77
+        ],
+        "sphereCorrection": {
+            "pan": "-13deg"
+        }
+    },
+    {
+        "id": "82",
+        "panorama": "http://localhost:8000/motor/GS__1511.jpg",
+        "name": "GS__1511",
+        "links": [
+            {
+                "nodeId": "81"
+            },
+            {
+                "nodeId": "83"
+            }
+        ],
+        "gps": [
+            "59.52073838888889",
+            "36.33904830555556",
+            1043.37
+        ],
+        "sphereCorrection": {
+            "pan": "-13deg"
+        }
+    },
+    {
+        "id": "83",
+        "panorama": "http://localhost:8000/motor/GS__1512.jpg",
+        "name": "GS__1512",
+        "links": [
+            {
+                "nodeId": "82"
+            },
+            {
+                "nodeId": "84"
+            }
+        ],
+        "gps": [
+            "59.520764388888885",
+            "36.33914738888889",
+            1044.77
+        ],
+        "sphereCorrection": {
+            "pan": "-12deg"
+        }
+    },
+    {
+        "id": "84",
+        "panorama": "http://localhost:8000/motor/GS__1513.jpg",
+        "name": "GS__1513",
+        "links": [
+            {
+                "nodeId": "83"
+            },
+            {
+                "nodeId": "85"
+            }
+        ],
+        "gps": [
+            "59.520785805555555",
+            "36.33922619444445",
+            1044.35
+        ],
+        "sphereCorrection": {
+            "pan": "-12deg"
+        }
+    },
+    {
+        "id": "85",
+        "panorama": "http://localhost:8000/motor/GS__1514.jpg",
+        "name": "GS__1514",
+        "links": [
+            {
+                "nodeId": "84"
+            },
+            {
+                "nodeId": "86"
+            }
+        ],
+        "gps": [
+            "59.52075280555555",
+            "36.33929838888889",
+            1043.69
+        ],
+        "sphereCorrection": {
+            "pan": "20deg"
+        }
+    },
+    {
+        "id": "86",
+        "panorama": "http://localhost:8000/motor/GS__1515.jpg",
+        "name": "GS__1515",
+        "links": [
+            {
+                "nodeId": "85"
+            },
+            {
+                "nodeId": "87"
+            }
+        ],
+        "gps": [
+            "59.5206885",
+            "36.339333805555555",
+            1042.25
+        ],
+        "sphereCorrection": {
+            "pan": "56deg"
+        }
+    },
+    {
+        "id": "87",
+        "panorama": "http://localhost:8000/motor/GS__1516.jpg",
+        "name": "GS__1516",
+        "links": [
+            {
+                "nodeId": "86"
+            },
+            {
+                "nodeId": "88"
+            }
+        ],
+        "gps": [
+            "59.520576194444445",
+            "36.33935319444445",
+            1041.75
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "88",
+        "panorama": "http://localhost:8000/motor/GS__1517.jpg",
+        "name": "GS__1517",
+        "links": [
+            {
+                "nodeId": "87"
+            },
+            {
+                "nodeId": "89"
+            }
+        ],
+        "gps": [
+            "59.520451888888886",
+            "36.339374694444444",
+            1041.24
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "89",
+        "panorama": "http://localhost:8000/motor/GS__1518.jpg",
+        "name": "GS__1518",
+        "links": [
+            {
+                "nodeId": "88"
+            },
+            {
+                "nodeId": "90"
+            }
+        ],
+        "gps": [
+            "59.52030161111111",
+            "36.33939938888889",
+            1041.18
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "90",
+        "panorama": "http://localhost:8000/motor/GS__1519.jpg",
+        "name": "GS__1519",
+        "links": [
+            {
+                "nodeId": "89"
+            },
+            {
+                "nodeId": "91"
+            }
+        ],
+        "gps": [
+            "59.52019138888889",
+            "36.339426305555556",
+            1041.01
+        ],
+        "sphereCorrection": {
+            "pan": "73deg"
+        }
+    },
+    {
+        "id": "91",
+        "panorama": "http://localhost:8000/motor/GS__1520.jpg",
+        "name": "GS__1520",
+        "links": [
+            {
+                "nodeId": "90"
+            },
+            {
+                "nodeId": "92"
+            }
+        ],
+        "gps": [
+            "59.5200725",
+            "36.33946688888889",
+            1040.64
+        ],
+        "sphereCorrection": {
+            "pan": "67deg"
+        }
+    },
+    {
+        "id": "92",
+        "panorama": "http://localhost:8000/motor/GS__1521.jpg",
+        "name": "GS__1521",
+        "links": [
+            {
+                "nodeId": "91"
+            },
+            {
+                "nodeId": "93"
+            }
+        ],
+        "gps": [
+            "59.51996719444444",
+            "36.33949761111111",
+            1040.35
+        ],
+        "sphereCorrection": {
+            "pan": "70deg"
+        }
+    },
+    {
+        "id": "93",
+        "panorama": "http://localhost:8000/motor/GS__1522.jpg",
+        "name": "GS__1522",
+        "links": [
+            {
+                "nodeId": "92"
+            },
+            {
+                "nodeId": "94"
+            }
+        ],
+        "gps": [
+            "59.51983888888889",
+            "36.33952380555556",
+            1040.47
+        ],
+        "sphereCorrection": {
+            "pan": "76deg"
+        }
+    },
+    {
+        "id": "94",
+        "panorama": "http://localhost:8000/motor/GS__1523.jpg",
+        "name": "GS__1523",
+        "links": [
+            {
+                "nodeId": "93"
+            },
+            {
+                "nodeId": "95"
+            }
+        ],
+        "gps": [
+            "59.519711",
+            "36.33955138888889",
+            1040.12
+        ],
+        "sphereCorrection": {
+            "pan": "75deg"
+        }
+    },
+    {
+        "id": "95",
+        "panorama": "http://localhost:8000/motor/GS__1524.jpg",
+        "name": "GS__1524",
+        "links": [
+            {
+                "nodeId": "94"
+            },
+            {
+                "nodeId": "96"
+            }
+        ],
+        "gps": [
+            "59.51960361111111",
+            "36.339567888888894",
+            1040.43
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "96",
+        "panorama": "http://localhost:8000/motor/GS__1525.jpg",
+        "name": "GS__1525",
+        "links": [
+            {
+                "nodeId": "95"
+            },
+            {
+                "nodeId": "97"
+            }
+        ],
+        "gps": [
+            "59.519470999999996",
+            "36.339591694444444",
+            1040.37
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "97",
+        "panorama": "http://localhost:8000/motor/GS__1526.jpg",
+        "name": "GS__1526",
+        "links": [
+            {
+                "nodeId": "96"
+            },
+            {
+                "nodeId": "98"
+            }
+        ],
+        "gps": [
+            "59.5193444",
+            "36.33961188888889",
+            1040.47
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "98",
+        "panorama": "http://localhost:8000/motor/GS__1527.jpg",
+        "name": "GS__1527",
+        "links": [
+            {
+                "nodeId": "97"
+            },
+            {
+                "nodeId": "99"
+            }
+        ],
+        "gps": [
+            "59.519235099999996",
+            "36.33962680555556",
+            1040.47
+        ],
+        "sphereCorrection": {
+            "pan": "80deg"
+        }
+    },
+    {
+        "id": "99",
+        "panorama": "http://localhost:8000/motor/GS__1528.jpg",
+        "name": "GS__1528",
+        "links": [
+            {
+                "nodeId": "98"
+            },
+            {
+                "nodeId": "100"
+            },
+            {
+                "nodeId": "317"
+            },
+            {
+                "nodeId": "318"
+            }
+        ],
+        "gps": [
+            "59.5191059",
+            "36.33965080555556",
+            1040.46
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "100",
+        "panorama": "http://localhost:8000/motor/GS__1529.jpg",
+        "name": "GS__1529",
+        "links": [
+            {
+                "nodeId": "99"
+            },
+            {
+                "nodeId": "101"
+            },
+            {
+                "nodeId": "317"
+            }
+        ],
+        "gps": [
+            "59.5189975",
+            "36.33969561111111",
+            1038.76
+        ],
+        "sphereCorrection": {
+            "pan": "63deg"
+        }
+    },
+    {
+        "id": "101",
+        "panorama": "http://localhost:8000/motor/GS__1530.jpg",
+        "name": "GS__1530",
+        "links": [
+            {
+                "nodeId": "100"
+            },
+            {
+                "nodeId": "102"
+            }
+        ],
+        "gps": [
+            "59.5188574",
+            "36.3397165",
+            1039.13
+        ],
+        "sphereCorrection": {
+            "pan": "80deg"
+        }
+    },
+    {
+        "id": "102",
+        "panorama": "http://localhost:8000/motor/GS__1531.jpg",
+        "name": "GS__1531",
+        "links": [
+            {
+                "nodeId": "101"
+            },
+            {
+                "nodeId": "103"
+            }
+        ],
+        "gps": [
+            "59.5187306",
+            "36.33973319444445",
+            1039.41
+        ],
+        "sphereCorrection": {
+            "pan": "81deg"
+        }
+    },
+    {
+        "id": "103",
+        "panorama": "http://localhost:8000/motor/GS__1532.jpg",
+        "name": "GS__1532",
+        "links": [
+            {
+                "nodeId": "102"
+            },
+            {
+                "nodeId": "104"
+            }
+        ],
+        "gps": [
+            "59.5186196",
+            "36.33975369444445",
+            1039.46
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "104",
+        "panorama": "http://localhost:8000/motor/GS__1533.jpg",
+        "name": "GS__1533",
+        "links": [
+            {
+                "nodeId": "103"
+            },
+            {
+                "nodeId": "105"
+            }
+        ],
+        "gps": [
+            "59.5184948",
+            "36.33977030555556",
+            1039.62
+        ],
+        "sphereCorrection": {
+            "pan": "81deg"
+        }
+    },
+    {
+        "id": "105",
+        "panorama": "http://localhost:8000/motor/GS__1534.jpg",
+        "name": "GS__1534",
+        "links": [
+            {
+                "nodeId": "104"
+            },
+            {
+                "nodeId": "106"
+            }
+        ],
+        "gps": [
+            "59.5183572",
+            "36.33979088888889",
+            1039.83
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "106",
+        "panorama": "http://localhost:8000/motor/GS__1535.jpg",
+        "name": "GS__1535",
+        "links": [
+            {
+                "nodeId": "105"
+            },
+            {
+                "nodeId": "107"
+            }
+        ],
+        "gps": [
+            "59.518216699999996",
+            "36.33981819444445",
+            1040.09
+        ],
+        "sphereCorrection": {
+            "pan": "76deg"
+        }
+    },
+    {
+        "id": "107",
+        "panorama": "http://localhost:8000/motor/GS__1536.jpg",
+        "name": "GS__1536",
+        "links": [
+            {
+                "nodeId": "106"
+            },
+            {
+                "nodeId": "108"
+            }
+        ],
+        "gps": [
+            "59.5180934",
+            "36.33983861111111",
+            1040.39
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "108",
+        "panorama": "http://localhost:8000/motor/GS__1537.jpg",
+        "name": "GS__1537",
+        "links": [
+            {
+                "nodeId": "107"
+            },
+            {
+                "nodeId": "109"
+            }
+        ],
+        "gps": [
+            "59.5179402",
+            "36.33986238888889",
+            1040.35
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "109",
+        "panorama": "http://localhost:8000/motor/GS__1538.jpg",
+        "name": "GS__1538",
+        "links": [
+            {
+                "nodeId": "108"
+            },
+            {
+                "nodeId": "110"
+            }
+        ],
+        "gps": [
+            "59.5178067",
+            "36.33988488888889",
+            1040.54
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "110",
+        "panorama": "http://localhost:8000/motor/GS__1539.jpg",
+        "name": "GS__1539",
+        "links": [
+            {
+                "nodeId": "109"
+            },
+            {
+                "nodeId": "111"
+            }
+        ],
+        "gps": [
+            "59.517688299999996",
+            "36.33990530555556",
+            1040.71
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "111",
+        "panorama": "http://localhost:8000/motor/GS__1540.jpg",
+        "name": "GS__1540",
+        "links": [
+            {
+                "nodeId": "110"
+            },
+            {
+                "nodeId": "112"
+            }
+        ],
+        "gps": [
+            "59.5175806",
+            "36.33992388888889",
+            1041.02
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "112",
+        "panorama": "http://localhost:8000/motor/GS__1541.jpg",
+        "name": "GS__1541",
+        "links": [
+            {
+                "nodeId": "111"
+            },
+            {
+                "nodeId": "113"
+            }
+        ],
+        "gps": [
+            "59.5174552",
+            "36.33994719444445",
+            1041.14
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "113",
+        "panorama": "http://localhost:8000/motor/GS__1542.jpg",
+        "name": "GS__1542",
+        "links": [
+            {
+                "nodeId": "112"
+            },
+            {
+                "nodeId": "114"
+            }
+        ],
+        "gps": [
+            "59.517339",
+            "36.33998130555556",
+            1041.14
+        ],
+        "sphereCorrection": {
+            "pan": "70deg"
+        }
+    },
+    {
+        "id": "114",
+        "panorama": "http://localhost:8000/motor/GS__1543.jpg",
+        "name": "GS__1543",
+        "links": [
+            {
+                "nodeId": "113"
+            },
+            {
+                "nodeId": "115"
+            }
+        ],
+        "gps": [
+            "59.5172221",
+            "36.340009305555554",
+            1041.23
+        ],
+        "sphereCorrection": {
+            "pan": "73deg"
+        }
+    },
+    {
+        "id": "115",
+        "panorama": "http://localhost:8000/motor/GS__1544.jpg",
+        "name": "GS__1544",
+        "links": [
+            {
+                "nodeId": "114"
+            },
+            {
+                "nodeId": "116"
+            }
+        ],
+        "gps": [
+            "59.5171212",
+            "36.340029111111114",
+            1041.61
+        ],
+        "sphereCorrection": {
+            "pan": "76deg"
+        }
+    },
+    {
+        "id": "116",
+        "panorama": "http://localhost:8000/motor/GS__1545.jpg",
+        "name": "GS__1545",
+        "links": [
+            {
+                "nodeId": "115"
+            },
+            {
+                "nodeId": "117"
+            }
+        ],
+        "gps": [
+            "59.5169856",
+            "36.34005338888889",
+            1041.88
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "117",
+        "panorama": "http://localhost:8000/motor/GS__1546.jpg",
+        "name": "GS__1546",
+        "links": [
+            {
+                "nodeId": "116"
+            },
+            {
+                "nodeId": "118"
+            }
+        ],
+        "gps": [
+            "59.5168594",
+            "36.340072",
+            1042.06
+        ],
+        "sphereCorrection": {
+            "pan": "80deg"
+        }
+    },
+    {
+        "id": "118",
+        "panorama": "http://localhost:8000/motor/GS__1547.jpg",
+        "name": "GS__1547",
+        "links": [
+            {
+                "nodeId": "117"
+            },
+            {
+                "nodeId": "119"
+            }
+        ],
+        "gps": [
+            "59.5167296",
+            "36.340089194444445",
+            1042.42
+        ],
+        "sphereCorrection": {
+            "pan": "81deg"
+        }
+    },
+    {
+        "id": "119",
+        "panorama": "http://localhost:8000/motor/GS__1548.jpg",
+        "name": "GS__1548",
+        "links": [
+            {
+                "nodeId": "118"
+            },
+            {
+                "nodeId": "120"
+            }
+        ],
+        "gps": [
+            "59.51660230555556",
+            "36.34010880555556",
+            1042.94
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "120",
+        "panorama": "http://localhost:8000/motor/GS__1549.jpg",
+        "name": "GS__1549",
+        "links": [
+            {
+                "nodeId": "119"
+            },
+            {
+                "nodeId": "121"
+            }
+        ],
+        "gps": [
+            "59.51643111111111",
+            "36.340134500000005",
+            1043.51
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "121",
+        "panorama": "http://localhost:8000/motor/GS__1550.jpg",
+        "name": "GS__1550",
+        "links": [
+            {
+                "nodeId": "120"
+            },
+            {
+                "nodeId": "122"
+            }
+        ],
+        "gps": [
+            "59.51627738888889",
+            "36.340155611111115",
+            1043.98
+        ],
+        "sphereCorrection": {
+            "pan": "80deg"
+        }
+    },
+    {
+        "id": "122",
+        "panorama": "http://localhost:8000/motor/GS__1551.jpg",
+        "name": "GS__1551",
+        "links": [
+            {
+                "nodeId": "121"
+            },
+            {
+                "nodeId": "123"
+            }
+        ],
+        "gps": [
+            "59.51614961111111",
+            "36.340182000000006",
+            1044.43
+        ],
+        "sphereCorrection": {
+            "pan": "76deg"
+        }
+    },
+    {
+        "id": "123",
+        "panorama": "http://localhost:8000/motor/GS__1552.jpg",
+        "name": "GS__1552",
+        "links": [
+            {
+                "nodeId": "122"
+            },
+            {
+                "nodeId": "124"
+            }
+        ],
+        "gps": [
+            "59.516036694444445",
+            "36.34020988888889",
+            1044.29
+        ],
+        "sphereCorrection": {
+            "pan": "73deg"
+        }
+    },
+    {
+        "id": "124",
+        "panorama": "http://localhost:8000/motor/GS__1553.jpg",
+        "name": "GS__1553",
+        "links": [
+            {
+                "nodeId": "123"
+            },
+            {
+                "nodeId": "125"
+            }
+        ],
+        "gps": [
+            "59.515865",
+            "36.34024138888889",
+            1044.76
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "125",
+        "panorama": "http://localhost:8000/motor/GS__1554.jpg",
+        "name": "GS__1554",
+        "links": [
+            {
+                "nodeId": "124"
+            },
+            {
+                "nodeId": "126"
+            },
+            {
+                "nodeId": "135"
+            },
+            {
+                "nodeId": "136"
+            },
+            {
+                "nodeId": "377"
+            }
+        ],
+        "gps": [
+            "59.51565538888889",
+            "36.340280500000006",
+            1044.89
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "126",
+        "panorama": "http://localhost:8000/motor/GS__1555.jpg",
+        "name": "GS__1555",
+        "links": [
+            {
+                "nodeId": "125"
+            },
+            {
+                "nodeId": "127"
+            }
+        ],
+        "gps": [
+            "59.51552438888889",
+            "36.3403025",
+            1045.14
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "127",
+        "panorama": "http://localhost:8000/motor/GS__1556.jpg",
+        "name": "GS__1556",
+        "links": [
+            {
+                "nodeId": "126"
+            },
+            {
+                "nodeId": "128"
+            }
+        ],
+        "gps": [
+            "59.51537580555556",
+            "36.34033188888889",
+            1045.37
+        ],
+        "sphereCorrection": {
+            "pan": "76deg"
+        }
+    },
+    {
+        "id": "128",
+        "panorama": "http://localhost:8000/motor/GS__1557.jpg",
+        "name": "GS__1557",
+        "links": [
+            {
+                "nodeId": "127"
+            },
+            {
+                "nodeId": "129"
+            }
+        ],
+        "gps": [
+            "59.515176805555555",
+            "36.34036569444444",
+            1046.07
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "129",
+        "panorama": "http://localhost:8000/motor/GS__1558.jpg",
+        "name": "GS__1558",
+        "links": [
+            {
+                "nodeId": "128"
+            },
+            {
+                "nodeId": "130"
+            }
+        ],
+        "gps": [
+            "59.51501538888889",
+            "36.340393194444445",
+            1046.36
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "130",
+        "panorama": "http://localhost:8000/motor/GS__1559.jpg",
+        "name": "GS__1559",
+        "links": [
+            {
+                "nodeId": "129"
+            },
+            {
+                "nodeId": "131"
+            }
+        ],
+        "gps": [
+            "59.514862",
+            "36.34041838888889",
+            1046.54
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "131",
+        "panorama": "http://localhost:8000/motor/GS__1560.jpg",
+        "name": "GS__1560",
+        "links": [
+            {
+                "nodeId": "130"
+            },
+            {
+                "nodeId": "132"
+            }
+        ],
+        "gps": [
+            "59.51471461111111",
+            "36.3404425",
+            1046.67
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "132",
+        "panorama": "http://localhost:8000/motor/GS__1561.jpg",
+        "name": "GS__1561",
+        "links": [
+            {
+                "nodeId": "131"
+            },
+            {
+                "nodeId": "133"
+            }
+        ],
+        "gps": [
+            "59.51452961111111",
+            "36.340465",
+            1046.76
+        ],
+        "sphereCorrection": {
+            "pan": "81deg"
+        }
+    },
+    {
+        "id": "133",
+        "panorama": "http://localhost:8000/motor/GS__1562.jpg",
+        "name": "GS__1562",
+        "links": [
+            {
+                "nodeId": "132"
+            },
+            {
+                "nodeId": "134"
+            }
+        ],
+        "gps": [
+            "59.5143865",
+            "36.3404875",
+            1047.08
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "134",
+        "panorama": "http://localhost:8000/motor/GS__1563.jpg",
+        "name": "GS__1563",
+        "links": [
+            {
+                "nodeId": "133"
+            },
+            {
+                "nodeId": "135"
+            }
+        ],
+        "gps": [
+            "59.51425588888889",
+            "36.340507111111116",
+            1047.3
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "135",
+        "panorama": "http://localhost:8000/motor/GS__1564.jpg",
+        "name": "GS__1564",
+        "links": [
+            {
+                "nodeId": "134"
+            },
+            {
+                "nodeId": "136"
+            },
+            {
+                "nodeId": "125"
+            },
+            {
+                "nodeId": "137"
+            },
+            {
+                "nodeId": "377"
+            },
+            {
+                "nodeId": "378"
+            }
+        ],
+        "gps": [
+            "59.51562111111111",
+            "36.34021688888889",
+            1045.01
+        ],
+        "sphereCorrection": {
+            "pan": "-105deg"
+        }
+    },
+    {
+        "id": "136",
+        "panorama": "http://localhost:8000/motor/GS__1565.jpg",
+        "name": "GS__1565",
+        "links": [
+            {
+                "nodeId": "135"
+            },
+            {
+                "nodeId": "137"
+            },
+            {
+                "nodeId": "125"
+            },
+            {
+                "nodeId": "377"
+            },
+            {
+                "nodeId": "378"
+            }
+        ],
+        "gps": [
+            "59.515614194444446",
+            "36.34020069444445",
+            1045.55
+        ],
+        "sphereCorrection": {
+            "pan": "161deg"
+        }
+    },
+    {
+        "id": "137",
+        "panorama": "http://localhost:8000/motor/GS__1566.jpg",
+        "name": "GS__1566",
+        "links": [
+            {
+                "nodeId": "136"
+            },
+            {
+                "nodeId": "138"
+            },
+            {
+                "nodeId": "135"
+            },
+            {
+                "nodeId": "377"
+            },
+            {
+                "nodeId": "378"
+            }
+        ],
+        "gps": [
+            "59.51559511111111",
+            "36.340131694444445",
+            1046.1
+        ],
+        "sphereCorrection": {
+            "pan": "167deg"
+        }
+    },
+    {
+        "id": "138",
+        "panorama": "http://localhost:8000/motor/GS__1567.jpg",
+        "name": "GS__1567",
+        "links": [
+            {
+                "nodeId": "137"
+            },
+            {
+                "nodeId": "139"
+            },
+            {
+                "nodeId": "379"
+            }
+        ],
+        "gps": [
+            "59.515567",
+            "36.34001888888889",
+            1046.79
+        ],
+        "sphereCorrection": {
+            "pan": "169deg"
+        }
+    },
+    {
+        "id": "139",
+        "panorama": "http://localhost:8000/motor/GS__1568.jpg",
+        "name": "GS__1568",
+        "links": [
+            {
+                "nodeId": "138"
+            },
+            {
+                "nodeId": "140"
+            },
+            {
+                "nodeId": "380"
+            }
+        ],
+        "gps": [
+            "59.515540305555554",
+            "36.339922",
+            1047.62
+        ],
+        "sphereCorrection": {
+            "pan": "167deg"
+        }
+    },
+    {
+        "id": "140",
+        "panorama": "http://localhost:8000/motor/GS__1569.jpg",
+        "name": "GS__1569",
+        "links": [
+            {
+                "nodeId": "139"
+            },
+            {
+                "nodeId": "141"
+            },
+            {
+                "nodeId": "380"
+            },
+            {
+                "nodeId": "381"
+            }
+        ],
+        "gps": [
+            "59.515513194444445",
+            "36.33982288888889",
+            1048.0
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "141",
+        "panorama": "http://localhost:8000/motor/GS__1570.jpg",
+        "name": "GS__1570",
+        "links": [
+            {
+                "nodeId": "140"
+            },
+            {
+                "nodeId": "142"
+            },
+            {
+                "nodeId": "381"
+            },
+            {
+                "nodeId": "382"
+            }
+        ],
+        "gps": [
+            "59.51549380555556",
+            "36.339753111111115",
+            1048.15
+        ],
+        "sphereCorrection": {
+            "pan": "167deg"
+        }
+    },
+    {
+        "id": "142",
+        "panorama": "http://localhost:8000/motor/GS__1571.jpg",
+        "name": "GS__1571",
+        "links": [
+            {
+                "nodeId": "141"
+            },
+            {
+                "nodeId": "143"
+            },
+            {
+                "nodeId": "268"
+            },
+            {
+                "nodeId": "382"
+            },
+            {
+                "nodeId": "383"
+            }
+        ],
+        "gps": [
+            "59.51547411111111",
+            "36.33967361111112",
+            1047.95
+        ],
+        "sphereCorrection": {
+            "pan": "169deg"
+        }
+    },
+    {
+        "id": "143",
+        "panorama": "http://localhost:8000/motor/GS__1572.jpg",
+        "name": "GS__1572",
+        "links": [
+            {
+                "nodeId": "142"
+            },
+            {
+                "nodeId": "144"
+            },
+            {
+                "nodeId": "268"
+            },
+            {
+                "nodeId": "383"
+            }
+        ],
+        "gps": [
+            "59.51544469444445",
+            "36.33957819444445",
+            1047.92
+        ],
+        "sphereCorrection": {
+            "pan": "166deg"
+        }
+    },
+    {
+        "id": "144",
+        "panorama": "http://localhost:8000/motor/GS__1573.jpg",
+        "name": "GS__1573",
+        "links": [
+            {
+                "nodeId": "143"
+            },
+            {
+                "nodeId": "145"
+            },
+            {
+                "nodeId": "384"
+            }
+        ],
+        "gps": [
+            "59.51541380555555",
+            "36.339461",
+            1048.44
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "145",
+        "panorama": "http://localhost:8000/motor/GS__1574.jpg",
+        "name": "GS__1574",
+        "links": [
+            {
+                "nodeId": "144"
+            },
+            {
+                "nodeId": "146"
+            },
+            {
+                "nodeId": "385"
+            }
+        ],
+        "gps": [
+            "59.5153875",
+            "36.33936080555556",
+            1049.03
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "146",
+        "panorama": "http://localhost:8000/motor/GS__1575.jpg",
+        "name": "GS__1575",
+        "links": [
+            {
+                "nodeId": "145"
+            },
+            {
+                "nodeId": "147"
+            },
+            {
+                "nodeId": "385"
+            },
+            {
+                "nodeId": "386"
+            }
+        ],
+        "gps": [
+            "59.515352388888886",
+            "36.33927030555556",
+            1050.49
+        ],
+        "sphereCorrection": {
+            "pan": "163deg"
+        }
+    },
+    {
+        "id": "147",
+        "panorama": "http://localhost:8000/motor/GS__1576.jpg",
+        "name": "GS__1576",
+        "links": [
+            {
+                "nodeId": "146"
+            },
+            {
+                "nodeId": "148"
+            },
+            {
+                "nodeId": "386"
+            }
+        ],
+        "gps": [
+            "59.5153325",
+            "36.33918580555556",
+            1050.0
+        ],
+        "sphereCorrection": {
+            "pan": "169deg"
+        }
+    },
+    {
+        "id": "148",
+        "panorama": "http://localhost:8000/motor/GS__1577.jpg",
+        "name": "GS__1577",
+        "links": [
+            {
+                "nodeId": "147"
+            },
+            {
+                "nodeId": "149"
+            },
+            {
+                "nodeId": "386"
+            },
+            {
+                "nodeId": "387"
+            }
+        ],
+        "gps": [
+            "59.515312",
+            "36.33911338888889",
+            1050.33
+        ],
+        "sphereCorrection": {
+            "pan": "167deg"
+        }
+    },
+    {
+        "id": "149",
+        "panorama": "http://localhost:8000/motor/GS__1578.jpg",
+        "name": "GS__1578",
+        "links": [
+            {
+                "nodeId": "148"
+            },
+            {
+                "nodeId": "150"
+            },
+            {
+                "nodeId": "240"
+            },
+            {
+                "nodeId": "241"
+            },
+            {
+                "nodeId": "387"
+            },
+            {
+                "nodeId": "388"
+            }
+        ],
+        "gps": [
+            "59.51528588888889",
+            "36.339016",
+            1049.81
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "150",
+        "panorama": "http://localhost:8000/motor/GS__1579.jpg",
+        "name": "GS__1579",
+        "links": [
+            {
+                "nodeId": "149"
+            },
+            {
+                "nodeId": "151"
+            },
+            {
+                "nodeId": "388"
+            }
+        ],
+        "gps": [
+            "59.51525161111111",
+            "36.33891419444445",
+            1050.05
+        ],
+        "sphereCorrection": {
+            "pan": "165deg"
+        }
+    },
+    {
+        "id": "151",
+        "panorama": "http://localhost:8000/motor/GS__1580.jpg",
+        "name": "GS__1580",
+        "links": [
+            {
+                "nodeId": "150"
+            },
+            {
+                "nodeId": "152"
+            },
+            {
+                "nodeId": "389"
+            }
+        ],
+        "gps": [
+            "59.515208888888885",
+            "36.33879969444445",
+            1049.86
+        ],
+        "sphereCorrection": {
+            "pan": "163deg"
+        }
+    },
+    {
+        "id": "152",
+        "panorama": "http://localhost:8000/motor/GS__1581.jpg",
+        "name": "GS__1581",
+        "links": [
+            {
+                "nodeId": "151"
+            },
+            {
+                "nodeId": "153"
+            },
+            {
+                "nodeId": "390"
+            }
+        ],
+        "gps": [
+            "59.515187805555556",
+            "36.338695111111114",
+            1050.63
+        ],
+        "sphereCorrection": {
+            "pan": "171deg"
+        }
+    },
+    {
+        "id": "153",
+        "panorama": "http://localhost:8000/motor/GS__1582.jpg",
+        "name": "GS__1582",
+        "links": [
+            {
+                "nodeId": "152"
+            },
+            {
+                "nodeId": "154"
+            },
+            {
+                "nodeId": "390"
+            },
+            {
+                "nodeId": "391"
+            }
+        ],
+        "gps": [
+            "59.51515861111111",
+            "36.33860819444445",
+            1049.35
+        ],
+        "sphereCorrection": {
+            "pan": "165deg"
+        }
+    },
+    {
+        "id": "154",
+        "panorama": "http://localhost:8000/motor/GS__1583.jpg",
+        "name": "GS__1583",
+        "links": [
+            {
+                "nodeId": "153"
+            },
+            {
+                "nodeId": "155"
+            },
+            {
+                "nodeId": "391"
+            },
+            {
+                "nodeId": "392"
+            }
+        ],
+        "gps": [
+            "59.515139",
+            "36.3385085",
+            1049.11
+        ],
+        "sphereCorrection": {
+            "pan": "171deg"
+        }
+    },
+    {
+        "id": "155",
+        "panorama": "http://localhost:8000/motor/GS__1584.jpg",
+        "name": "GS__1584",
+        "links": [
+            {
+                "nodeId": "154"
+            },
+            {
+                "nodeId": "156"
+            },
+            {
+                "nodeId": "392"
+            }
+        ],
+        "gps": [
+            "59.5152125",
+            "36.338442",
+            1048.47
+        ],
+        "sphereCorrection": {
+            "pan": "-138deg"
+        }
+    },
+    {
+        "id": "156",
+        "panorama": "http://localhost:8000/motor/GS__1585.jpg",
+        "name": "GS__1585",
+        "links": [
+            {
+                "nodeId": "155"
+            },
+            {
+                "nodeId": "157"
+            }
+        ],
+        "gps": [
+            "59.51532311111111",
+            "36.33841480555556",
+            1047.94
+        ],
+        "sphereCorrection": {
+            "pan": "-107deg"
+        }
+    },
+    {
+        "id": "157",
+        "panorama": "http://localhost:8000/motor/GS__1586.jpg",
+        "name": "GS__1586",
+        "links": [
+            {
+                "nodeId": "156"
+            },
+            {
+                "nodeId": "158"
+            }
+        ],
+        "gps": [
+            "59.51548230555556",
+            "36.338384500000004",
+            1047.5
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "158",
+        "panorama": "http://localhost:8000/motor/GS__1587.jpg",
+        "name": "GS__1587",
+        "links": [
+            {
+                "nodeId": "157"
+            },
+            {
+                "nodeId": "159"
+            }
+        ],
+        "gps": [
+            "59.51561788888889",
+            "36.338357305555554",
+            1046.95
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "159",
+        "panorama": "http://localhost:8000/motor/GS__1588.jpg",
+        "name": "GS__1588",
+        "links": [
+            {
+                "nodeId": "158"
+            },
+            {
+                "nodeId": "160"
+            }
+        ],
+        "gps": [
+            "59.51574080555555",
+            "36.33833338888889",
+            1046.4
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "160",
+        "panorama": "http://localhost:8000/motor/GS__1589.jpg",
+        "name": "GS__1589",
+        "links": [
+            {
+                "nodeId": "159"
+            },
+            {
+                "nodeId": "161"
+            }
+        ],
+        "gps": [
+            "59.515883305555555",
+            "36.338307694444445",
+            1046.0
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "161",
+        "panorama": "http://localhost:8000/motor/GS__1590.jpg",
+        "name": "GS__1590",
+        "links": [
+            {
+                "nodeId": "160"
+            },
+            {
+                "nodeId": "162"
+            }
+        ],
+        "gps": [
+            "59.51602119444444",
+            "36.33827880555556",
+            1046.14
+        ],
+        "sphereCorrection": {
+            "pan": "-105deg"
+        }
+    },
+    {
+        "id": "162",
+        "panorama": "http://localhost:8000/motor/GS__1591.jpg",
+        "name": "GS__1591",
+        "links": [
+            {
+                "nodeId": "161"
+            },
+            {
+                "nodeId": "163"
+            }
+        ],
+        "gps": [
+            "59.516165388888886",
+            "36.33825538888889",
+            1045.63
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "163",
+        "panorama": "http://localhost:8000/motor/GS__1592.jpg",
+        "name": "GS__1592",
+        "links": [
+            {
+                "nodeId": "162"
+            },
+            {
+                "nodeId": "164"
+            }
+        ],
+        "gps": [
+            "59.51631311111111",
+            "36.338231111111114",
+            1045.07
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "164",
+        "panorama": "http://localhost:8000/motor/GS__1593.jpg",
+        "name": "GS__1593",
+        "links": [
+            {
+                "nodeId": "163"
+            },
+            {
+                "nodeId": "165"
+            }
+        ],
+        "gps": [
+            "59.51645419444444",
+            "36.338205",
+            1044.73
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "165",
+        "panorama": "http://localhost:8000/motor/GS__1594.jpg",
+        "name": "GS__1594",
+        "links": [
+            {
+                "nodeId": "164"
+            },
+            {
+                "nodeId": "166"
+            }
+        ],
+        "gps": [
+            "59.51658838888889",
+            "36.33817938888889",
+            1044.39
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "166",
+        "panorama": "http://localhost:8000/motor/GS__1595.jpg",
+        "name": "GS__1595",
+        "links": [
+            {
+                "nodeId": "165"
+            },
+            {
+                "nodeId": "167"
+            }
+        ],
+        "gps": [
+            "59.5167169",
+            "36.3381435",
+            1044.92
+        ],
+        "sphereCorrection": {
+            "pan": "-109deg"
+        }
+    },
+    {
+        "id": "167",
+        "panorama": "http://localhost:8000/motor/GS__1596.jpg",
+        "name": "GS__1596",
+        "links": [
+            {
+                "nodeId": "166"
+            },
+            {
+                "nodeId": "168"
+            },
+            {
+                "nodeId": "362"
+            },
+            {
+                "nodeId": "363"
+            }
+        ],
+        "gps": [
+            "59.5168828",
+            "36.33810530555556",
+            1045.01
+        ],
+        "sphereCorrection": {
+            "pan": "-106deg"
+        }
+    },
+    {
+        "id": "168",
+        "panorama": "http://localhost:8000/motor/GS__1597.jpg",
+        "name": "GS__1597",
+        "links": [
+            {
+                "nodeId": "167"
+            },
+            {
+                "nodeId": "169"
+            }
+        ],
+        "gps": [
+            "59.517024",
+            "36.33808038888889",
+            1044.36
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "169",
+        "panorama": "http://localhost:8000/motor/GS__1598.jpg",
+        "name": "GS__1598",
+        "links": [
+            {
+                "nodeId": "168"
+            },
+            {
+                "nodeId": "170"
+            }
+        ],
+        "gps": [
+            "59.5171761",
+            "36.33805988888889",
+            1043.77
+        ],
+        "sphereCorrection": {
+            "pan": "-99deg"
+        }
+    },
+    {
+        "id": "170",
+        "panorama": "http://localhost:8000/motor/GS__1599.jpg",
+        "name": "GS__1599",
+        "links": [
+            {
+                "nodeId": "169"
+            },
+            {
+                "nodeId": "171"
+            }
+        ],
+        "gps": [
+            "59.5173126",
+            "36.33803119444445",
+            1043.56
+        ],
+        "sphereCorrection": {
+            "pan": "-105deg"
+        }
+    },
+    {
+        "id": "171",
+        "panorama": "http://localhost:8000/motor/GS__1600.jpg",
+        "name": "GS__1600",
+        "links": [
+            {
+                "nodeId": "170"
+            },
+            {
+                "nodeId": "172"
+            }
+        ],
+        "gps": [
+            "59.517463299999996",
+            "36.33799880555556",
+            1043.1
+        ],
+        "sphereCorrection": {
+            "pan": "-105deg"
+        }
+    },
+    {
+        "id": "172",
+        "panorama": "http://localhost:8000/motor/GS__1601.jpg",
+        "name": "GS__1601",
+        "links": [
+            {
+                "nodeId": "171"
+            },
+            {
+                "nodeId": "173"
+            }
+        ],
+        "gps": [
+            "59.5176046",
+            "36.337973500000004",
+            1042.77
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "173",
+        "panorama": "http://localhost:8000/motor/GS__1602.jpg",
+        "name": "GS__1602",
+        "links": [
+            {
+                "nodeId": "172"
+            },
+            {
+                "nodeId": "174"
+            }
+        ],
+        "gps": [
+            "59.5177537",
+            "36.33794838888889",
+            1042.33
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "174",
+        "panorama": "http://localhost:8000/motor/GS__1603.jpg",
+        "name": "GS__1603",
+        "links": [
+            {
+                "nodeId": "173"
+            },
+            {
+                "nodeId": "175"
+            }
+        ],
+        "gps": [
+            "59.5179105",
+            "36.33792238888889",
+            1042.15
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "175",
+        "panorama": "http://localhost:8000/motor/GS__1604.jpg",
+        "name": "GS__1604",
+        "links": [
+            {
+                "nodeId": "174"
+            },
+            {
+                "nodeId": "176"
+            }
+        ],
+        "gps": [
+            "59.5180962",
+            "36.337886194444444",
+            1041.91
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "176",
+        "panorama": "http://localhost:8000/motor/GS__1605.jpg",
+        "name": "GS__1605",
+        "links": [
+            {
+                "nodeId": "175"
+            },
+            {
+                "nodeId": "177"
+            }
+        ],
+        "gps": [
+            "59.5182385",
+            "36.3378555",
+            1041.61
+        ],
+        "sphereCorrection": {
+            "pan": "-105deg"
+        }
+    },
+    {
+        "id": "177",
+        "panorama": "http://localhost:8000/motor/GS__1606.jpg",
+        "name": "GS__1606",
+        "links": [
+            {
+                "nodeId": "176"
+            },
+            {
+                "nodeId": "178"
+            }
+        ],
+        "gps": [
+            "59.5183602",
+            "36.33783488888889",
+            1041.19
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "178",
+        "panorama": "http://localhost:8000/motor/GS__1607.jpg",
+        "name": "GS__1607",
+        "links": [
+            {
+                "nodeId": "177"
+            },
+            {
+                "nodeId": "179"
+            }
+        ],
+        "gps": [
+            "59.518448",
+            "36.33781730555556",
+            1040.74
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "179",
+        "panorama": "http://localhost:8000/motor/GS__1608.jpg",
+        "name": "GS__1608",
+        "links": [
+            {
+                "nodeId": "178"
+            },
+            {
+                "nodeId": "180"
+            },
+            {
+                "nodeId": "335"
+            }
+        ],
+        "gps": [
+            "59.518535299999996",
+            "36.33779861111111",
+            1040.49
+        ],
+        "sphereCorrection": {
+            "pan": "-105deg"
+        }
+    },
+    {
+        "id": "180",
+        "panorama": "http://localhost:8000/motor/GS__1609.jpg",
+        "name": "GS__1609",
+        "links": [
+            {
+                "nodeId": "179"
+            },
+            {
+                "nodeId": "181"
+            },
+            {
+                "nodeId": "335"
+            }
+        ],
+        "gps": [
+            "59.5186567",
+            "36.33776830555556",
+            1040.73
+        ],
+        "sphereCorrection": {
+            "pan": "-107deg"
+        }
+    },
+    {
+        "id": "181",
+        "panorama": "http://localhost:8000/motor/GS__1610.jpg",
+        "name": "GS__1610",
+        "links": [
+            {
+                "nodeId": "180"
+            },
+            {
+                "nodeId": "182"
+            }
+        ],
+        "gps": [
+            "59.5187946",
+            "36.337741111111114",
+            1040.31
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "182",
+        "panorama": "http://localhost:8000/motor/GS__1611.jpg",
+        "name": "GS__1611",
+        "links": [
+            {
+                "nodeId": "181"
+            },
+            {
+                "nodeId": "183"
+            }
+        ],
+        "gps": [
+            "59.518941",
+            "36.337721388888895",
+            1040.03
+        ],
+        "sphereCorrection": {
+            "pan": "-99deg"
+        }
+    },
+    {
+        "id": "183",
+        "panorama": "http://localhost:8000/motor/GS__1612.jpg",
+        "name": "GS__1612",
+        "links": [
+            {
+                "nodeId": "182"
+            },
+            {
+                "nodeId": "184"
+            }
+        ],
+        "gps": [
+            "59.5190625",
+            "36.33769980555556",
+            1039.83
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "184",
+        "panorama": "http://localhost:8000/motor/GS__1613.jpg",
+        "name": "GS__1613",
+        "links": [
+            {
+                "nodeId": "183"
+            },
+            {
+                "nodeId": "185"
+            }
+        ],
+        "gps": [
+            "59.5191642",
+            "36.337680500000005",
+            1039.74
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "185",
+        "panorama": "http://localhost:8000/motor/GS__1614.jpg",
+        "name": "GS__1614",
+        "links": [
+            {
+                "nodeId": "184"
+            },
+            {
+                "nodeId": "186"
+            }
+        ],
+        "gps": [
+            "59.5192817",
+            "36.33766011111111",
+            1039.51
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "186",
+        "panorama": "http://localhost:8000/motor/GS__1615.jpg",
+        "name": "GS__1615",
+        "links": [
+            {
+                "nodeId": "185"
+            },
+            {
+                "nodeId": "187"
+            }
+        ],
+        "gps": [
+            "59.519387699999996",
+            "36.33763869444444",
+            1039.27
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "187",
+        "panorama": "http://localhost:8000/motor/GS__1616.jpg",
+        "name": "GS__1616",
+        "links": [
+            {
+                "nodeId": "186"
+            },
+            {
+                "nodeId": "188"
+            }
+        ],
+        "gps": [
+            "59.51953019444444",
+            "36.337613194444444",
+            1039.21
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "188",
+        "panorama": "http://localhost:8000/motor/GS__1617.jpg",
+        "name": "GS__1617",
+        "links": [
+            {
+                "nodeId": "187"
+            },
+            {
+                "nodeId": "189"
+            }
+        ],
+        "gps": [
+            "59.5196525",
+            "36.3375915",
+            1039.13
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "189",
+        "panorama": "http://localhost:8000/motor/GS__1618.jpg",
+        "name": "GS__1618",
+        "links": [
+            {
+                "nodeId": "188"
+            },
+            {
+                "nodeId": "190"
+            }
+        ],
+        "gps": [
+            "59.51979980555556",
+            "36.33756638888889",
+            1039.07
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "190",
+        "panorama": "http://localhost:8000/motor/GS__1619.jpg",
+        "name": "GS__1619",
+        "links": [
+            {
+                "nodeId": "189"
+            },
+            {
+                "nodeId": "191"
+            }
+        ],
+        "gps": [
+            "59.51992930555556",
+            "36.33753961111111",
+            1039.42
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "191",
+        "panorama": "http://localhost:8000/motor/GS__1620.jpg",
+        "name": "GS__1620",
+        "links": [
+            {
+                "nodeId": "190"
+            },
+            {
+                "nodeId": "192"
+            }
+        ],
+        "gps": [
+            "59.520034305555555",
+            "36.33752011111111",
+            1039.28
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "192",
+        "panorama": "http://localhost:8000/motor/GS__1621.jpg",
+        "name": "GS__1621",
+        "links": [
+            {
+                "nodeId": "191"
+            },
+            {
+                "nodeId": "193"
+            }
+        ],
+        "gps": [
+            "59.52013980555555",
+            "36.33750169444445",
+            1038.73
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "193",
+        "panorama": "http://localhost:8000/motor/GS__1622.jpg",
+        "name": "GS__1622",
+        "links": [
+            {
+                "nodeId": "192"
+            },
+            {
+                "nodeId": "194"
+            },
+            {
+                "nodeId": "65"
+            }
+        ],
+        "gps": [
+            "59.52027061111111",
+            "36.3374785",
+            1038.53
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "194",
+        "panorama": "http://localhost:8000/motor/GS__1623.jpg",
+        "name": "GS__1623",
+        "links": [
+            {
+                "nodeId": "193"
+            },
+            {
+                "nodeId": "195"
+            },
+            {
+                "nodeId": "65"
+            }
+        ],
+        "gps": [
+            "59.520385",
+            "36.3374565",
+            1038.6
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "195",
+        "panorama": "http://localhost:8000/motor/GS__1624.jpg",
+        "name": "GS__1624",
+        "links": [
+            {
+                "nodeId": "194"
+            },
+            {
+                "nodeId": "196"
+            }
+        ],
+        "gps": [
+            "59.52047730555555",
+            "36.33744219444445",
+            1038.46
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "196",
+        "panorama": "http://localhost:8000/motor/GS__1625.jpg",
+        "name": "GS__1625",
+        "links": [
+            {
+                "nodeId": "195"
+            },
+            {
+                "nodeId": "197"
+            }
+        ],
+        "gps": [
+            "59.520597305555555",
+            "36.33743011111111",
+            1038.15
+        ],
+        "sphereCorrection": {
+            "pan": "-97deg"
+        }
+    },
+    {
+        "id": "197",
+        "panorama": "http://localhost:8000/motor/GS__1626.jpg",
+        "name": "GS__1626",
+        "links": [
+            {
+                "nodeId": "196"
+            },
+            {
+                "nodeId": "198"
+            }
+        ],
+        "gps": [
+            "59.520729805555554",
+            "36.337409111111114",
+            1037.72
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "198",
+        "panorama": "http://localhost:8000/motor/GS__1627.jpg",
+        "name": "GS__1627",
+        "links": [
+            {
+                "nodeId": "197"
+            },
+            {
+                "nodeId": "199"
+            }
+        ],
+        "gps": [
+            "59.520896888888885",
+            "36.33737680555556",
+            1037.36
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "199",
+        "panorama": "http://localhost:8000/motor/GS__1628.jpg",
+        "name": "GS__1628",
+        "links": [
+            {
+                "nodeId": "198"
+            },
+            {
+                "nodeId": "200"
+            }
+        ],
+        "gps": [
+            "59.52101161111111",
+            "36.33734838888889",
+            1037.21
+        ],
+        "sphereCorrection": {
+            "pan": "-107deg"
+        }
+    },
+    {
+        "id": "200",
+        "panorama": "http://localhost:8000/motor/GS__1629.jpg",
+        "name": "GS__1629",
+        "links": [
+            {
+                "nodeId": "199"
+            },
+            {
+                "nodeId": "201"
+            }
+        ],
+        "gps": [
+            "59.521131",
+            "36.33732888888889",
+            1037.16
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "201",
+        "panorama": "http://localhost:8000/motor/GS__1630.jpg",
+        "name": "GS__1630",
+        "links": [
+            {
+                "nodeId": "200"
+            },
+            {
+                "nodeId": "202"
+            }
+        ],
+        "gps": [
+            "59.52128688888889",
+            "36.337305111111114",
+            1036.87
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "202",
+        "panorama": "http://localhost:8000/motor/GS__1631.jpg",
+        "name": "GS__1631",
+        "links": [
+            {
+                "nodeId": "201"
+            },
+            {
+                "nodeId": "203"
+            }
+        ],
+        "gps": [
+            "59.521414694444445",
+            "36.337284611111116",
+            1036.6
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "203",
+        "panorama": "http://localhost:8000/motor/GS__1632.jpg",
+        "name": "GS__1632",
+        "links": [
+            {
+                "nodeId": "202"
+            },
+            {
+                "nodeId": "204"
+            }
+        ],
+        "gps": [
+            "59.5215125",
+            "36.337265",
+            1036.48
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "204",
+        "panorama": "http://localhost:8000/motor/GS__1633.jpg",
+        "name": "GS__1633",
+        "links": [
+            {
+                "nodeId": "203"
+            },
+            {
+                "nodeId": "205"
+            },
+            {
+                "nodeId": "72"
+            }
+        ],
+        "gps": [
+            "59.52037111111111",
+            "36.3381105",
+            1040.99
+        ],
+        "sphereCorrection": {
+            "pan": "47deg"
+        }
+    },
+    {
+        "id": "205",
+        "panorama": "http://localhost:8000/motor/GS__1634.jpg",
+        "name": "GS__1634",
+        "links": [
+            {
+                "nodeId": "204"
+            },
+            {
+                "nodeId": "206"
+            }
+        ],
+        "gps": [
+            "59.5202535",
+            "36.33813311111111",
+            1040.71
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "206",
+        "panorama": "http://localhost:8000/motor/GS__1635.jpg",
+        "name": "GS__1635",
+        "links": [
+            {
+                "nodeId": "205"
+            },
+            {
+                "nodeId": "207"
+            }
+        ],
+        "gps": [
+            "59.52014061111111",
+            "36.33815611111111",
+            1040.55
+        ],
+        "sphereCorrection": {
+            "pan": "76deg"
+        }
+    },
+    {
+        "id": "207",
+        "panorama": "http://localhost:8000/motor/GS__1636.jpg",
+        "name": "GS__1636",
+        "links": [
+            {
+                "nodeId": "206"
+            },
+            {
+                "nodeId": "208"
+            }
+        ],
+        "gps": [
+            "59.520015694444446",
+            "36.338181194444445",
+            1040.65
+        ],
+        "sphereCorrection": {
+            "pan": "76deg"
+        }
+    },
+    {
+        "id": "208",
+        "panorama": "http://localhost:8000/motor/GS__1637.jpg",
+        "name": "GS__1637",
+        "links": [
+            {
+                "nodeId": "207"
+            },
+            {
+                "nodeId": "209"
+            }
+        ],
+        "gps": [
+            "59.51988188888889",
+            "36.33821719444445",
+            1040.67
+        ],
+        "sphereCorrection": {
+            "pan": "72deg"
+        }
+    },
+    {
+        "id": "209",
+        "panorama": "http://localhost:8000/motor/GS__1638.jpg",
+        "name": "GS__1638",
+        "links": [
+            {
+                "nodeId": "208"
+            },
+            {
+                "nodeId": "210"
+            }
+        ],
+        "gps": [
+            "59.519768388888885",
+            "36.33824061111111",
+            1040.56
+        ],
+        "sphereCorrection": {
+            "pan": "76deg"
+        }
+    },
+    {
+        "id": "210",
+        "panorama": "http://localhost:8000/motor/GS__1639.jpg",
+        "name": "GS__1639",
+        "links": [
+            {
+                "nodeId": "209"
+            },
+            {
+                "nodeId": "211"
+            }
+        ],
+        "gps": [
+            "59.51962780555556",
+            "36.338262",
+            1040.68
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "211",
+        "panorama": "http://localhost:8000/motor/GS__1640.jpg",
+        "name": "GS__1640",
+        "links": [
+            {
+                "nodeId": "210"
+            },
+            {
+                "nodeId": "212"
+            }
+        ],
+        "gps": [
+            "59.51951230555555",
+            "36.338283000000004",
+            1040.62
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "212",
+        "panorama": "http://localhost:8000/motor/GS__1641.jpg",
+        "name": "GS__1641",
+        "links": [
+            {
+                "nodeId": "211"
+            },
+            {
+                "nodeId": "213"
+            }
+        ],
+        "gps": [
+            "59.519401699999996",
+            "36.33830238888889",
+            1040.77
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "213",
+        "panorama": "http://localhost:8000/motor/GS__1642.jpg",
+        "name": "GS__1642",
+        "links": [
+            {
+                "nodeId": "212"
+            },
+            {
+                "nodeId": "214"
+            }
+        ],
+        "gps": [
+            "59.5193381",
+            "36.33831038888889",
+            1040.94
+        ],
+        "sphereCorrection": {
+            "pan": "81deg"
+        }
+    },
+    {
+        "id": "214",
+        "panorama": "http://localhost:8000/motor/GS__1643.jpg",
+        "name": "GS__1643",
+        "links": [
+            {
+                "nodeId": "213"
+            },
+            {
+                "nodeId": "215"
+            }
+        ],
+        "gps": [
+            "59.5192311",
+            "36.3383265",
+            1041.22
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "215",
+        "panorama": "http://localhost:8000/motor/GS__1644.jpg",
+        "name": "GS__1644",
+        "links": [
+            {
+                "nodeId": "214"
+            },
+            {
+                "nodeId": "216"
+            }
+        ],
+        "gps": [
+            "59.5191255",
+            "36.338346694444446",
+            1041.54
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "216",
+        "panorama": "http://localhost:8000/motor/GS__1645.jpg",
+        "name": "GS__1645",
+        "links": [
+            {
+                "nodeId": "215"
+            },
+            {
+                "nodeId": "217"
+            }
+        ],
+        "gps": [
+            "59.5189924",
+            "36.33837030555556",
+            1041.64
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "217",
+        "panorama": "http://localhost:8000/motor/GS__1646.jpg",
+        "name": "GS__1646",
+        "links": [
+            {
+                "nodeId": "216"
+            },
+            {
+                "nodeId": "218"
+            }
+        ],
+        "gps": [
+            "59.5189032",
+            "36.338387194444444",
+            1041.73
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "218",
+        "panorama": "http://localhost:8000/motor/GS__1647.jpg",
+        "name": "GS__1647",
+        "links": [
+            {
+                "nodeId": "217"
+            },
+            {
+                "nodeId": "219"
+            },
+            {
+                "nodeId": "329"
+            },
+            {
+                "nodeId": "330"
+            }
+        ],
+        "gps": [
+            "59.5188043",
+            "36.338403694444445",
+            1041.93
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "219",
+        "panorama": "http://localhost:8000/motor/GS__1648.jpg",
+        "name": "GS__1648",
+        "links": [
+            {
+                "nodeId": "218"
+            },
+            {
+                "nodeId": "220"
+            }
+        ],
+        "gps": [
+            "59.5186609",
+            "36.3384305",
+            1042.03
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "220",
+        "panorama": "http://localhost:8000/motor/GS__1649.jpg",
+        "name": "GS__1649",
+        "links": [
+            {
+                "nodeId": "219"
+            },
+            {
+                "nodeId": "221"
+            }
+        ],
+        "gps": [
+            "59.5185095",
+            "36.33845961111111",
+            1042.12
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "221",
+        "panorama": "http://localhost:8000/motor/GS__1650.jpg",
+        "name": "GS__1650",
+        "links": [
+            {
+                "nodeId": "220"
+            },
+            {
+                "nodeId": "222"
+            }
+        ],
+        "gps": [
+            "59.5183551",
+            "36.3384845",
+            1042.26
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "222",
+        "panorama": "http://localhost:8000/motor/GS__1651.jpg",
+        "name": "GS__1651",
+        "links": [
+            {
+                "nodeId": "221"
+            },
+            {
+                "nodeId": "223"
+            }
+        ],
+        "gps": [
+            "59.518205",
+            "36.33851219444445",
+            1042.33
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "223",
+        "panorama": "http://localhost:8000/motor/GS__1652.jpg",
+        "name": "GS__1652",
+        "links": [
+            {
+                "nodeId": "222"
+            },
+            {
+                "nodeId": "224"
+            }
+        ],
+        "gps": [
+            "59.5180426",
+            "36.33854180555556",
+            1042.52
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "224",
+        "panorama": "http://localhost:8000/motor/GS__1653.jpg",
+        "name": "GS__1653",
+        "links": [
+            {
+                "nodeId": "223"
+            },
+            {
+                "nodeId": "225"
+            }
+        ],
+        "gps": [
+            "59.5178799",
+            "36.33857430555556",
+            1042.32
+        ],
+        "sphereCorrection": {
+            "pan": "76deg"
+        }
+    },
+    {
+        "id": "225",
+        "panorama": "http://localhost:8000/motor/GS__1654.jpg",
+        "name": "GS__1654",
+        "links": [
+            {
+                "nodeId": "224"
+            },
+            {
+                "nodeId": "226"
+            }
+        ],
+        "gps": [
+            "59.517737499999996",
+            "36.33860061111111",
+            1042.42
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "226",
+        "panorama": "http://localhost:8000/motor/GS__1655.jpg",
+        "name": "GS__1655",
+        "links": [
+            {
+                "nodeId": "225"
+            },
+            {
+                "nodeId": "227"
+            }
+        ],
+        "gps": [
+            "59.5175847",
+            "36.338621611111115",
+            1042.66
+        ],
+        "sphereCorrection": {
+            "pan": "80deg"
+        }
+    },
+    {
+        "id": "227",
+        "panorama": "http://localhost:8000/motor/GS__1656.jpg",
+        "name": "GS__1656",
+        "links": [
+            {
+                "nodeId": "226"
+            },
+            {
+                "nodeId": "228"
+            }
+        ],
+        "gps": [
+            "59.5172546",
+            "36.338683",
+            1043.34
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "228",
+        "panorama": "http://localhost:8000/motor/GS__1657.jpg",
+        "name": "GS__1657",
+        "links": [
+            {
+                "nodeId": "227"
+            },
+            {
+                "nodeId": "229"
+            }
+        ],
+        "gps": [
+            "59.5171527",
+            "36.33869861111111",
+            1043.29
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "229",
+        "panorama": "http://localhost:8000/motor/GS__1658.jpg",
+        "name": "GS__1658",
+        "links": [
+            {
+                "nodeId": "228"
+            },
+            {
+                "nodeId": "230"
+            },
+            {
+                "nodeId": "366"
+            },
+            {
+                "nodeId": "367"
+            }
+        ],
+        "gps": [
+            "59.5170279",
+            "36.338716000000005",
+            1043.52
+        ],
+        "sphereCorrection": {
+            "pan": "80deg"
+        }
+    },
+    {
+        "id": "230",
+        "panorama": "http://localhost:8000/motor/GS__1659.jpg",
+        "name": "GS__1659",
+        "links": [
+            {
+                "nodeId": "229"
+            },
+            {
+                "nodeId": "231"
+            }
+        ],
+        "gps": [
+            "59.5169061",
+            "36.338738694444444",
+            1043.7
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "231",
+        "panorama": "http://localhost:8000/motor/GS__1660.jpg",
+        "name": "GS__1660",
+        "links": [
+            {
+                "nodeId": "230"
+            },
+            {
+                "nodeId": "232"
+            }
+        ],
+        "gps": [
+            "59.5167899",
+            "36.338758500000004",
+            1043.68
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "232",
+        "panorama": "http://localhost:8000/motor/GS__1661.jpg",
+        "name": "GS__1661",
+        "links": [
+            {
+                "nodeId": "231"
+            },
+            {
+                "nodeId": "233"
+            }
+        ],
+        "gps": [
+            "59.516666799999996",
+            "36.338779888888894",
+            1043.81
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "233",
+        "panorama": "http://localhost:8000/motor/GS__1662.jpg",
+        "name": "GS__1662",
+        "links": [
+            {
+                "nodeId": "232"
+            },
+            {
+                "nodeId": "234"
+            }
+        ],
+        "gps": [
+            "59.516530305555555",
+            "36.33880219444445",
+            1044.02
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "234",
+        "panorama": "http://localhost:8000/motor/GS__1663.jpg",
+        "name": "GS__1663",
+        "links": [
+            {
+                "nodeId": "233"
+            },
+            {
+                "nodeId": "235"
+            }
+        ],
+        "gps": [
+            "59.516390694444446",
+            "36.338824888888894",
+            1044.16
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "235",
+        "panorama": "http://localhost:8000/motor/GS__1664.jpg",
+        "name": "GS__1664",
+        "links": [
+            {
+                "nodeId": "234"
+            },
+            {
+                "nodeId": "236"
+            }
+        ],
+        "gps": [
+            "59.51613761111111",
+            "36.338865500000004",
+            1044.2
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "236",
+        "panorama": "http://localhost:8000/motor/GS__1665.jpg",
+        "name": "GS__1665",
+        "links": [
+            {
+                "nodeId": "235"
+            },
+            {
+                "nodeId": "237"
+            }
+        ],
+        "gps": [
+            "59.51593030555556",
+            "36.338907",
+            1044.12
+        ],
+        "sphereCorrection": {
+            "pan": "76deg"
+        }
+    },
+    {
+        "id": "237",
+        "panorama": "http://localhost:8000/motor/GS__1666.jpg",
+        "name": "GS__1666",
+        "links": [
+            {
+                "nodeId": "236"
+            },
+            {
+                "nodeId": "238"
+            }
+        ],
+        "gps": [
+            "59.51575669444444",
+            "36.338943",
+            1043.79
+        ],
+        "sphereCorrection": {
+            "pan": "76deg"
+        }
+    },
+    {
+        "id": "238",
+        "panorama": "http://localhost:8000/motor/GS__1667.jpg",
+        "name": "GS__1667",
+        "links": [
+            {
+                "nodeId": "237"
+            },
+            {
+                "nodeId": "239"
+            }
+        ],
+        "gps": [
+            "59.51559311111111",
+            "36.33897319444445",
+            1043.8
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "239",
+        "panorama": "http://localhost:8000/motor/GS__1668.jpg",
+        "name": "GS__1668",
+        "links": [
+            {
+                "nodeId": "238"
+            },
+            {
+                "nodeId": "240"
+            }
+        ],
+        "gps": [
+            "59.515450305555554",
+            "36.33899688888889",
+            1044.04
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "240",
+        "panorama": "http://localhost:8000/motor/GS__1669.jpg",
+        "name": "GS__1669",
+        "links": [
+            {
+                "nodeId": "239"
+            },
+            {
+                "nodeId": "241"
+            },
+            {
+                "nodeId": "149"
+            },
+            {
+                "nodeId": "387"
+            }
+        ],
+        "gps": [
+            "59.51534569444444",
+            "36.339020000000005",
+            1044.28
+        ],
+        "sphereCorrection": {
+            "pan": "75deg"
+        }
+    },
+    {
+        "id": "241",
+        "panorama": "http://localhost:8000/motor/GS__1670.jpg",
+        "name": "GS__1670",
+        "links": [
+            {
+                "nodeId": "240"
+            },
+            {
+                "nodeId": "242"
+            },
+            {
+                "nodeId": "149"
+            },
+            {
+                "nodeId": "387"
+            }
+        ],
+        "gps": [
+            "59.515194111111114",
+            "36.33905130555556",
+            1044.73
+        ],
+        "sphereCorrection": {
+            "pan": "76deg"
+        }
+    },
+    {
+        "id": "242",
+        "panorama": "http://localhost:8000/motor/GS__1671.jpg",
+        "name": "GS__1671",
+        "links": [
+            {
+                "nodeId": "241"
+            },
+            {
+                "nodeId": "243"
+            }
+        ],
+        "gps": [
+            "59.51506111111111",
+            "36.339072",
+            1044.86
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "243",
+        "panorama": "http://localhost:8000/motor/GS__1672.jpg",
+        "name": "GS__1672",
+        "links": [
+            {
+                "nodeId": "242"
+            },
+            {
+                "nodeId": "244"
+            }
+        ],
+        "gps": [
+            "59.5149115",
+            "36.33909480555556",
+            1045.07
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "244",
+        "panorama": "http://localhost:8000/motor/GS__1673.jpg",
+        "name": "GS__1673",
+        "links": [
+            {
+                "nodeId": "243"
+            },
+            {
+                "nodeId": "245"
+            }
+        ],
+        "gps": [
+            "59.51474869444444",
+            "36.339120388888894",
+            1045.37
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "245",
+        "panorama": "http://localhost:8000/motor/GS__1674.jpg",
+        "name": "GS__1674",
+        "links": [
+            {
+                "nodeId": "244"
+            },
+            {
+                "nodeId": "246"
+            }
+        ],
+        "gps": [
+            "59.514567",
+            "36.33914911111111",
+            1045.66
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "246",
+        "panorama": "http://localhost:8000/motor/GS__1675.jpg",
+        "name": "GS__1675",
+        "links": [
+            {
+                "nodeId": "245"
+            },
+            {
+                "nodeId": "247"
+            }
+        ],
+        "gps": [
+            "59.51438288888889",
+            "36.33918119444445",
+            1046.0
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "247",
+        "panorama": "http://localhost:8000/motor/GS__1676.jpg",
+        "name": "GS__1676",
+        "links": [
+            {
+                "nodeId": "246"
+            },
+            {
+                "nodeId": "248"
+            }
+        ],
+        "gps": [
+            "59.51425280555556",
+            "36.339203000000005",
+            1046.15
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "248",
+        "panorama": "http://localhost:8000/motor/GS__1677.jpg",
+        "name": "GS__1677",
+        "links": [
+            {
+                "nodeId": "247"
+            },
+            {
+                "nodeId": "249"
+            }
+        ],
+        "gps": [
+            "59.51409911111111",
+            "36.339227694444446",
+            1046.04
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "249",
+        "panorama": "http://localhost:8000/motor/GS__1678.jpg",
+        "name": "GS__1678",
+        "links": [
+            {
+                "nodeId": "248"
+            },
+            {
+                "nodeId": "250"
+            }
+        ],
+        "gps": [
+            "59.513950111111114",
+            "36.339250694444445",
+            1045.92
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "250",
+        "panorama": "http://localhost:8000/motor/GS__1679.jpg",
+        "name": "GS__1679",
+        "links": [
+            {
+                "nodeId": "249"
+            },
+            {
+                "nodeId": "251"
+            }
+        ],
+        "gps": [
+            "59.51380069444444",
+            "36.339273694444444",
+            1045.91
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "251",
+        "panorama": "http://localhost:8000/motor/GS__1680.jpg",
+        "name": "GS__1680",
+        "links": [
+            {
+                "nodeId": "250"
+            },
+            {
+                "nodeId": "252"
+            }
+        ],
+        "gps": [
+            "59.513691305555554",
+            "36.33929861111111",
+            1046.07
+        ],
+        "sphereCorrection": {
+            "pan": "74deg"
+        }
+    },
+    {
+        "id": "252",
+        "panorama": "http://localhost:8000/motor/GS__1681.jpg",
+        "name": "GS__1681",
+        "links": [
+            {
+                "nodeId": "251"
+            },
+            {
+                "nodeId": "253"
+            }
+        ],
+        "gps": [
+            "59.51365111111111",
+            "36.339380000000006",
+            1046.29
+        ],
+        "sphereCorrection": {
+            "pan": "22deg"
+        }
+    },
+    {
+        "id": "253",
+        "panorama": "http://localhost:8000/motor/GS__1682.jpg",
+        "name": "GS__1682",
+        "links": [
+            {
+                "nodeId": "252"
+            },
+            {
+                "nodeId": "254"
+            }
+        ],
+        "gps": [
+            "59.51368030555555",
+            "36.33951619444445",
+            1047.04
+        ],
+        "sphereCorrection": {
+            "pan": "-10deg"
+        }
+    },
+    {
+        "id": "254",
+        "panorama": "http://localhost:8000/motor/GS__1683.jpg",
+        "name": "GS__1683",
+        "links": [
+            {
+                "nodeId": "253"
+            },
+            {
+                "nodeId": "255"
+            }
+        ],
+        "gps": [
+            "59.51372238888889",
+            "36.33965588888889",
+            1047.21
+        ],
+        "sphereCorrection": {
+            "pan": "-14deg"
+        }
+    },
+    {
+        "id": "255",
+        "panorama": "http://localhost:8000/motor/GS__1684.jpg",
+        "name": "GS__1684",
+        "links": [
+            {
+                "nodeId": "254"
+            },
+            {
+                "nodeId": "256"
+            }
+        ],
+        "gps": [
+            "59.51376338888889",
+            "36.339795305555555",
+            1047.51
+        ],
+        "sphereCorrection": {
+            "pan": "-13deg"
+        }
+    },
+    {
+        "id": "256",
+        "panorama": "http://localhost:8000/motor/GS__1685.jpg",
+        "name": "GS__1685",
+        "links": [
+            {
+                "nodeId": "255"
+            },
+            {
+                "nodeId": "257"
+            }
+        ],
+        "gps": [
+            "59.51383669444444",
+            "36.33990438888889",
+            1047.2
+        ],
+        "sphereCorrection": {
+            "pan": "-28deg"
+        }
+    },
+    {
+        "id": "257",
+        "panorama": "http://localhost:8000/motor/GS__1686.jpg",
+        "name": "GS__1686",
+        "links": [
+            {
+                "nodeId": "256"
+            },
+            {
+                "nodeId": "258"
+            }
+        ],
+        "gps": [
+            "59.51396288888889",
+            "36.3398915",
+            1046.98
+        ],
+        "sphereCorrection": {
+            "pan": "-97deg"
+        }
+    },
+    {
+        "id": "258",
+        "panorama": "http://localhost:8000/motor/GS__1687.jpg",
+        "name": "GS__1687",
+        "links": [
+            {
+                "nodeId": "257"
+            },
+            {
+                "nodeId": "259"
+            }
+        ],
+        "gps": [
+            "59.514070305555556",
+            "36.3398705",
+            1046.76
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "259",
+        "panorama": "http://localhost:8000/motor/GS__1688.jpg",
+        "name": "GS__1688",
+        "links": [
+            {
+                "nodeId": "258"
+            },
+            {
+                "nodeId": "260"
+            }
+        ],
+        "gps": [
+            "59.51421061111111",
+            "36.33984369444445",
+            1046.68
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "260",
+        "panorama": "http://localhost:8000/motor/GS__1689.jpg",
+        "name": "GS__1689",
+        "links": [
+            {
+                "nodeId": "259"
+            },
+            {
+                "nodeId": "261"
+            }
+        ],
+        "gps": [
+            "59.51433611111111",
+            "36.339823611111115",
+            1046.44
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "261",
+        "panorama": "http://localhost:8000/motor/GS__1690.jpg",
+        "name": "GS__1690",
+        "links": [
+            {
+                "nodeId": "260"
+            },
+            {
+                "nodeId": "262"
+            }
+        ],
+        "gps": [
+            "59.51449111111111",
+            "36.33979569444445",
+            1046.35
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "262",
+        "panorama": "http://localhost:8000/motor/GS__1691.jpg",
+        "name": "GS__1691",
+        "links": [
+            {
+                "nodeId": "261"
+            },
+            {
+                "nodeId": "263"
+            }
+        ],
+        "gps": [
+            "59.514617305555554",
+            "36.33976880555556",
+            1046.56
+        ],
+        "sphereCorrection": {
+            "pan": "-105deg"
+        }
+    },
+    {
+        "id": "263",
+        "panorama": "http://localhost:8000/motor/GS__1692.jpg",
+        "name": "GS__1692",
+        "links": [
+            {
+                "nodeId": "262"
+            },
+            {
+                "nodeId": "264"
+            }
+        ],
+        "gps": [
+            "59.51474688888889",
+            "36.3397445",
+            1046.57
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "264",
+        "panorama": "http://localhost:8000/motor/GS__1693.jpg",
+        "name": "GS__1693",
+        "links": [
+            {
+                "nodeId": "263"
+            },
+            {
+                "nodeId": "265"
+            }
+        ],
+        "gps": [
+            "59.514907388888886",
+            "36.33971419444445",
+            1046.47
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "265",
+        "panorama": "http://localhost:8000/motor/GS__1694.jpg",
+        "name": "GS__1694",
+        "links": [
+            {
+                "nodeId": "264"
+            },
+            {
+                "nodeId": "266"
+            }
+        ],
+        "gps": [
+            "59.515062",
+            "36.33968711111111",
+            1046.34
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "266",
+        "panorama": "http://localhost:8000/motor/GS__1695.jpg",
+        "name": "GS__1695",
+        "links": [
+            {
+                "nodeId": "265"
+            },
+            {
+                "nodeId": "267"
+            }
+        ],
+        "gps": [
+            "59.51520580555555",
+            "36.33966711111111",
+            1045.87
+        ],
+        "sphereCorrection": {
+            "pan": "-100deg"
+        }
+    },
+    {
+        "id": "267",
+        "panorama": "http://localhost:8000/motor/GS__1696.jpg",
+        "name": "GS__1696",
+        "links": [
+            {
+                "nodeId": "266"
+            },
+            {
+                "nodeId": "268"
+            }
+        ],
+        "gps": [
+            "59.5153485",
+            "36.3396465",
+            1045.52
+        ],
+        "sphereCorrection": {
+            "pan": "-100deg"
+        }
+    },
+    {
+        "id": "268",
+        "panorama": "http://localhost:8000/motor/GS__1697.jpg",
+        "name": "GS__1697",
+        "links": [
+            {
+                "nodeId": "267"
+            },
+            {
+                "nodeId": "269"
+            },
+            {
+                "nodeId": "142"
+            },
+            {
+                "nodeId": "143"
+            },
+            {
+                "nodeId": "383"
+            }
+        ],
+        "gps": [
+            "59.51551388888889",
+            "36.339615611111114",
+            1045.42
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "269",
+        "panorama": "http://localhost:8000/motor/GS__1698.jpg",
+        "name": "GS__1698",
+        "links": [
+            {
+                "nodeId": "268"
+            },
+            {
+                "nodeId": "270"
+            }
+        ],
+        "gps": [
+            "59.515654194444444",
+            "36.33959880555556",
+            1044.86
+        ],
+        "sphereCorrection": {
+            "pan": "-98deg"
+        }
+    },
+    {
+        "id": "270",
+        "panorama": "http://localhost:8000/motor/GS__1699.jpg",
+        "name": "GS__1699",
+        "links": [
+            {
+                "nodeId": "269"
+            },
+            {
+                "nodeId": "271"
+            }
+        ],
+        "gps": [
+            "59.515872888888886",
+            "36.339557694444444",
+            1044.24
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "271",
+        "panorama": "http://localhost:8000/motor/GS__1700.jpg",
+        "name": "GS__1700",
+        "links": [
+            {
+                "nodeId": "270"
+            },
+            {
+                "nodeId": "272"
+            }
+        ],
+        "gps": [
+            "59.51601519444444",
+            "36.339527000000004",
+            1044.17
+        ],
+        "sphereCorrection": {
+            "pan": "-105deg"
+        }
+    },
+    {
+        "id": "272",
+        "panorama": "http://localhost:8000/motor/GS__1701.jpg",
+        "name": "GS__1701",
+        "links": [
+            {
+                "nodeId": "271"
+            },
+            {
+                "nodeId": "273"
+            }
+        ],
+        "gps": [
+            "59.51617588888889",
+            "36.339494111111115",
+            1043.88
+        ],
+        "sphereCorrection": {
+            "pan": "-104deg"
+        }
+    },
+    {
+        "id": "273",
+        "panorama": "http://localhost:8000/motor/GS__1702.jpg",
+        "name": "GS__1702",
+        "links": [
+            {
+                "nodeId": "272"
+            },
+            {
+                "nodeId": "274"
+            }
+        ],
+        "gps": [
+            "59.51639138888889",
+            "36.339463111111115",
+            1043.73
+        ],
+        "sphereCorrection": {
+            "pan": "-100deg"
+        }
+    },
+    {
+        "id": "274",
+        "panorama": "http://localhost:8000/motor/GS__1703.jpg",
+        "name": "GS__1703",
+        "links": [
+            {
+                "nodeId": "273"
+            },
+            {
+                "nodeId": "275"
+            }
+        ],
+        "gps": [
+            "59.51656330555556",
+            "36.339436194444446",
+            1043.51
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "275",
+        "panorama": "http://localhost:8000/motor/GS__1704.jpg",
+        "name": "GS__1704",
+        "links": [
+            {
+                "nodeId": "274"
+            },
+            {
+                "nodeId": "276"
+            }
+        ],
+        "gps": [
+            "59.5167287",
+            "36.339405500000005",
+            1043.34
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "276",
+        "panorama": "http://localhost:8000/motor/GS__1705.jpg",
+        "name": "GS__1705",
+        "links": [
+            {
+                "nodeId": "275"
+            },
+            {
+                "nodeId": "277"
+            }
+        ],
+        "gps": [
+            "59.5168803",
+            "36.33937980555556",
+            1043.16
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "277",
+        "panorama": "http://localhost:8000/motor/GS__1706.jpg",
+        "name": "GS__1706",
+        "links": [
+            {
+                "nodeId": "276"
+            },
+            {
+                "nodeId": "278"
+            }
+        ],
+        "gps": [
+            "59.5170214",
+            "36.33935511111111",
+            1043.1
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "278",
+        "panorama": "http://localhost:8000/motor/GS__1707.jpg",
+        "name": "GS__1707",
+        "links": [
+            {
+                "nodeId": "277"
+            },
+            {
+                "nodeId": "279"
+            },
+            {
+                "nodeId": "372"
+            }
+        ],
+        "gps": [
+            "59.5171541",
+            "36.33933338888889",
+            1043.19
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "279",
+        "panorama": "http://localhost:8000/motor/GS__1708.jpg",
+        "name": "GS__1708",
+        "links": [
+            {
+                "nodeId": "278"
+            },
+            {
+                "nodeId": "280"
+            },
+            {
+                "nodeId": "372"
+            }
+        ],
+        "gps": [
+            "59.517296",
+            "36.33930330555556",
+            1043.08
+        ],
+        "sphereCorrection": {
+            "pan": "-105deg"
+        }
+    },
+    {
+        "id": "280",
+        "panorama": "http://localhost:8000/motor/GS__1709.jpg",
+        "name": "GS__1709",
+        "links": [
+            {
+                "nodeId": "279"
+            },
+            {
+                "nodeId": "281"
+            }
+        ],
+        "gps": [
+            "59.517445099999996",
+            "36.33928111111111",
+            1043.2
+        ],
+        "sphereCorrection": {
+            "pan": "-100deg"
+        }
+    },
+    {
+        "id": "281",
+        "panorama": "http://localhost:8000/motor/GS__1710.jpg",
+        "name": "GS__1710",
+        "links": [
+            {
+                "nodeId": "280"
+            },
+            {
+                "nodeId": "282"
+            }
+        ],
+        "gps": [
+            "59.5175586",
+            "36.33925961111111",
+            1043.43
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "282",
+        "panorama": "http://localhost:8000/motor/GS__1711.jpg",
+        "name": "GS__1711",
+        "links": [
+            {
+                "nodeId": "281"
+            },
+            {
+                "nodeId": "283"
+            }
+        ],
+        "gps": [
+            "59.5176484",
+            "36.33924430555556",
+            1043.33
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "283",
+        "panorama": "http://localhost:8000/motor/GS__1712.jpg",
+        "name": "GS__1712",
+        "links": [
+            {
+                "nodeId": "282"
+            },
+            {
+                "nodeId": "284"
+            }
+        ],
+        "gps": [
+            "59.5177639",
+            "36.33922561111111",
+            1043.11
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "284",
+        "panorama": "http://localhost:8000/motor/GS__1713.jpg",
+        "name": "GS__1713",
+        "links": [
+            {
+                "nodeId": "283"
+            },
+            {
+                "nodeId": "285"
+            }
+        ],
+        "gps": [
+            "59.5178988",
+            "36.33920088888889",
+            1043.0
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "285",
+        "panorama": "http://localhost:8000/motor/GS__1714.jpg",
+        "name": "GS__1714",
+        "links": [
+            {
+                "nodeId": "284"
+            },
+            {
+                "nodeId": "286"
+            }
+        ],
+        "gps": [
+            "59.5180378",
+            "36.3391785",
+            1042.74
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "286",
+        "panorama": "http://localhost:8000/motor/GS__1715.jpg",
+        "name": "GS__1715",
+        "links": [
+            {
+                "nodeId": "285"
+            },
+            {
+                "nodeId": "287"
+            }
+        ],
+        "gps": [
+            "59.518205",
+            "36.339149194444445",
+            1042.41
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "287",
+        "panorama": "http://localhost:8000/motor/GS__1716.jpg",
+        "name": "GS__1716",
+        "links": [
+            {
+                "nodeId": "286"
+            },
+            {
+                "nodeId": "288"
+            }
+        ],
+        "gps": [
+            "59.5183697",
+            "36.3391235",
+            1041.97
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "288",
+        "panorama": "http://localhost:8000/motor/GS__1717.jpg",
+        "name": "GS__1717",
+        "links": [
+            {
+                "nodeId": "287"
+            },
+            {
+                "nodeId": "289"
+            }
+        ],
+        "gps": [
+            "59.518510299999996",
+            "36.33909838888889",
+            1042.03
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "289",
+        "panorama": "http://localhost:8000/motor/GS__1718.jpg",
+        "name": "GS__1718",
+        "links": [
+            {
+                "nodeId": "288"
+            },
+            {
+                "nodeId": "290"
+            }
+        ],
+        "gps": [
+            "59.5186287",
+            "36.33907719444445",
+            1042.27
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "290",
+        "panorama": "http://localhost:8000/motor/GS__1719.jpg",
+        "name": "GS__1719",
+        "links": [
+            {
+                "nodeId": "289"
+            },
+            {
+                "nodeId": "291"
+            }
+        ],
+        "gps": [
+            "59.5187522",
+            "36.33904830555556",
+            1042.08
+        ],
+        "sphereCorrection": {
+            "pan": "-106deg"
+        }
+    },
+    {
+        "id": "291",
+        "panorama": "http://localhost:8000/motor/GS__1720.jpg",
+        "name": "GS__1720",
+        "links": [
+            {
+                "nodeId": "290"
+            },
+            {
+                "nodeId": "292"
+            },
+            {
+                "nodeId": "323"
+            },
+            {
+                "nodeId": "324"
+            }
+        ],
+        "gps": [
+            "59.5188379",
+            "36.33902730555556",
+            1042.24
+        ],
+        "sphereCorrection": {
+            "pan": "-107deg"
+        }
+    },
+    {
+        "id": "292",
+        "panorama": "http://localhost:8000/motor/GS__1721.jpg",
+        "name": "GS__1721",
+        "links": [
+            {
+                "nodeId": "291"
+            },
+            {
+                "nodeId": "293"
+            },
+            {
+                "nodeId": "323"
+            },
+            {
+                "nodeId": "324"
+            }
+        ],
+        "gps": [
+            "59.5189486",
+            "36.33900338888889",
+            1042.3
+        ],
+        "sphereCorrection": {
+            "pan": "-105deg"
+        }
+    },
+    {
+        "id": "293",
+        "panorama": "http://localhost:8000/motor/GS__1722.jpg",
+        "name": "GS__1722",
+        "links": [
+            {
+                "nodeId": "292"
+            },
+            {
+                "nodeId": "294"
+            }
+        ],
+        "gps": [
+            "59.5190669",
+            "36.338984",
+            1042.31
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "294",
+        "panorama": "http://localhost:8000/motor/GS__1723.jpg",
+        "name": "GS__1723",
+        "links": [
+            {
+                "nodeId": "293"
+            },
+            {
+                "nodeId": "295"
+            }
+        ],
+        "gps": [
+            "59.5191837",
+            "36.338966694444444",
+            1042.32
+        ],
+        "sphereCorrection": {
+            "pan": "-100deg"
+        }
+    },
+    {
+        "id": "295",
+        "panorama": "http://localhost:8000/motor/GS__1724.jpg",
+        "name": "GS__1724",
+        "links": [
+            {
+                "nodeId": "294"
+            },
+            {
+                "nodeId": "296"
+            }
+        ],
+        "gps": [
+            "59.5193451",
+            "36.33893988888889",
+            1042.41
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "296",
+        "panorama": "http://localhost:8000/motor/GS__1725.jpg",
+        "name": "GS__1725",
+        "links": [
+            {
+                "nodeId": "295"
+            },
+            {
+                "nodeId": "297"
+            }
+        ],
+        "gps": [
+            "59.51950111111111",
+            "36.338911111111116",
+            1041.96
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "297",
+        "panorama": "http://localhost:8000/motor/GS__1726.jpg",
+        "name": "GS__1726",
+        "links": [
+            {
+                "nodeId": "296"
+            },
+            {
+                "nodeId": "298"
+            }
+        ],
+        "gps": [
+            "59.519633",
+            "36.338889111111115",
+            1042.07
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "298",
+        "panorama": "http://localhost:8000/motor/GS__1727.jpg",
+        "name": "GS__1727",
+        "links": [
+            {
+                "nodeId": "297"
+            },
+            {
+                "nodeId": "299"
+            }
+        ],
+        "gps": [
+            "59.51981311111111",
+            "36.338857611111116",
+            1042.31
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "299",
+        "panorama": "http://localhost:8000/motor/GS__1728.jpg",
+        "name": "GS__1728",
+        "links": [
+            {
+                "nodeId": "298"
+            },
+            {
+                "nodeId": "300"
+            }
+        ],
+        "gps": [
+            "59.51999130555556",
+            "36.33882630555556",
+            1041.9
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "300",
+        "panorama": "http://localhost:8000/motor/GS__1729.jpg",
+        "name": "GS__1729",
+        "links": [
+            {
+                "nodeId": "299"
+            },
+            {
+                "nodeId": "301"
+            }
+        ],
+        "gps": [
+            "59.52016319444444",
+            "36.33879761111111",
+            1041.56
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "301",
+        "panorama": "http://localhost:8000/motor/GS__1730.jpg",
+        "name": "GS__1730",
+        "links": [
+            {
+                "nodeId": "300"
+            },
+            {
+                "nodeId": "302"
+            }
+        ],
+        "gps": [
+            "59.52030219444444",
+            "36.338772194444445",
+            1041.01
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "302",
+        "panorama": "http://localhost:8000/motor/GS__1731.jpg",
+        "name": "GS__1731",
+        "links": [
+            {
+                "nodeId": "301"
+            },
+            {
+                "nodeId": "303"
+            }
+        ],
+        "gps": [
+            "59.52042738888889",
+            "36.33874319444445",
+            1041.05
+        ],
+        "sphereCorrection": {
+            "pan": "-106deg"
+        }
+    },
+    {
+        "id": "303",
+        "panorama": "http://localhost:8000/motor/GS__1732.jpg",
+        "name": "GS__1732",
+        "links": [
+            {
+                "nodeId": "302"
+            },
+            {
+                "nodeId": "304"
+            },
+            {
+                "nodeId": "78"
+            },
+            {
+                "nodeId": "79"
+            }
+        ],
+        "gps": [
+            "59.52060288888889",
+            "36.33870538888889",
+            1040.86
+        ],
+        "sphereCorrection": {
+            "pan": "-105deg"
+        }
+    },
+    {
+        "id": "304",
+        "panorama": "http://localhost:8000/motor/GS__1733.jpg",
+        "name": "GS__1733",
+        "links": [
+            {
+                "nodeId": "303"
+            },
+            {
+                "nodeId": "305"
+            }
+        ],
+        "gps": [
+            "59.520790194444444",
+            "36.33867688888889",
+            1040.25
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "305",
+        "panorama": "http://localhost:8000/motor/GS__1734.jpg",
+        "name": "GS__1734",
+        "links": [
+            {
+                "nodeId": "304"
+            },
+            {
+                "nodeId": "306"
+            }
+        ],
+        "gps": [
+            "59.52095788888889",
+            "36.33865211111112",
+            1039.93
+        ],
+        "sphereCorrection": {
+            "pan": "-100deg"
+        }
+    },
+    {
+        "id": "306",
+        "panorama": "http://localhost:8000/motor/GS__1735.jpg",
+        "name": "GS__1735",
+        "links": [
+            {
+                "nodeId": "305"
+            },
+            {
+                "nodeId": "307"
+            }
+        ],
+        "gps": [
+            "59.52110169444445",
+            "36.33862930555556",
+            1039.61
+        ],
+        "sphereCorrection": {
+            "pan": "-101deg"
+        }
+    },
+    {
+        "id": "307",
+        "panorama": "http://localhost:8000/motor/GS__1736.jpg",
+        "name": "GS__1736",
+        "links": [
+            {
+                "nodeId": "306"
+            },
+            {
+                "nodeId": "308"
+            }
+        ],
+        "gps": [
+            "59.52124530555555",
+            "36.33860288888889",
+            1039.6
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "308",
+        "panorama": "http://localhost:8000/motor/GS__1737.jpg",
+        "name": "GS__1737",
+        "links": [
+            {
+                "nodeId": "307"
+            },
+            {
+                "nodeId": "309"
+            }
+        ],
+        "gps": [
+            "59.52140138888889",
+            "36.338573611111116",
+            1039.5
+        ],
+        "sphereCorrection": {
+            "pan": "-103deg"
+        }
+    },
+    {
+        "id": "309",
+        "panorama": "http://localhost:8000/motor/GS__1738.jpg",
+        "name": "GS__1738",
+        "links": [
+            {
+                "nodeId": "308"
+            },
+            {
+                "nodeId": "310"
+            }
+        ],
+        "gps": [
+            "59.521644888888886",
+            "36.338532",
+            1038.95
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "310",
+        "panorama": "http://localhost:8000/motor/GS__1739.jpg",
+        "name": "GS__1739",
+        "links": [
+            {
+                "nodeId": "309"
+            },
+            {
+                "nodeId": "311"
+            }
+        ],
+        "gps": [
+            "59.52176330555555",
+            "36.33850261111111",
+            1038.54
+        ],
+        "sphereCorrection": {
+            "pan": "-107deg"
+        }
+    },
+    {
+        "id": "311",
+        "panorama": "http://localhost:8000/motor/GS__1740.jpg",
+        "name": "GS__1740",
+        "links": [
+            {
+                "nodeId": "310"
+            },
+            {
+                "nodeId": "312"
+            }
+        ],
+        "gps": [
+            "59.5218765",
+            "36.338484",
+            1038.08
+        ],
+        "sphereCorrection": {
+            "pan": "-102deg"
+        }
+    },
+    {
+        "id": "312",
+        "panorama": "http://localhost:8000/motor/GS__1741.jpg",
+        "name": "GS__1741",
+        "links": [
+            {
+                "nodeId": "311"
+            },
+            {
+                "nodeId": "313"
+            }
+        ],
+        "gps": [
+            "59.5191954",
+            "36.340161611111114",
+            1043.34
+        ],
+        "sphereCorrection": {
+            "pan": "52deg"
+        }
+    },
+    {
+        "id": "313",
+        "panorama": "http://localhost:8000/motor/GS__1742.jpg",
+        "name": "GS__1742",
+        "links": [
+            {
+                "nodeId": "312"
+            },
+            {
+                "nodeId": "314"
+            }
+        ],
+        "gps": [
+            "59.5191948",
+            "36.34009569444445",
+            1042.97
+        ],
+        "sphereCorrection": {
+            "pan": "180deg"
+        }
+    },
+    {
+        "id": "314",
+        "panorama": "http://localhost:8000/motor/GS__1743.jpg",
+        "name": "GS__1743",
+        "links": [
+            {
+                "nodeId": "313"
+            },
+            {
+                "nodeId": "315"
+            }
+        ],
+        "gps": [
+            "59.5191691",
+            "36.339986",
+            1042.79
+        ],
+        "sphereCorrection": {
+            "pan": "169deg"
+        }
+    },
+    {
+        "id": "315",
+        "panorama": "http://localhost:8000/motor/GS__1744.jpg",
+        "name": "GS__1744",
+        "links": [
+            {
+                "nodeId": "314"
+            },
+            {
+                "nodeId": "316"
+            }
+        ],
+        "gps": [
+            "59.5191448",
+            "36.339888111111115",
+            1043.11
+        ],
+        "sphereCorrection": {
+            "pan": "169deg"
+        }
+    },
+    {
+        "id": "316",
+        "panorama": "http://localhost:8000/motor/GS__1745.jpg",
+        "name": "GS__1745",
+        "links": [
+            {
+                "nodeId": "315"
+            },
+            {
+                "nodeId": "317"
+            }
+        ],
+        "gps": [
+            "59.5191216",
+            "36.33978030555556",
+            1043.05
+        ],
+        "sphereCorrection": {
+            "pan": "170deg"
+        }
+    },
+    {
+        "id": "317",
+        "panorama": "http://localhost:8000/motor/GS__1746.jpg",
+        "name": "GS__1746",
+        "links": [
+            {
+                "nodeId": "316"
+            },
+            {
+                "nodeId": "318"
+            },
+            {
+                "nodeId": "99"
+            },
+            {
+                "nodeId": "100"
+            }
+        ],
+        "gps": [
+            "59.5190873",
+            "36.33967169444445",
+            1043.34
+        ],
+        "sphereCorrection": {
+            "pan": "166deg"
+        }
+    },
+    {
+        "id": "318",
+        "panorama": "http://localhost:8000/motor/GS__1747.jpg",
+        "name": "GS__1747",
+        "links": [
+            {
+                "nodeId": "317"
+            },
+            {
+                "nodeId": "319"
+            },
+            {
+                "nodeId": "99"
+            }
+        ],
+        "gps": [
+            "59.5190561",
+            "36.339581305555555",
+            1043.07
+        ],
+        "sphereCorrection": {
+            "pan": "164deg"
+        }
+    },
+    {
+        "id": "319",
+        "panorama": "http://localhost:8000/motor/GS__1748.jpg",
+        "name": "GS__1748",
+        "links": [
+            {
+                "nodeId": "318"
+            },
+            {
+                "nodeId": "320"
+            }
+        ],
+        "gps": [
+            "59.5190266",
+            "36.33946369444445",
+            1043.08
+        ],
+        "sphereCorrection": {
+            "pan": "169deg"
+        }
+    },
+    {
+        "id": "320",
+        "panorama": "http://localhost:8000/motor/GS__1749.jpg",
+        "name": "GS__1749",
+        "links": [
+            {
+                "nodeId": "319"
+            },
+            {
+                "nodeId": "321"
+            }
+        ],
+        "gps": [
+            "59.5189882",
+            "36.339343",
+            1042.49
+        ],
+        "sphereCorrection": {
+            "pan": "166deg"
+        }
+    },
+    {
+        "id": "321",
+        "panorama": "http://localhost:8000/motor/GS__1750.jpg",
+        "name": "GS__1750",
+        "links": [
+            {
+                "nodeId": "320"
+            },
+            {
+                "nodeId": "322"
+            }
+        ],
+        "gps": [
+            "59.5189606",
+            "36.3392235",
+            1042.22
+        ],
+        "sphereCorrection": {
+            "pan": "169deg"
+        }
+    },
+    {
+        "id": "322",
+        "panorama": "http://localhost:8000/motor/GS__1751.jpg",
+        "name": "GS__1751",
+        "links": [
+            {
+                "nodeId": "321"
+            },
+            {
+                "nodeId": "323"
+            }
+        ],
+        "gps": [
+            "59.5189377",
+            "36.339128611111114",
+            1041.7
+        ],
+        "sphereCorrection": {
+            "pan": "169deg"
+        }
+    },
+    {
+        "id": "323",
+        "panorama": "http://localhost:8000/motor/GS__1752.jpg",
+        "name": "GS__1752",
+        "links": [
+            {
+                "nodeId": "322"
+            },
+            {
+                "nodeId": "324"
+            },
+            {
+                "nodeId": "291"
+            },
+            {
+                "nodeId": "292"
+            }
+        ],
+        "gps": [
+            "59.5189178",
+            "36.339052111111116",
+            1041.66
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "324",
+        "panorama": "http://localhost:8000/motor/GS__1753.jpg",
+        "name": "GS__1753",
+        "links": [
+            {
+                "nodeId": "323"
+            },
+            {
+                "nodeId": "325"
+            },
+            {
+                "nodeId": "291"
+            },
+            {
+                "nodeId": "292"
+            }
+        ],
+        "gps": [
+            "59.5188997",
+            "36.338970805555554",
+            1041.42
+        ],
+        "sphereCorrection": {
+            "pan": "170deg"
+        }
+    },
+    {
+        "id": "325",
+        "panorama": "http://localhost:8000/motor/GS__1754.jpg",
+        "name": "GS__1754",
+        "links": [
+            {
+                "nodeId": "324"
+            },
+            {
+                "nodeId": "326"
+            }
+        ],
+        "gps": [
+            "59.5188813",
+            "36.33888411111111",
+            1041.47
+        ],
+        "sphereCorrection": {
+            "pan": "170deg"
+        }
+    },
+    {
+        "id": "326",
+        "panorama": "http://localhost:8000/motor/GS__1755.jpg",
+        "name": "GS__1755",
+        "links": [
+            {
+                "nodeId": "325"
+            },
+            {
+                "nodeId": "327"
+            }
+        ],
+        "gps": [
+            "59.518842299999996",
+            "36.338756000000004",
+            1040.72
+        ],
+        "sphereCorrection": {
+            "pan": "166deg"
+        }
+    },
+    {
+        "id": "327",
+        "panorama": "http://localhost:8000/motor/GS__1756.jpg",
+        "name": "GS__1756",
+        "links": [
+            {
+                "nodeId": "326"
+            },
+            {
+                "nodeId": "328"
+            }
+        ],
+        "gps": [
+            "59.5188102",
+            "36.33863138888889",
+            1040.58
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "328",
+        "panorama": "http://localhost:8000/motor/GS__1757.jpg",
+        "name": "GS__1757",
+        "links": [
+            {
+                "nodeId": "327"
+            },
+            {
+                "nodeId": "329"
+            }
+        ],
+        "gps": [
+            "59.518785",
+            "36.33853388888889",
+            1040.27
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "329",
+        "panorama": "http://localhost:8000/motor/GS__1758.jpg",
+        "name": "GS__1758",
+        "links": [
+            {
+                "nodeId": "328"
+            },
+            {
+                "nodeId": "330"
+            },
+            {
+                "nodeId": "218"
+            }
+        ],
+        "gps": [
+            "59.5187702",
+            "36.338464611111114",
+            1040.66
+        ],
+        "sphereCorrection": {
+            "pan": "170deg"
+        }
+    },
+    {
+        "id": "330",
+        "panorama": "http://localhost:8000/motor/GS__1759.jpg",
+        "name": "GS__1759",
+        "links": [
+            {
+                "nodeId": "329"
+            },
+            {
+                "nodeId": "331"
+            },
+            {
+                "nodeId": "218"
+            }
+        ],
+        "gps": [
+            "59.5187457",
+            "36.3383715",
+            1040.82
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "331",
+        "panorama": "http://localhost:8000/motor/GS__1760.jpg",
+        "name": "GS__1760",
+        "links": [
+            {
+                "nodeId": "330"
+            },
+            {
+                "nodeId": "332"
+            }
+        ],
+        "gps": [
+            "59.5187204",
+            "36.338283805555555",
+            1040.51
+        ],
+        "sphereCorrection": {
+            "pan": "167deg"
+        }
+    },
+    {
+        "id": "332",
+        "panorama": "http://localhost:8000/motor/GS__1761.jpg",
+        "name": "GS__1761",
+        "links": [
+            {
+                "nodeId": "331"
+            },
+            {
+                "nodeId": "333"
+            }
+        ],
+        "gps": [
+            "59.5186837",
+            "36.338149694444446",
+            1040.77
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "333",
+        "panorama": "http://localhost:8000/motor/GS__1762.jpg",
+        "name": "GS__1762",
+        "links": [
+            {
+                "nodeId": "332"
+            },
+            {
+                "nodeId": "334"
+            }
+        ],
+        "gps": [
+            "59.5186549",
+            "36.338040694444445",
+            1040.92
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "334",
+        "panorama": "http://localhost:8000/motor/GS__1763.jpg",
+        "name": "GS__1763",
+        "links": [
+            {
+                "nodeId": "333"
+            },
+            {
+                "nodeId": "335"
+            }
+        ],
+        "gps": [
+            "59.5186132",
+            "36.337891194444445",
+            1040.88
+        ],
+        "sphereCorrection": {
+            "pan": "167deg"
+        }
+    },
+    {
+        "id": "335",
+        "panorama": "http://localhost:8000/motor/GS__1764.jpg",
+        "name": "GS__1764",
+        "links": [
+            {
+                "nodeId": "334"
+            },
+            {
+                "nodeId": "336"
+            },
+            {
+                "nodeId": "179"
+            },
+            {
+                "nodeId": "180"
+            }
+        ],
+        "gps": [
+            "59.5185878",
+            "36.3378085",
+            1040.97
+        ],
+        "sphereCorrection": {
+            "pan": "166deg"
+        }
+    },
+    {
+        "id": "336",
+        "panorama": "http://localhost:8000/motor/GS__1765.jpg",
+        "name": "GS__1765",
+        "links": [
+            {
+                "nodeId": "335"
+            },
+            {
+                "nodeId": "337"
+            }
+        ],
+        "gps": [
+            "59.5185524",
+            "36.337665388888894",
+            1040.89
+        ],
+        "sphereCorrection": {
+            "pan": "169deg"
+        }
+    },
+    {
+        "id": "337",
+        "panorama": "http://localhost:8000/motor/GS__1766.jpg",
+        "name": "GS__1766",
+        "links": [
+            {
+                "nodeId": "336"
+            },
+            {
+                "nodeId": "338"
+            }
+        ],
+        "gps": [
+            "59.5185204",
+            "36.33754461111111",
+            1041.2
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "338",
+        "panorama": "http://localhost:8000/motor/GS__1767.jpg",
+        "name": "GS__1767",
+        "links": [
+            {
+                "nodeId": "337"
+            },
+            {
+                "nodeId": "339"
+            }
+        ],
+        "gps": [
+            "59.5184845",
+            "36.33741169444445",
+            1041.08
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "339",
+        "panorama": "http://localhost:8000/motor/GS__1768.jpg",
+        "name": "GS__1768",
+        "links": [
+            {
+                "nodeId": "338"
+            },
+            {
+                "nodeId": "340"
+            }
+        ],
+        "gps": [
+            "59.5184523",
+            "36.33729780555556",
+            1040.85
+        ],
+        "sphereCorrection": {
+            "pan": "167deg"
+        }
+    },
+    {
+        "id": "340",
+        "panorama": "http://localhost:8000/motor/GS__1769.jpg",
+        "name": "GS__1769",
+        "links": [
+            {
+                "nodeId": "339"
+            },
+            {
+                "nodeId": "341"
+            },
+            {
+                "nodeId": "44"
+            }
+        ],
+        "gps": [
+            "59.5184164",
+            "36.337180805555555",
+            1041.03
+        ],
+        "sphereCorrection": {
+            "pan": "166deg"
+        }
+    },
+    {
+        "id": "341",
+        "panorama": "http://localhost:8000/motor/GS__1770.jpg",
+        "name": "GS__1770",
+        "links": [
+            {
+                "nodeId": "340"
+            },
+            {
+                "nodeId": "342"
+            }
+        ],
+        "gps": [
+            "59.518376599999996",
+            "36.337040388888894",
+            1040.92
+        ],
+        "sphereCorrection": {
+            "pan": "167deg"
+        }
+    },
+    {
+        "id": "342",
+        "panorama": "http://localhost:8000/motor/GS__1771.jpg",
+        "name": "GS__1771",
+        "links": [
+            {
+                "nodeId": "341"
+            },
+            {
+                "nodeId": "343"
+            }
+        ],
+        "gps": [
+            "59.5183473",
+            "36.33692961111112",
+            1041.28
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "343",
+        "panorama": "http://localhost:8000/motor/GS__1772.jpg",
+        "name": "GS__1772",
+        "links": [
+            {
+                "nodeId": "342"
+            },
+            {
+                "nodeId": "344"
+            }
+        ],
+        "gps": [
+            "59.5183077",
+            "36.33679488888889",
+            1041.2
+        ],
+        "sphereCorrection": {
+            "pan": "167deg"
+        }
+    },
+    {
+        "id": "344",
+        "panorama": "http://localhost:8000/motor/GS__1773.jpg",
+        "name": "GS__1773",
+        "links": [
+            {
+                "nodeId": "343"
+            },
+            {
+                "nodeId": "345"
+            }
+        ],
+        "gps": [
+            "59.5182773",
+            "36.336688",
+            1041.27
+        ],
+        "sphereCorrection": {
+            "pan": "167deg"
+        }
+    },
+    {
+        "id": "345",
+        "panorama": "http://localhost:8000/motor/GS__1774.jpg",
+        "name": "GS__1774",
+        "links": [
+            {
+                "nodeId": "344"
+            },
+            {
+                "nodeId": "346"
+            }
+        ],
+        "gps": [
+            "59.518194799999996",
+            "36.336626",
+            1041.13
+        ],
+        "sphereCorrection": {
+            "pan": "133deg"
+        }
+    },
+    {
+        "id": "346",
+        "panorama": "http://localhost:8000/motor/GS__1775.jpg",
+        "name": "GS__1775",
+        "links": [
+            {
+                "nodeId": "345"
+            },
+            {
+                "nodeId": "347"
+            }
+        ],
+        "gps": [
+            "59.517956999999996",
+            "36.336663388888894",
+            1041.45
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "347",
+        "panorama": "http://localhost:8000/motor/GS__1776.jpg",
+        "name": "GS__1776",
+        "links": [
+            {
+                "nodeId": "346"
+            },
+            {
+                "nodeId": "348"
+            }
+        ],
+        "gps": [
+            "59.5176774",
+            "36.336707000000004",
+            1041.61
+        ],
+        "sphereCorrection": {
+            "pan": "79deg"
+        }
+    },
+    {
+        "id": "348",
+        "panorama": "http://localhost:8000/motor/GS__1777.jpg",
+        "name": "GS__1777",
+        "links": [
+            {
+                "nodeId": "347"
+            },
+            {
+                "nodeId": "349"
+            }
+        ],
+        "gps": [
+            "59.5173944",
+            "36.33675438888889",
+            1041.95
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "349",
+        "panorama": "http://localhost:8000/motor/GS__1778.jpg",
+        "name": "GS__1778",
+        "links": [
+            {
+                "nodeId": "348"
+            },
+            {
+                "nodeId": "350"
+            }
+        ],
+        "gps": [
+            "59.5171325",
+            "36.336802194444445",
+            1042.2
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "350",
+        "panorama": "http://localhost:8000/motor/GS__1779.jpg",
+        "name": "GS__1779",
+        "links": [
+            {
+                "nodeId": "349"
+            },
+            {
+                "nodeId": "351"
+            }
+        ],
+        "gps": [
+            "59.516871",
+            "36.336845305555556",
+            1042.68
+        ],
+        "sphereCorrection": {
+            "pan": "78deg"
+        }
+    },
+    {
+        "id": "351",
+        "panorama": "http://localhost:8000/motor/GS__1780.jpg",
+        "name": "GS__1780",
+        "links": [
+            {
+                "nodeId": "350"
+            },
+            {
+                "nodeId": "352"
+            }
+        ],
+        "gps": [
+            "59.51664930555555",
+            "36.336887805555556",
+            1043.18
+        ],
+        "sphereCorrection": {
+            "pan": "77deg"
+        }
+    },
+    {
+        "id": "352",
+        "panorama": "http://localhost:8000/motor/GS__1781.jpg",
+        "name": "GS__1781",
+        "links": [
+            {
+                "nodeId": "351"
+            },
+            {
+                "nodeId": "353"
+            }
+        ],
+        "gps": [
+            "59.51656630555556",
+            "36.33697319444445",
+            1043.56
+        ],
+        "sphereCorrection": {
+            "pan": "38deg"
+        }
+    },
+    {
+        "id": "353",
+        "panorama": "http://localhost:8000/motor/GS__1782.jpg",
+        "name": "GS__1782",
+        "links": [
+            {
+                "nodeId": "352"
+            },
+            {
+                "nodeId": "354"
+            }
+        ],
+        "gps": [
+            "59.51658988888889",
+            "36.33704330555556",
+            1044.48
+        ],
+        "sphereCorrection": {
+            "pan": "-15deg"
+        }
+    },
+    {
+        "id": "354",
+        "panorama": "http://localhost:8000/motor/GS__1783.jpg",
+        "name": "GS__1783",
+        "links": [
+            {
+                "nodeId": "353"
+            },
+            {
+                "nodeId": "355"
+            }
+        ],
+        "gps": [
+            "59.516618",
+            "36.33714488888889",
+            1044.84
+        ],
+        "sphereCorrection": {
+            "pan": "-13deg"
+        }
+    },
+    {
+        "id": "355",
+        "panorama": "http://localhost:8000/motor/GS__1784.jpg",
+        "name": "GS__1784",
+        "links": [
+            {
+                "nodeId": "354"
+            },
+            {
+                "nodeId": "356"
+            }
+        ],
+        "gps": [
+            "59.516646",
+            "36.33724930555556",
+            1045.64
+        ],
+        "sphereCorrection": {
+            "pan": "-12deg"
+        }
+    },
+    {
+        "id": "356",
+        "panorama": "http://localhost:8000/motor/GS__1785.jpg",
+        "name": "GS__1785",
+        "links": [
+            {
+                "nodeId": "355"
+            },
+            {
+                "nodeId": "357"
+            }
+        ],
+        "gps": [
+            "59.516676499999996",
+            "36.337333694444446",
+            1046.6
+        ],
+        "sphereCorrection": {
+            "pan": "-16deg"
+        }
+    },
+    {
+        "id": "357",
+        "panorama": "http://localhost:8000/motor/GS__1786.jpg",
+        "name": "GS__1786",
+        "links": [
+            {
+                "nodeId": "356"
+            },
+            {
+                "nodeId": "358"
+            },
+            {
+                "nodeId": "30"
+            }
+        ],
+        "gps": [
+            "59.5167026",
+            "36.33742069444445",
+            1046.28
+        ],
+        "sphereCorrection": {
+            "pan": "-14deg"
+        }
+    },
+    {
+        "id": "358",
+        "panorama": "http://localhost:8000/motor/GS__1787.jpg",
+        "name": "GS__1787",
+        "links": [
+            {
+                "nodeId": "357"
+            },
+            {
+                "nodeId": "359"
+            }
+        ],
+        "gps": [
+            "59.516732",
+            "36.33754238888889",
+            1045.93
+        ],
+        "sphereCorrection": {
+            "pan": "-11deg"
+        }
+    },
+    {
+        "id": "359",
+        "panorama": "http://localhost:8000/motor/GS__1788.jpg",
+        "name": "GS__1788",
+        "links": [
+            {
+                "nodeId": "358"
+            },
+            {
+                "nodeId": "360"
+            }
+        ],
+        "gps": [
+            "59.5167675",
+            "36.33767188888889",
+            1046.66
+        ],
+        "sphereCorrection": {
+            "pan": "-12deg"
+        }
+    },
+    {
+        "id": "360",
+        "panorama": "http://localhost:8000/motor/GS__1789.jpg",
+        "name": "GS__1789",
+        "links": [
+            {
+                "nodeId": "359"
+            },
+            {
+                "nodeId": "361"
+            }
+        ],
+        "gps": [
+            "59.5168046",
+            "36.33783011111111",
+            1046.58
+        ],
+        "sphereCorrection": {
+            "pan": "-11deg"
+        }
+    },
+    {
+        "id": "361",
+        "panorama": "http://localhost:8000/motor/GS__1790.jpg",
+        "name": "GS__1790",
+        "links": [
+            {
+                "nodeId": "360"
+            },
+            {
+                "nodeId": "362"
+            }
+        ],
+        "gps": [
+            "59.5168452",
+            "36.337952388888894",
+            1048.11
+        ],
+        "sphereCorrection": {
+            "pan": "-15deg"
+        }
+    },
+    {
+        "id": "362",
+        "panorama": "http://localhost:8000/motor/GS__1791.jpg",
+        "name": "GS__1791",
+        "links": [
+            {
+                "nodeId": "361"
+            },
+            {
+                "nodeId": "363"
+            },
+            {
+                "nodeId": "167"
+            }
+        ],
+        "gps": [
+            "59.5168704",
+            "36.338065",
+            1047.62
+        ],
+        "sphereCorrection": {
+            "pan": "-10deg"
+        }
+    },
+    {
+        "id": "363",
+        "panorama": "http://localhost:8000/motor/GS__1792.jpg",
+        "name": "GS__1792",
+        "links": [
+            {
+                "nodeId": "362"
+            },
+            {
+                "nodeId": "364"
+            },
+            {
+                "nodeId": "167"
+            }
+        ],
+        "gps": [
+            "59.5169006",
+            "36.338184500000004",
+            1048.03
+        ],
+        "sphereCorrection": {
+            "pan": "-12deg"
+        }
+    },
+    {
+        "id": "364",
+        "panorama": "http://localhost:8000/motor/GS__1793.jpg",
+        "name": "GS__1793",
+        "links": [
+            {
+                "nodeId": "363"
+            },
+            {
+                "nodeId": "365"
+            }
+        ],
+        "gps": [
+            "59.516956799999996",
+            "36.33840311111111",
+            1049.1
+        ],
+        "sphereCorrection": {
+            "pan": "-12deg"
+        }
+    },
+    {
+        "id": "365",
+        "panorama": "http://localhost:8000/motor/GS__1794.jpg",
+        "name": "GS__1794",
+        "links": [
+            {
+                "nodeId": "364"
+            },
+            {
+                "nodeId": "366"
+            }
+        ],
+        "gps": [
+            "59.5170064",
+            "36.33855719444445",
+            1049.18
+        ],
+        "sphereCorrection": {
+            "pan": "-15deg"
+        }
+    },
+    {
+        "id": "366",
+        "panorama": "http://localhost:8000/motor/GS__1795.jpg",
+        "name": "GS__1795",
+        "links": [
+            {
+                "nodeId": "365"
+            },
+            {
+                "nodeId": "367"
+            },
+            {
+                "nodeId": "229"
+            }
+        ],
+        "gps": [
+            "59.5170305",
+            "36.33866530555556",
+            1049.1
+        ],
+        "sphereCorrection": {
+            "pan": "-10deg"
+        }
+    },
+    {
+        "id": "367",
+        "panorama": "http://localhost:8000/motor/GS__1796.jpg",
+        "name": "GS__1796",
+        "links": [
+            {
+                "nodeId": "366"
+            },
+            {
+                "nodeId": "368"
+            },
+            {
+                "nodeId": "229"
+            }
+        ],
+        "gps": [
+            "59.5170548",
+            "36.33876580555556",
+            1049.08
+        ],
+        "sphereCorrection": {
+            "pan": "-11deg"
+        }
+    },
+    {
+        "id": "368",
+        "panorama": "http://localhost:8000/motor/GS__1797.jpg",
+        "name": "GS__1797",
+        "links": [
+            {
+                "nodeId": "367"
+            },
+            {
+                "nodeId": "369"
+            }
+        ],
+        "gps": [
+            "59.5170902",
+            "36.33889638888889",
+            1049.01
+        ],
+        "sphereCorrection": {
+            "pan": "-12deg"
+        }
+    },
+    {
+        "id": "369",
+        "panorama": "http://localhost:8000/motor/GS__1798.jpg",
+        "name": "GS__1798",
+        "links": [
+            {
+                "nodeId": "368"
+            },
+            {
+                "nodeId": "370"
+            }
+        ],
+        "gps": [
+            "59.517127099999996",
+            "36.33903569444445",
+            1048.97
+        ],
+        "sphereCorrection": {
+            "pan": "-12deg"
+        }
+    },
+    {
+        "id": "370",
+        "panorama": "http://localhost:8000/motor/GS__1799.jpg",
+        "name": "GS__1799",
+        "links": [
+            {
+                "nodeId": "369"
+            },
+            {
+                "nodeId": "371"
+            }
+        ],
+        "gps": [
+            "59.5171668",
+            "36.339151694444446",
+            1049.73
+        ],
+        "sphereCorrection": {
+            "pan": "-15deg"
+        }
+    },
+    {
+        "id": "371",
+        "panorama": "http://localhost:8000/motor/GS__1800.jpg",
+        "name": "GS__1800",
+        "links": [
+            {
+                "nodeId": "370"
+            },
+            {
+                "nodeId": "372"
+            }
+        ],
+        "gps": [
+            "59.517186",
+            "36.33923830555556",
+            1049.43
+        ],
+        "sphereCorrection": {
+            "pan": "-10deg"
+        }
+    },
+    {
+        "id": "372",
+        "panorama": "http://localhost:8000/motor/GS__1801.jpg",
+        "name": "GS__1801",
+        "links": [
+            {
+                "nodeId": "371"
+            },
+            {
+                "nodeId": "373"
+            },
+            {
+                "nodeId": "278"
+            },
+            {
+                "nodeId": "279"
+            }
+        ],
+        "gps": [
+            "59.5172106",
+            "36.3393555",
+            1050.35
+        ],
+        "sphereCorrection": {
+            "pan": "-10deg"
+        }
+    },
+    {
+        "id": "373",
+        "panorama": "http://localhost:8000/motor/GS__1802.jpg",
+        "name": "GS__1802",
+        "links": [
+            {
+                "nodeId": "372"
+            },
+            {
+                "nodeId": "374"
+            }
+        ],
+        "gps": [
+            "59.5172442",
+            "36.339482611111116",
+            1051.76
+        ],
+        "sphereCorrection": {
+            "pan": "-12deg"
+        }
+    },
+    {
+        "id": "374",
+        "panorama": "http://localhost:8000/motor/GS__1803.jpg",
+        "name": "GS__1803",
+        "links": [
+            {
+                "nodeId": "373"
+            },
+            {
+                "nodeId": "375"
+            }
+        ],
+        "gps": [
+            "59.5172828",
+            "36.339612611111114",
+            1052.8
+        ],
+        "sphereCorrection": {
+            "pan": "-13deg"
+        }
+    },
+    {
+        "id": "375",
+        "panorama": "http://localhost:8000/motor/GS__1804.jpg",
+        "name": "GS__1804",
+        "links": [
+            {
+                "nodeId": "374"
+            },
+            {
+                "nodeId": "376"
+            }
+        ],
+        "gps": [
+            "59.5173092",
+            "36.339742388888894",
+            1052.97
+        ],
+        "sphereCorrection": {
+            "pan": "-9deg"
+        }
+    },
+    {
+        "id": "376",
+        "panorama": "http://localhost:8000/motor/GS__1805.jpg",
+        "name": "GS__1805",
+        "links": [
+            {
+                "nodeId": "375"
+            },
+            {
+                "nodeId": "377"
+            }
+        ],
+        "gps": [
+            "59.5173372",
+            "36.33986088888889",
+            1051.78
+        ],
+        "sphereCorrection": {
+            "pan": "-11deg"
+        }
+    },
+    {
+        "id": "377",
+        "panorama": "http://localhost:8000/motor/GS__1806.jpg",
+        "name": "GS__1806",
+        "links": [
+            {
+                "nodeId": "376"
+            },
+            {
+                "nodeId": "378"
+            },
+            {
+                "nodeId": "125"
+            },
+            {
+                "nodeId": "135"
+            },
+            {
+                "nodeId": "136"
+            },
+            {
+                "nodeId": "137"
+            }
+        ],
+        "gps": [
+            "59.51563319444445",
+            "36.340194805555555",
+            1049.65
+        ],
+        "sphereCorrection": {
+            "pan": "76deg"
+        }
+    },
+    {
+        "id": "378",
+        "panorama": "http://localhost:8000/motor/GS__1807.jpg",
+        "name": "GS__1807",
+        "links": [
+            {
+                "nodeId": "377"
+            },
+            {
+                "nodeId": "379"
+            },
+            {
+                "nodeId": "135"
+            },
+            {
+                "nodeId": "136"
+            },
+            {
+                "nodeId": "137"
+            }
+        ],
+        "gps": [
+            "59.51561088888889",
+            "36.34012969444445",
+            1049.71
+        ],
+        "sphereCorrection": {
+            "pan": "165deg"
+        }
+    },
+    {
+        "id": "379",
+        "panorama": "http://localhost:8000/motor/GS__1808.jpg",
+        "name": "GS__1808",
+        "links": [
+            {
+                "nodeId": "378"
+            },
+            {
+                "nodeId": "380"
+            },
+            {
+                "nodeId": "138"
+            }
+        ],
+        "gps": [
+            "59.51557161111111",
+            "36.340012111111115",
+            1049.44
+        ],
+        "sphereCorrection": {
+            "pan": "165deg"
+        }
+    },
+    {
+        "id": "380",
+        "panorama": "http://localhost:8000/motor/GS__1809.jpg",
+        "name": "GS__1809",
+        "links": [
+            {
+                "nodeId": "379"
+            },
+            {
+                "nodeId": "381"
+            },
+            {
+                "nodeId": "139"
+            },
+            {
+                "nodeId": "140"
+            }
+        ],
+        "gps": [
+            "59.51553438888889",
+            "36.3399",
+            1049.83
+        ],
+        "sphereCorrection": {
+            "pan": "165deg"
+        }
+    },
+    {
+        "id": "381",
+        "panorama": "http://localhost:8000/motor/GS__1810.jpg",
+        "name": "GS__1810",
+        "links": [
+            {
+                "nodeId": "380"
+            },
+            {
+                "nodeId": "382"
+            },
+            {
+                "nodeId": "140"
+            },
+            {
+                "nodeId": "141"
+            }
+        ],
+        "gps": [
+            "59.51551461111111",
+            "36.339794805555556",
+            1050.73
+        ],
+        "sphereCorrection": {
+            "pan": "171deg"
+        }
+    },
+    {
+        "id": "382",
+        "panorama": "http://localhost:8000/motor/GS__1811.jpg",
+        "name": "GS__1811",
+        "links": [
+            {
+                "nodeId": "381"
+            },
+            {
+                "nodeId": "383"
+            },
+            {
+                "nodeId": "141"
+            },
+            {
+                "nodeId": "142"
+            }
+        ],
+        "gps": [
+            "59.51549688888889",
+            "36.339717694444445",
+            1049.93
+        ],
+        "sphereCorrection": {
+            "pan": "170deg"
+        }
+    },
+    {
+        "id": "383",
+        "panorama": "http://localhost:8000/motor/GS__1812.jpg",
+        "name": "GS__1812",
+        "links": [
+            {
+                "nodeId": "382"
+            },
+            {
+                "nodeId": "384"
+            },
+            {
+                "nodeId": "142"
+            },
+            {
+                "nodeId": "143"
+            },
+            {
+                "nodeId": "268"
+            }
+        ],
+        "gps": [
+            "59.51545111111111",
+            "36.339588500000005",
+            1049.96
+        ],
+        "sphereCorrection": {
+            "pan": "164deg"
+        }
+    },
+    {
+        "id": "384",
+        "panorama": "http://localhost:8000/motor/GS__1813.jpg",
+        "name": "GS__1813",
+        "links": [
+            {
+                "nodeId": "383"
+            },
+            {
+                "nodeId": "385"
+            },
+            {
+                "nodeId": "144"
+            }
+        ],
+        "gps": [
+            "59.51541261111111",
+            "36.33945688888889",
+            1049.72
+        ],
+        "sphereCorrection": {
+            "pan": "167deg"
+        }
+    },
+    {
+        "id": "385",
+        "panorama": "http://localhost:8000/motor/GS__1814.jpg",
+        "name": "GS__1814",
+        "links": [
+            {
+                "nodeId": "384"
+            },
+            {
+                "nodeId": "386"
+            },
+            {
+                "nodeId": "145"
+            },
+            {
+                "nodeId": "146"
+            }
+        ],
+        "gps": [
+            "59.51536988888889",
+            "36.33932319444445",
+            1049.32
+        ],
+        "sphereCorrection": {
+            "pan": "166deg"
+        }
+    },
+    {
+        "id": "386",
+        "panorama": "http://localhost:8000/motor/GS__1815.jpg",
+        "name": "GS__1815",
+        "links": [
+            {
+                "nodeId": "385"
+            },
+            {
+                "nodeId": "387"
+            },
+            {
+                "nodeId": "146"
+            },
+            {
+                "nodeId": "147"
+            },
+            {
+                "nodeId": "148"
+            }
+        ],
+        "gps": [
+            "59.5153295",
+            "36.33918588888889",
+            1050.43
+        ],
+        "sphereCorrection": {
+            "pan": "167deg"
+        }
+    },
+    {
+        "id": "387",
+        "panorama": "http://localhost:8000/motor/GS__1816.jpg",
+        "name": "GS__1816",
+        "links": [
+            {
+                "nodeId": "386"
+            },
+            {
+                "nodeId": "388"
+            },
+            {
+                "nodeId": "148"
+            },
+            {
+                "nodeId": "149"
+            },
+            {
+                "nodeId": "240"
+            },
+            {
+                "nodeId": "241"
+            }
+        ],
+        "gps": [
+            "59.51529680555556",
+            "36.33904761111111",
+            1049.54
+        ],
+        "sphereCorrection": {
+            "pan": "169deg"
+        }
+    },
+    {
+        "id": "388",
+        "panorama": "http://localhost:8000/motor/GS__1817.jpg",
+        "name": "GS__1817",
+        "links": [
+            {
+                "nodeId": "387"
+            },
+            {
+                "nodeId": "389"
+            },
+            {
+                "nodeId": "149"
+            },
+            {
+                "nodeId": "150"
+            }
+        ],
+        "gps": [
+            "59.515265694444444",
+            "36.338930194444444",
+            1048.64
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "389",
+        "panorama": "http://localhost:8000/motor/GS__1818.jpg",
+        "name": "GS__1818",
+        "links": [
+            {
+                "nodeId": "388"
+            },
+            {
+                "nodeId": "390"
+            },
+            {
+                "nodeId": "151"
+            }
+        ],
+        "gps": [
+            "59.5152295",
+            "36.33881319444445",
+            1049.16
+        ],
+        "sphereCorrection": {
+            "pan": "166deg"
+        }
+    },
+    {
+        "id": "390",
+        "panorama": "http://localhost:8000/motor/GS__1819.jpg",
+        "name": "GS__1819",
+        "links": [
+            {
+                "nodeId": "389"
+            },
+            {
+                "nodeId": "391"
+            },
+            {
+                "nodeId": "152"
+            },
+            {
+                "nodeId": "153"
+            }
+        ],
+        "gps": [
+            "59.51518519444444",
+            "36.3386915",
+            1049.0
+        ],
+        "sphereCorrection": {
+            "pan": "164deg"
+        }
+    },
+    {
+        "id": "391",
+        "panorama": "http://localhost:8000/motor/GS__1820.jpg",
+        "name": "GS__1820",
+        "links": [
+            {
+                "nodeId": "390"
+            },
+            {
+                "nodeId": "392"
+            },
+            {
+                "nodeId": "153"
+            },
+            {
+                "nodeId": "154"
+            }
+        ],
+        "gps": [
+            "59.5151525",
+            "36.338570805555555",
+            1049.39
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "392",
+        "panorama": "http://localhost:8000/motor/GS__1821.jpg",
+        "name": "GS__1821",
+        "links": [
+            {
+                "nodeId": "391"
+            },
+            {
+                "nodeId": "393"
+            },
+            {
+                "nodeId": "154"
+            },
+            {
+                "nodeId": "155"
+            }
+        ],
+        "gps": [
+            "59.515129",
+            "36.338472611111115",
+            1049.47
+        ],
+        "sphereCorrection": {
+            "pan": "169deg"
+        }
+    },
+    {
+        "id": "393",
+        "panorama": "http://localhost:8000/motor/GS__1822.jpg",
+        "name": "GS__1822",
+        "links": [
+            {
+                "nodeId": "392"
+            },
+            {
+                "nodeId": "394"
+            }
+        ],
+        "gps": [
+            "59.51510511111111",
+            "36.338389",
+            1049.27
+        ],
+        "sphereCorrection": {
+            "pan": "167deg"
+        }
+    },
+    {
+        "id": "394",
+        "panorama": "http://localhost:8000/motor/GS__1823.jpg",
+        "name": "GS__1823",
+        "links": [
+            {
+                "nodeId": "393"
+            },
+            {
+                "nodeId": "395"
+            }
+        ],
+        "gps": [
+            "59.515080194444444",
+            "36.33827761111112",
+            1049.22
+        ],
+        "sphereCorrection": {
+            "pan": "170deg"
+        }
+    },
+    {
+        "id": "395",
+        "panorama": "http://localhost:8000/motor/GS__1824.jpg",
+        "name": "GS__1824",
+        "links": [
+            {
+                "nodeId": "394"
+            },
+            {
+                "nodeId": "396"
+            }
+        ],
+        "gps": [
+            "59.515041305555556",
+            "36.338109611111115",
+            1049.33
+        ],
+        "sphereCorrection": {
+            "pan": "169deg"
+        }
+    },
+    {
+        "id": "396",
+        "panorama": "http://localhost:8000/motor/GS__1825.jpg",
+        "name": "GS__1825",
+        "links": [
+            {
+                "nodeId": "395"
+            },
+            {
+                "nodeId": "397"
+            }
+        ],
+        "gps": [
+            "59.515002305555555",
+            "36.3379755",
+            1049.28
+        ],
+        "sphereCorrection": {
+            "pan": "167deg"
+        }
+    },
+    {
+        "id": "397",
+        "panorama": "http://localhost:8000/motor/GS__1826.jpg",
+        "name": "GS__1826",
+        "links": [
+            {
+                "nodeId": "396"
+            },
+            {
+                "nodeId": "398"
+            }
+        ],
+        "gps": [
+            "59.51497661111111",
+            "36.33787811111112",
+            1048.61
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "398",
+        "panorama": "http://localhost:8000/motor/GS__1827.jpg",
+        "name": "GS__1827",
+        "links": [
+            {
+                "nodeId": "397"
+            },
+            {
+                "nodeId": "399"
+            },
+            {
+                "nodeId": "16"
+            },
+            {
+                "nodeId": "17"
+            }
+        ],
+        "gps": [
+            "59.514949",
+            "36.337769111111115",
+            1048.41
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "399",
+        "panorama": "http://localhost:8000/motor/GS__1828.jpg",
+        "name": "GS__1828",
+        "links": [
+            {
+                "nodeId": "398"
+            },
+            {
+                "nodeId": "400"
+            }
+        ],
+        "gps": [
+            "59.514916694444445",
+            "36.33764819444445",
+            1048.68
+        ],
+        "sphereCorrection": {
+            "pan": "168deg"
+        }
+    },
+    {
+        "id": "400",
+        "panorama": "http://localhost:8000/motor/GS__1829.jpg",
+        "name": "GS__1829",
+        "links": [
+            {
+                "nodeId": "399"
+            },
+            {
+                "nodeId": "401"
+            }
+        ],
+        "gps": [
+            "59.514846694444444",
+            "36.33736261111111",
+            1049.68
+        ],
+        "sphereCorrection": {
+            "pan": "169deg"
+        }
+    },
+    {
+        "id": "401",
+        "panorama": "http://localhost:8000/motor/GS__1830.jpg",
+        "name": "GS__1830",
+        "links": [
+            {
+                "nodeId": "400"
+            }
+        ],
+        "gps": [
+            "59.514827805555555",
+            "36.33727511111111",
+            1049.41
+        ],
+        "sphereCorrection": {
+            "pan": "170deg"
+        }
+    }
+]
