@@ -206,7 +206,8 @@ def convert_to_point_cloud(project_path, output_dir, preview_ratio=None, export_
                 format=Metashape.PointCloudFormatPLY,  # Point cloud format (PLY)
                 crs=chunk.crs,  # Coordinate Reference System
                 binary=True,
-                save_point_classification=True
+                save_point_classification=True,
+                save_colors=True
             )
             print(f"ply Point cloud exported to {output_path}")
 
@@ -216,7 +217,8 @@ def convert_to_point_cloud(project_path, output_dir, preview_ratio=None, export_
                 output_path,
                 format=Metashape.PointCloudFormatPCD,  # Point cloud format (pcd)
                 crs=chunk.crs,  # Coordinate Reference System
-                binary=True
+                binary=True,
+                save_colors=True
             )
             print(f"pcd Point cloud exported to {output_path}")
 
