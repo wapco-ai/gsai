@@ -1585,7 +1585,7 @@ def ply(output_foldername, file_path):
 
     if os.path.exists(full_file_path) and os.path.isfile(full_file_path):
         return render_template(
-            "ply.html", output_foldername=output_foldername, file_path=file_path
+            "viewer.html", output_foldername=output_foldername, file_path=file_path
         )
     else:
         flash("PLY file not found.")
@@ -1611,7 +1611,7 @@ def pcd_viewer(output_foldername, file_path):
 
     if os.path.exists(full_file_path) and os.path.isfile(full_file_path):
         return render_template(
-            "pcd_viewer.html", output_foldername=output_foldername, file_path=file_path
+            "viewer.html", output_foldername=output_foldername, file_path=file_path
         )
     else:
         flash("pcd file not found.")

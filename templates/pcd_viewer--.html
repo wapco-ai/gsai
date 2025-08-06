@@ -1,0 +1,210 @@
+<!DOCTYPE html>  
+<html lang="en">  
+<head>  
+    <title>Three.js PCD Viewer</title>  
+    <meta charset="utf-8">  
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">  
+    <style>  
+        body { margin: 0; }  
+    </style>  
+</head>  
+<body>  
+    <div id="container"></div>
+    <div id="filterContainer" style="position:absolute; top:10px; left:10px; z-index:100; background:rgba(255,255,255,0.8); padding:5px; font-family: sans-serif;"></div>
+    <div id="infoBox" style="position:absolute; top:10px; right:10px; z-index:100; background:rgba(0,0,0,0.6); color:#fff; padding:5px; font-family:sans-serif;"></div>
+    <div id="helpBox" style="position:absolute; bottom:10px; left:10px; z-index:100; background:rgba(255,255,255,0.8); padding:5px; font-family:sans-serif; max-width:300px;">
+        راهنمای مشاهده ابر نقاط: تنها کلاس‌های موجود در ابر نقاط بارگذاری می‌شوند.
+        برای مشاهده نام کلاس هر نقطه روی آن کلیک کنید.
+    </div>
+
+    <script type="importmap">  
+        {  
+            "imports": {  
+                "three": "/static/threejs/build/three.module.js",  
+                "three/addons/": "/static/threejs/jsm/" 
+            }  
+        }  
+    </script>  
+
+    <script type="module">  
+        import * as THREE from 'three';  
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';  
+        import { PCDLoader } from 'three/addons/loaders/PCDLoader.js';  
+        import { GUI } from 'three/addons/libs/lil-gui.module.min.js';  
+
+        let camera, scene, renderer, controls;
+        let pointCloud; // Store the point cloud object
+        let raycaster = new THREE.Raycaster();
+        let mouse = new THREE.Vector2();
+        let labels = {};
+        init();
+        render();
+
+        function init() {  
+            // Renderer  
+            renderer = new THREE.WebGLRenderer({ antialias: true });  
+            renderer.setPixelRatio(window.devicePixelRatio);  
+            renderer.setSize(window.innerWidth, window.innerHeight);  
+            document.body.appendChild(renderer.domElement);  
+
+            // Scene  
+            scene = new THREE.Scene();  
+            scene.background = new THREE.Color(0x000000); // Black background  
+
+            // Camera  
+            camera = new THREE.PerspectiveCamera(30, window.innerWidth / window.innerHeight, 0.1, 100);  
+            camera.position.set(0, 0, 3); // Adjust initial camera position  
+            scene.add(camera);  
+
+            // Controls  
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = false; // Disabled because there is no animation loop
+            controls.addEventListener('change', render); // Render on interaction
+            controls.dampingFactor = 0.05;
+            controls.screenSpacePanning = false;  
+            controls.minDistance = 1;  
+            controls.maxDistance = 10;  
+
+            // Lights - add some ambient light for better visuals  
+            const ambientLight = new THREE.AmbientLight(0x404040); // soft white light  
+            scene.add(ambientLight);  
+
+            // PCD Loader  
+            const loader = new PCDLoader();  
+    // const pcdFilePath = '/static/{{ filename }}/{{ file_path }}';  
+    var pcdFilePath = "{{ url_for('serve_output_file', output_foldername=output_foldername, file_path=file_path) }}";
+
+    loader.load(pcdFilePath, async function (points) {
+        const geometry = points.geometry;
+        geometry.rotateX(0);
+        geometry.rotateY(0);
+        geometry.center();
+
+        const total = geometry.getAttribute('position').count;
+
+        const colAttr = geometry.getAttribute('color');
+        const classGroups = {};
+        let colorScale = 1;
+
+        if (colAttr) {
+            const col = colAttr.array;
+            colorScale = colAttr.array.BYTES_PER_ELEMENT === 1 ? 255 : 1;
+            for (let i = 0; i < total; i++) {
+                const classId = Math.round(colorScale === 255 ?
+                    col[i * 3 + 1] : col[i * 3 + 1] * 255);
+                if (!classGroups[classId]) {
+                    classGroups[classId] = [];
+                }
+                classGroups[classId].push(i);
+            }
+        } else {
+            classGroups[0] = Array.from({length: total}, (_, i) => i);
+
+        }
+
+        const groupObjects = {};
+        for (const cls in classGroups) {
+            const idx = new Uint32Array(classGroups[cls]);
+            const g = new THREE.BufferGeometry();
+            g.setAttribute('position', geometry.getAttribute('position'));
+            if (colAttr) {
+                g.setAttribute('color', colAttr);
+            }
+            g.setIndex(new THREE.BufferAttribute(idx, 1));
+            const materialOpts = { size: 0.01 };
+            if (colAttr) {
+                materialOpts.vertexColors = true;
+            } else {
+                materialOpts.color = '#ffffff';
+
+            }
+            const material = new THREE.PointsMaterial(materialOpts);
+            const pts = new THREE.Points(g, material);
+            pts.userData.classId = parseInt(cls);
+            scene.add(pts);
+            groupObjects[cls] = pts;
+        }
+
+        const bbox = new THREE.Box3().setFromBufferAttribute(geometry.getAttribute('position'));
+        const center = bbox.getCenter(new THREE.Vector3());
+        const size = bbox.getSize(new THREE.Vector3()).length();
+
+        camera.position.copy(center);
+        camera.position.z += size * 0.5;
+        controls.target.copy(center);
+        camera.lookAt(center);
+        controls.update();
+
+        const gui = new GUI();
+        gui.add({size:0.01}, 'size', 0.001, 0.1).onChange(value => {
+            for(const id in groupObjects){ groupObjects[id].material.size = value; }
+            render();
+        }).name('Point Size');
+
+        const filterContainer = document.getElementById('filterContainer');
+        const response = await fetch('/class_labels?lang=fa');
+        labels = await response.json();
+        for (const cls in groupObjects) {
+            const label = document.createElement('label');
+            label.style.display = 'block';
+            const cb = document.createElement('input');
+            cb.type = 'checkbox';
+            cb.checked = true;
+            cb.onchange = () => { groupObjects[cls].visible = cb.checked; render(); };
+            const swatch = document.createElement('span');
+            swatch.style.display = 'inline-block';
+            swatch.style.width = '12px';
+            swatch.style.height = '12px';
+            const sample = classGroups[cls][0];
+            const r = colAttr.array[sample * 3] / colorScale;
+            const gVal = colAttr.array[sample * 3 + 1] / colorScale;
+            const b = colAttr.array[sample * 3 + 2] / colorScale;
+            swatch.style.backgroundColor = '#' + new THREE.Color(r, gVal, b).getHexString();
+            swatch.style.margin = '0 4px';
+            label.appendChild(cb);
+            label.appendChild(swatch);
+            const name = labels[cls] || ('Class ' + cls);
+            label.appendChild(document.createTextNode(name));
+            filterContainer.appendChild(label);
+        }
+
+        renderer.domElement.addEventListener('click', event => {
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(Object.values(groupObjects));
+            const info = document.getElementById('infoBox');
+            if (intersects.length > 0) {
+                const clsId = intersects[0].object.userData.classId;
+                const name = labels[clsId] || ('Class ' + clsId);
+                info.textContent = 'کلاس: ' + name;
+            } else {
+                info.textContent = '';
+            }
+        });
+
+        render();
+    }, function (xhr) {
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');  
+    }, function (error) {  
+        console.error('An error happened loading the PCD file:', error);  
+    }); 
+
+            // Window Resize  
+            window.addEventListener('resize', onWindowResize);  
+        }  
+
+        function onWindowResize() {  
+            camera.aspect = window.innerWidth / window.innerHeight;  
+            camera.updateProjectionMatrix();  
+            renderer.setSize(window.innerWidth, window.innerHeight);  
+            render();  
+        }  
+
+        function render() {
+            renderer.render(scene, camera);
+        }
+    </script>  
+</body>  
+</html>
