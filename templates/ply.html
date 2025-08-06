@@ -82,7 +82,7 @@
 
                 if (colAttr) {
                     const col = colAttr.array;
-                    if (col[0] > 1) colorScale = 255;
+                    colorScale = colAttr.array.BYTES_PER_ELEMENT === 1 ? 255 : 1;
                     for (let i = 0; i < total; i++) {
                         const classId = Math.round(colorScale === 255 ?
                             col[i * 3 + 1] : col[i * 3 + 1] * 255);
