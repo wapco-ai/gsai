@@ -823,15 +823,23 @@
             updateDebugInfo();
         }
 
-        // Extract point data for analysis - prefers label attribute over color
+
+        
+
         // Extract point data for analysis - prefers label attribute over color
         function extractPointData() {
             pointsData = [];
             const positions = pointCloud.geometry.attributes.position.array;
             const colors = pointCloud.geometry.attributes.color ? pointCloud.geometry.attributes.color.array : null;
             const labels = pointCloud.geometry.attributes.label ? pointCloud.geometry.attributes.label.array : null;
-            console.log(colors)
+
             let classDistribution = {};
+            let uniqueGValues = new Set(); // برای دیدن مقادیر منحصر به فرد g
+
+            if (!colors) {
+                console.error("ابر نقاط فاقد اطلاعات رنگ است. کلاس‌ها قابل استخراج نیستند.");
+                return;
+            }
 
             for (let i = 0; i < positions.length; i += 3) {
                 let classId = 0; // Default class
@@ -839,24 +847,25 @@
 
                 if (labels) {
                     classId = labels[pointIndex];
-                } else if (colors) {
-                    const colorIndex = i; // Color array has same indexing as position
-                    const g = colors[colorIndex + 1]; // GREEN CHANNEL = CLASS
+                } else { // if (colors)
+                    const colorIndex = i;
+                    const g_float = colors[colorIndex + 1]; // مقدار g بین 0.0 و 1.0
 
-                    // اگر مقدار g مستقیماً همان کلاس است (نه بین 0-1)
-                    // classId = Math.round(g);
-                    
-                    // اگر هنوز مقدار بین 0-1 است، از این استفاده کنید:
-                    classId = Math.round(g * 255);
-                    // console.log(g)
+                    // ذخیره مقادیر g برای دیباگ
+                    if (pointIndex < 1000) { // فقط برای 1000 نقطه اول تا کنسول شلوغ نشود
+                        uniqueGValues.add(g_float);
+                    }
+
+                    // تبدیل مقدار نرمال‌شده به شناسه کلاس اصلی
+                    classId = Math.round(g_float * 255);
                 }
 
-                // Track class distribution for debugging
+                // ردیابی توزیع کلاس‌ها
                 if (!classDistribution[classId]) {
                     classDistribution[classId] = 0;
                 }
                 classDistribution[classId]++;
-                
+
                 pointsData.push({
                     index: pointIndex,
                     position: {
@@ -864,34 +873,35 @@
                         y: positions[i + 1],
                         z: positions[i + 2]
                     },
-                    color: colors ? {
+                    color: { // همیشه رنگ را از colors اصلی بخوان
                         r: colors[i],
                         g: colors[i + 1],
                         b: colors[i + 2]
-                    } : { r: 1, g: 1, b: 1 },
+                    },
                     classId: classId
                 });
             }
 
-            // Log class distribution for debugging
-            console.log('Class Distribution:', classDistribution);
+            // لاگ‌های مهم برای دیباگ
+            console.log("--- گزارش استخراج کلاس ---");
+            console.log("توزیع کلاس‌های محاسبه شده:", classDistribution);
 
-            // Update debug info
+            // مقادیر g را به ترتیب چاپ کن تا ببینیم آیا مقداری نزدیک به 20/255 داریم یا نه
+            const sortedGValues = Array.from(uniqueGValues).sort();
+            console.log("مقادیر منحصر به فرد کانال سبز (g) در 1000 نقطه اول (مرتب شده):", sortedGValues);
+
+            // بررسی وجود کلاس 20
+            if (classDistribution[20]) {
+                console.log(`✅ کلاس 20 (خودرو) با تعداد ${classDistribution[20]} نقطه پیدا شد.`);
+            } else {
+                console.warn("⚠️ هشدار: کلاس 20 (خودرو) در بین نقاط محاسبه شده یافت نشد.");
+            }
+            console.log("--------------------------");
+
+
+            // Update debug info (این بخش بدون تغییر باقی می‌ماند)
             if (debugMode) {
-                const debugElement = isUrlMode ?
-                    document.getElementById('debug-info-url') :
-                    document.getElementById('debug-info');
-
-                const sortedClasses = Object.entries(classDistribution)
-                    .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
-                    .slice(0, 10); // Show top 10 classes
-
-                debugElement.innerHTML = `
-            <strong>کلاس‌های شناسایی شده (10 مورد اول):</strong><br>
-            ${sortedClasses.map(([classId, count]) =>
-                    `کلاس ${classId}: ${count} نقطه`
-                ).join('<br>')}
-        `;
+                // ...
             }
         }
 
