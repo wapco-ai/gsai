@@ -594,6 +594,7 @@
         function loadPLYFromUrl(filePath) {
             return new Promise((resolve, reject) => {
                 const loader = new PLYLoader();
+                loader.setCustomPropertyNameMapping({ label: ['class'] });
 
                 updateLoadingStatus('در حال پردازش فایل PLY...');
 
@@ -781,6 +782,7 @@
         // Load PLY file data (for manual upload)
         function loadPLYData(buffer) {
             const loader = new PLYLoader();
+            loader.setCustomPropertyNameMapping({ label: ['class'] });
             loader.load(URL.createObjectURL(new Blob([buffer])), function (geometry) {
                 // Apply transformations
                 geometry.rotateX(0);
@@ -846,7 +848,7 @@
                 const pointIndex = i / 3;
 
                 if (labels) {
-                    classId = labels[pointIndex];
+                    classId = Math.round(labels[pointIndex]);
                 } else { // if (colors)
                     const colorIndex = i;
                     const g_float = colors[colorIndex + 1]; // مقدار g بین 0.0 و 1.0
