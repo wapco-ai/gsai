@@ -822,36 +822,37 @@
             updateDebugInfo();
         }
 
-        // Extract point data for analysis - GREEN CHANNEL = CLASS
+        // Extract point data for analysis - prefers label attribute over color
         function extractPointData() {
             pointsData = [];
             const positions = pointCloud.geometry.attributes.position.array;
             const colors = pointCloud.geometry.attributes.color ? pointCloud.geometry.attributes.color.array : null;
-            
+            const labels = pointCloud.geometry.attributes.label ? pointCloud.geometry.attributes.label.array : null;
+
             let classDistribution = {};
-            
+
             for (let i = 0; i < positions.length; i += 3) {
                 let classId = 0; // Default class
-                
-                // GREEN CHANNEL REPRESENTS CLASS ID
-                if (colors) {
+                const pointIndex = i / 3;
+
+                if (labels) {
+                    classId = labels[pointIndex];
+                } else if (colors) {
                     const colorIndex = i; // Color array has same indexing as position
-                    const r = colors[colorIndex];
                     const g = colors[colorIndex + 1]; // GREEN CHANNEL = CLASS
-                    const b = colors[colorIndex + 2];
-                    
+
                     // Convert green channel (0-1) to class ID (0-255)
                     classId = Math.round(g * 255);
-                    
-                    // Track class distribution for debugging
-                    if (!classDistribution[classId]) {
-                        classDistribution[classId] = 0;
-                    }
-                    classDistribution[classId]++;
                 }
 
+                // Track class distribution for debugging
+                if (!classDistribution[classId]) {
+                    classDistribution[classId] = 0;
+                }
+                classDistribution[classId]++;
+
                 pointsData.push({
-                    index: i / 3,
+                    index: pointIndex,
                     position: {
                         x: positions[i],
                         y: positions[i + 1],
