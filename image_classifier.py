@@ -94,6 +94,36 @@ def load_model_and_feature_extractor(model_name: str = DEFAULT_MODEL_NAME):
         raise
 
 
+def apply_neighborhood_smoothing(mask: np.ndarray, kernel_size: int = 3, num_classes: int = 150) -> np.ndarray:
+    """Apply a simple neighbourhood mode filter to reduce isolated misclassifications.
+
+    Each pixel is replaced by the most common class within a square window around it.
+    This helps merge small outlier regions with the surrounding background.
+
+    Args:
+        mask: 2D array of class indices.
+        kernel_size: Size of the square neighbourhood; must be odd.
+        num_classes: Total number of classes in the segmentation mask.
+
+    Returns:
+        np.ndarray: Smoothed mask with reduced outlier pixels.
+    """
+
+    # One-hot encode the mask so we can count occurrences of each class locally
+    mask_tensor = tf.one_hot(mask, depth=num_classes, dtype=tf.float32)
+    mask_tensor = tf.expand_dims(mask_tensor, axis=0)  # Add batch dimension
+
+    # Depthwise convolution with an all-ones kernel counts class occurrences in the neighbourhood
+    kernel = tf.ones((kernel_size, kernel_size, num_classes, 1), dtype=tf.float32)
+    counts = tf.nn.depthwise_conv2d(mask_tensor, kernel, strides=[1, 1, 1, 1], padding="SAME")
+
+    # Argmax across classes gives the most frequent class in the neighbourhood
+    counts = tf.reshape(counts, (mask.shape[0], mask.shape[1], num_classes))
+    smoothed = tf.argmax(counts, axis=-1)
+
+    return smoothed.numpy().astype(mask.dtype)
+
+
 def classify_image(image_path, model_name: str = DEFAULT_MODEL_NAME):
     """Classifies a single image and returns the predicted segmentation mask (numpy array)."""
     if model is None or feature_extractor is None or loaded_model_name != model_name:
@@ -118,6 +148,9 @@ def classify_image(image_path, model_name: str = DEFAULT_MODEL_NAME):
         # Filter classes outside the ADE20K range (0-149) as per sample
         # Replace Unknowns with background (class 0)
         predicted_mask = np.where(predicted_mask > 149, 0, predicted_mask)
+
+        # Apply neighbourhood smoothing to reduce isolated class outliers
+        predicted_mask = apply_neighborhood_smoothing(predicted_mask)
 
         return predicted_mask
 
