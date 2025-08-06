@@ -10,6 +10,7 @@ import logging
 from tqdm import tqdm
 import matplotlib.pyplot as plt  # Import matplotlib for colormap
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from scipy import ndimage
 
 # Configure TensorFlow to utilise GPU when available
 # gpus = tf.config.list_physical_devices('GPU')
@@ -124,6 +125,51 @@ def apply_neighborhood_smoothing(mask: np.ndarray, kernel_size: int = 3, num_cla
     return smoothed.numpy().astype(mask.dtype)
 
 
+def fill_holes_in_class(
+    mask: np.ndarray,
+    target_classes,
+    structure_size: int = 3,
+    area_threshold: int = 0,
+) -> np.ndarray:
+    """Fill internal holes within specified classes of a segmentation mask.
+
+    Args:
+        mask: 2D array of class indices.
+        target_classes: Iterable of class IDs for which holes should be filled.
+        structure_size: Size of the structuring element used for hole filling.
+        area_threshold: Maximum area (in pixels) of holes to fill. If 0, all holes
+            are filled regardless of size.
+
+    Returns:
+        np.ndarray: Mask with holes in the target classes filled.
+    """
+
+    # Copy to avoid modifying the input array in-place
+    filled_mask = mask.copy()
+    structure = np.ones((structure_size, structure_size), dtype=bool)
+
+    for cls in target_classes:
+        class_region = filled_mask == cls
+        # Fill holes inside the class region
+        filled_region = ndimage.binary_fill_holes(class_region, structure=structure)
+        holes = filled_region & (~class_region)
+
+        if area_threshold > 0:
+            # Keep only holes smaller than the area threshold
+            labeled, num_features = ndimage.label(holes)
+            small_holes = np.zeros_like(holes, dtype=bool)
+            for i in range(1, num_features + 1):
+                region = labeled == i
+                if np.sum(region) <= area_threshold:
+                    small_holes |= region
+            holes = small_holes
+
+        # Assign the surrounding class to the hole pixels
+        filled_mask[holes] = cls
+
+    return filled_mask
+
+
 def classify_image(image_path, model_name: str = DEFAULT_MODEL_NAME):
     """Classifies a single image and returns the predicted segmentation mask (numpy array)."""
     if model is None or feature_extractor is None or loaded_model_name != model_name:
@@ -151,6 +197,11 @@ def classify_image(image_path, model_name: str = DEFAULT_MODEL_NAME):
 
         # Apply neighbourhood smoothing to reduce isolated class outliers
         # predicted_mask = apply_neighborhood_smoothing(predicted_mask)
+
+        # Fill small holes for selected classes (e.g., floor=3, road=6)
+        predicted_mask = fill_holes_in_class(
+            predicted_mask, target_classes=[3, 6], structure_size=3, area_threshold=50
+        )
 
         return predicted_mask
 
