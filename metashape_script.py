@@ -34,6 +34,95 @@ def downsample_point_cloud(input_path, output_path, ratio=0.1):
     print(f"Preview point cloud saved to {output_path}")
     return True
 
+
+def add_class_field_to_ply(ply_path):
+    """Duplicate green channel into 'class' and 'label' fields in a PLY file."""
+    try:
+        import numpy as np
+        from plyfile import PlyData, PlyElement
+
+        plydata = PlyData.read(ply_path)
+        vertex = plydata['vertex']
+        if 'green' not in vertex.data.dtype.names:
+            print("No green channel found in PLY; skipping class field addition")
+            return
+
+        g = vertex['green']
+        fields = list(vertex.data.dtype.names)
+        dtype_descr = list(vertex.data.dtype.descr)
+
+        if 'class' not in fields:
+            dtype_descr.append(('class', 'u1'))
+        if 'label' not in fields:
+            dtype_descr.append(('label', 'u1'))
+
+        new_data = np.empty(vertex.count, dtype=dtype_descr)
+        for name in vertex.data.dtype.names:
+            new_data[name] = vertex[name]
+        new_data['class'] = g
+        new_data['label'] = g
+
+        plydata['vertex'] = PlyElement.describe(new_data, 'vertex')
+        plydata.write(ply_path)
+        print(f"Added class field to {ply_path}")
+    except Exception as exc:
+        print(f"Failed to add class field to PLY: {exc}")
+
+
+def add_class_field_to_pcd(pcd_path):
+    """Duplicate green channel into 'class' and 'label' fields in a PCD file."""
+    try:
+        import numpy as np
+        from numpy.lib import recfunctions as rfn
+        from pypcd import pypcd
+
+        pc = pypcd.PointCloud.from_path(pcd_path)
+        if 'green' in pc.fields:
+            g = pc.pc_data['green'].astype(np.uint8)
+        elif 'rgb' in pc.fields:
+            rgb = pc.pc_data['rgb'].view(np.uint32)
+            g = ((rgb >> 8) & 0x0000FF).astype(np.uint8)
+        else:
+            print("No color information found in PCD; skipping class field addition")
+            return
+
+        fields = list(pc.fields)
+        size = list(pc.size)
+        typ = list(pc.type)
+        count = list(pc.count)
+
+        new_fields = []
+        new_arrays = []
+        if 'class' not in fields:
+            fields.append('class')
+            size.append(1)
+            typ.append('U')
+            count.append(1)
+            new_fields.append('class')
+            new_arrays.append(g)
+        if 'label' not in fields:
+            fields.append('label')
+            size.append(1)
+            typ.append('U')
+            count.append(1)
+            new_fields.append('label')
+            new_arrays.append(g)
+
+        if new_fields:
+            pc.pc_data = rfn.append_fields(pc.pc_data, new_fields, new_arrays, usemask=False)
+        else:
+            pc.pc_data['class'] = g
+            pc.pc_data['label'] = g
+
+        pc.fields = fields
+        pc.size = size
+        pc.type = typ
+        pc.count = count
+        pc.save_pcd(pcd_path, compression='binary')
+        print(f"Added class field to {pcd_path}")
+    except Exception as exc:
+        print(f"Failed to add class field to PCD: {exc}")
+
 # ----------------------------  
 # Frame Extraction Functions  
 # ----------------------------  
@@ -209,6 +298,7 @@ def convert_to_point_cloud(project_path, output_dir, preview_ratio=None, export_
                 save_point_classification=True,
                 save_point_color=True
             )
+            add_class_field_to_ply(output_path)
             print(f"ply Point cloud exported to {output_path}")
 
         if export_pcd:
@@ -220,6 +310,7 @@ def convert_to_point_cloud(project_path, output_dir, preview_ratio=None, export_
                 binary=True,
                 save_point_color=True
             )
+            add_class_field_to_pcd(output_path)
             print(f"pcd Point cloud exported to {output_path}")
 
         if preview_ratio:
