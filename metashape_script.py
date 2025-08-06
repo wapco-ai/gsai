@@ -35,7 +35,7 @@ def downsample_point_cloud(input_path, output_path, ratio=0.1):
     return True
 
 
-def add_class_field_to_ply(ply_path):
+def add_class_field_to_ply222222(ply_path):
     """Duplicate green channel into 'class' and 'label' fields in a PLY file."""
     try:
         import numpy as np
@@ -67,61 +67,129 @@ def add_class_field_to_ply(ply_path):
         print(f"Added class field to {ply_path}")
     except Exception as exc:
         print(f"Failed to add class field to PLY: {exc}")
+        
+        
+def add_class_field_to_ply(ply_path):
+    """Duplicate green channel into 'class' and 'label' fields in a PLY file."""
+    try:
+        import numpy as np
+        from plyfile import PlyData, PlyElement
+
+        output_ply_path = ply_path.replace('.ply', '_with_class.ply')
+
+        plydata_in = PlyData.read(ply_path)
+        vertex = plydata_in['vertex']
+        
+        if 'green' not in vertex.data.dtype.names:
+            print("No green channel found in PLY; skipping class field addition")
+            return
+
+        g = vertex['green']
+        dtype_descr = list(vertex.data.dtype.descr)
+
+        # این روش برای بررسی وجود فیلد امن‌تر است
+        existing_fields = {name for name, fmt in dtype_descr}
+        if 'class' not in existing_fields:
+            dtype_descr.append(('class', 'u1'))
+        if 'label' not in existing_fields:
+            dtype_descr.append(('label', 'u1'))
+
+        new_data = np.empty(vertex.count, dtype=dtype_descr)
+        for name in vertex.data.dtype.names:
+            new_data[name] = vertex.data[name]
+        
+        new_data['class'] = g
+        new_data['label'] = g
+        
+        new_vertex_element = PlyElement.describe(new_data, 'vertex')
+
+        other_elements = [el for el in plydata_in.elements if el.name != 'vertex']
+
+        # +++ خط اصلاح شده اینجاست +++
+        # ما آرگومان‌های text و comments را که باعث خطا می‌شدند حذف کردیم.
+        plydata_out = PlyData([new_vertex_element] + other_elements)
+        # ++++++++++++++++++++++++++++++
+        
+        # فایل را در مسیر خروجی جدید می‌نویسیم
+        plydata_out.write(output_ply_path)
+        print(f"SUCCESS: Added class field to PLY and saved to {output_ply_path}")
+
+    except Exception as exc:
+        import traceback
+        print(f"Failed to add class field to PLY: {type(exc).__name__}: {exc}")
+        print(traceback.format_exc())
 
 
 def add_class_field_to_pcd(pcd_path):
-    """Duplicate green channel into 'class' and 'label' fields in a PCD file."""
+    """
+    Duplicate green channel into 'class' and 'label' fields in a PCD file.
+    This version uses a safer method to add fields to prevent data corruption.
+    """
     try:
         import numpy as np
-        from numpy.lib import recfunctions as rfn
-        from pypcd import pypcd
+        # تابع rfn دیگر استفاده نمی‌شود
+        # from numpy.lib import recfunctions as rfn 
+        from pypcd_imp import pypcd
 
         pc = pypcd.PointCloud.from_path(pcd_path)
+        
+        # ۱. استخراج کانال سبز (بدون تغییر)
         if 'green' in pc.fields:
             g = pc.pc_data['green'].astype(np.uint8)
         elif 'rgb' in pc.fields:
-            rgb = pc.pc_data['rgb'].view(np.uint32)
-            g = ((rgb >> 8) & 0x0000FF).astype(np.uint8)
+            rgb_bytes = pc.pc_data['rgb'].copy().view(np.uint8).reshape(-1, 4)
+            g = rgb_bytes[:, 1].astype(np.uint8)
         else:
             print("No color information found in PCD; skipping class field addition")
             return
 
-        fields = list(pc.fields)
-        size = list(pc.size)
-        typ = list(pc.type)
-        count = list(pc.count)
+        # ۲. تعریف ساختار داده جدید (dtype)
+        old_dtype = pc.pc_data.dtype.descr
+        new_dtype = list(old_dtype) # کپی کردن ساختار قدیمی
+        
+        existing_fields = {name for name, fmt in old_dtype}
+        if 'class' not in existing_fields:
+            new_dtype.append(('class', 'u1')) # u1 = np.uint8
+        if 'label' not in existing_fields:
+            new_dtype.append(('label', 'u1'))
 
-        new_fields = []
-        new_arrays = []
-        if 'class' not in fields:
-            fields.append('class')
-            size.append(1)
-            typ.append('U')
-            count.append(1)
-            new_fields.append('class')
-            new_arrays.append(g)
-        if 'label' not in fields:
-            fields.append('label')
-            size.append(1)
-            typ.append('U')
-            count.append(1)
-            new_fields.append('label')
-            new_arrays.append(g)
+        # اگر هیچ فیلد جدیدی اضافه نشده باشد، نیازی به ادامه نیست
+        if len(new_dtype) == len(old_dtype):
+            print("Fields 'class' and 'label' already exist. Skipping.")
+            # فایل اصلی را در مسیر خروجی کپی می‌کنیم تا گردش کار ادامه یابد
+            import shutil
+            output_pcd_path = pcd_path.replace('.pcd', '_with_class.pcd')
+            shutil.copy(pcd_path, output_pcd_path)
+            return
 
-        if new_fields:
-            pc.pc_data = rfn.append_fields(pc.pc_data, new_fields, new_arrays, usemask=False)
-        else:
-            pc.pc_data['class'] = g
-            pc.pc_data['label'] = g
+        # ۳. ایجاد آرایه خالی با ساختار جدید
+        new_pc_data = np.empty(pc.pc_data.shape, dtype=new_dtype)
 
-        pc.fields = fields
-        pc.size = size
-        pc.type = typ
-        pc.count = count
-        pc.save_pcd(pcd_path, compression='binary')
-        print(f"Added class field to {pcd_path}")
+        # ۴. کپی کردن داده‌ها به صورت ستون به ستون (روش امن)
+        for name in pc.pc_data.dtype.names:
+            new_pc_data[name] = pc.pc_data[name]
+        
+        # ۵. پر کردن ستون‌های جدید
+        if 'class' in [n for n, f in new_dtype]:
+            new_pc_data['class'] = g
+        if 'label' in [n for n, f in new_dtype]:
+            new_pc_data['label'] = g
+
+        # ۶. جایگزین کردن داده‌های قدیمی با داده‌های جدید
+        pc.pc_data = new_pc_data
+        
+        # متادیتا به صورت خودکار توسط save_pcd به‌روز می‌شود
+
+        output_pcd_path = pcd_path.replace('.pcd', '_with_class.pcd')
+        pc.save_pcd(output_pcd_path, compression='binary')
+        
+        print(f"SUCCESS (Safe Mode): Added class field to PCD and saved to {output_pcd_path}")
+
     except Exception as exc:
-        print(f"Failed to add class field to PCD: {exc}")
+        import traceback
+        print(f"Failed to add class field to PCD: {type(exc).__name__}: {exc}")
+        print(traceback.format_exc())
+
 
 # ----------------------------  
 # Frame Extraction Functions  

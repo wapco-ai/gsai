@@ -716,7 +716,7 @@ def video_upload():
                         )
 
                         for line in iter(process.stdout.readline, b""):
-                            logging.info(f"Metashape: {line.decode().strip()}")
+                            logging.info(f"geoSphereAi: {line.decode().strip()}")
                             line_str = line.decode().strip().lower()
                             if "aligncameras" in line_str:
                                 update_process_state(process_id, 
@@ -1100,7 +1100,7 @@ def zip_upload():
                     )
 
                     for line in iter(process.stdout.readline, b""):
-                        logging.info(f"Metashape: {line.decode().strip()}")
+                        logging.info(f"geoSphereAi: {line.decode().strip()}")
                         line_str = line.decode().strip().lower()
                         if "aligncameras" in line_str:
                             update_process_state(process_id, 
