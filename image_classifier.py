@@ -199,9 +199,9 @@ def classify_image(image_path, model_name: str = DEFAULT_MODEL_NAME):
         # predicted_mask = apply_neighborhood_smoothing(predicted_mask)
 
         # Fill small holes for selected classes (e.g., floor=3, road=6)
-        predicted_mask = fill_holes_in_class(
-            predicted_mask, target_classes=[3, 6], structure_size=3, area_threshold=50
-        )
+        # predicted_mask = fill_holes_in_class(
+        #     predicted_mask, target_classes=[3, 6], structure_size=3, area_threshold=50
+        # )
 
         return predicted_mask
 

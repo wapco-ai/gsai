@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}GeoSphereAI{% endblock %}</title>
     
-    <!-- CSS Files -->
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/global-fixes.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/video-upload.css') }}">
@@ -14,31 +18,472 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
     
+    <style>
+        /* Base Layout Fix - بازگشت به حالت اصلی */
+        .base-header-nav {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border-bottom: 1px solid rgba(0, 123, 255, 0.1);
+            position: sticky !important;
+            top: 0;
+            z-index: 1000;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .base-nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 80px;
+        }
+
+        .base-nav-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .base-brand-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: #333;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .base-brand-link:hover {
+            transform: translateY(-1px);
+            text-decoration: none;
+            color: #333;
+        }
+
+        .base-brand-logo {
+            width: 50px;
+            height: 50px;
+            padding: 8px;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .base-brand-link:hover .base-brand-logo {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+        }
+
+        .base-brand-text {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+        }
+
+        .base-nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .base-nav-link {
+            text-decoration: none !important;
+            color: #555 !important;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem;
+            transition: all 0.3s ease;
+            position: relative;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+
+        .base-nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            transition: width 0.3s ease;
+            z-index: -1;
+            border-radius: 50px;
+        }
+
+        .base-nav-link:hover::before {
+            width: 100%;
+        }
+
+        .base-nav-link:hover {
+            color: white !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+            text-decoration: none !important;
+        }
+
+        .base-nav-link i {
+            font-size: 1rem;
+        }
+
+        .base-logout-btn {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+            color: white !important;
+            padding: 0.75rem 1.25rem;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+        }
+
+        .base-logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+            color: white !important;
+        }
+
+        .base-logout-btn::before {
+            display: none !important;
+        }
+
+        /* Mobile Menu Toggle */
+        .base-mobile-menu-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .base-mobile-menu-toggle:hover {
+            background: rgba(0, 123, 255, 0.1);
+        }
+
+        .base-mobile-menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: #333;
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .base-mobile-menu-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .base-mobile-menu-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .base-mobile-menu-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* Enhanced Footer */
+        .base-footer {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-top: auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .base-footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #007bff 0%, #0056b3 100%);
+        }
+
+        .base-footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .base-footer-content {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .base-footer-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .base-footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .base-footer-logo {
+            width: 40px;
+            height: 40px;
+            padding: 8px;
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .base-footer-brand-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .base-footer-copyright {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .base-footer-description {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+            line-height: 1.5;
+            max-width: 400px;
+        }
+
+        .base-footer-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .base-footer-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.8) !important;
+            text-decoration: none !important;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            padding: 0.75rem 1.25rem;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .base-footer-link:hover {
+            color: white !important;
+            background: rgba(0, 123, 255, 0.2);
+            border-color: rgba(0, 123, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.2);
+            text-decoration: none !important;
+        }
+
+        .base-footer-link i {
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .base-nav-container {
+                padding: 0 15px;
+                min-height: 70px;
+            }
+            
+            .base-mobile-menu-toggle {
+                display: flex;
+            }
+            
+            .base-nav-menu {
+                position: fixed;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: rgba(255, 255, 255, 0.98);
+                backdrop-filter: blur(20px);
+                flex-direction: column;
+                gap: 0;
+                padding: 1.5rem 0;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+                border-radius: 0 0 20px 20px;
+                transform: translateY(-100%);
+                opacity: 0;
+                visibility: hidden;
+                transition: all 0.3s ease;
+                z-index: 999;
+            }
+            
+            .base-nav-menu.active {
+                transform: translateY(0);
+                opacity: 1;
+                visibility: visible;
+            }
+            
+            .base-nav-link {
+                padding: 1rem 2rem;
+                width: 100%;
+                justify-content: center;
+                border-radius: 0;
+                margin-bottom: 0.5rem;
+            }
+            
+            .base-nav-link:hover {
+                background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            }
+            
+            .base-logout-btn {
+                margin: 1rem 2rem 0.5rem;
+                justify-content: center;
+                border-radius: 50px;
+            }
+
+            .base-brand-text {
+                font-size: 1.3rem;
+            }
+
+            .base-brand-logo {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+            }
+            
+            .base-footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 1.5rem;
+            }
+            
+            .base-footer-links {
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .base-footer-link {
+                font-size: 0.875rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .base-nav-container {
+                padding: 0 10px;
+            }
+            
+            .base-brand-text {
+                font-size: 1.2rem;
+            }
+
+            .base-brand-logo {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+            
+            .base-footer-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .base-footer-link {
+                width: 100%;
+                max-width: 200px;
+                justify-content: center;
+            }
+
+            .base-nav-menu {
+                top: 60px;
+            }
+
+            .base-nav-container {
+                min-height: 60px;
+            }
+        }
+
+        /* Scroll effect */
+        .base-header-nav.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 6px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Override any conflicts */
+        .base-header-nav * {
+            box-sizing: border-box;
+        }
+    </style>
+
     {% block head %}{% endblock %}
 </head>
 <body>
-    <!-- Header Navigation -->
     {% if not hide_nav %}
-    <header class="main-header">
-        <nav class="main-nav">
-            <div class="nav-container">
-                <div class="nav-brand">
-                    <a href="{{ url_for('home') }}" class="brand-link">
-                        <img src="{{ url_for('static', filename='images/geosphere-logo.png') }}" alt="GeoSphere" class="brand-logo">
-                        <span class="brand-text">GeoSphereAI</span>
+    <!-- Enhanced Header -->
+    <header class="base-header-nav">
+        <nav>
+            <div class="base-nav-container">
+                <div class="base-nav-brand">
+                    <a href="{{ url_for('index') }}" class="base-brand-link">
+                                                <div class="base-brand-logo">
+                            <i class="fas fa-globe-americas"></i>
+                        </div>
+                        <span class="base-brand-text">GeoSphereAI</span>
                     </a>
                 </div>
-                
-                <div class="nav-menu">
-                    <a href="{{ url_for('home') }}" class="nav-link">خانه</a>
-                    <a href="{{ url_for('file_selection') }}" class="nav-link">پردازش جدید</a>
-                    <a href="{{ url_for('process_list') }}" class="nav-link">پردازش‌های قبلی</a>
-                    <a href="{{ url_for('classes_view') }}" class="nav-link">کلاس‌ها</a>
-                    <a href="{{ url_for('logout') }}" class="nav-link logout-btn">خروج</a>
+
+                <div class="base-nav-menu" id="baseNavMenu">
+                    <a href="{{ url_for('index') }}" class="base-nav-link">
+                        <i class="fas fa-home"></i>
+                        خانه
+                    </a>
+                    <a href="{{ url_for('file_selection') }}" class="base-nav-link">
+                        <i class="fas fa-plus-circle"></i>
+                        پردازش جدید
+                    </a>
+                    <a href="{{ url_for('process_list') }}" class="base-nav-link">
+                        <i class="fas fa-history"></i>
+                        پردازش‌های قبلی
+                    </a>
+                    <a href="{{ url_for('classes_view') }}" class="base-nav-link">
+                        <i class="fas fa-tags"></i>
+                        کلاس‌ها
+                    </a>
+                    
+                    <button onclick="handleBaseLogout()" class="base-logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        خروج
+                    </button>
                 </div>
-                
-                <!-- Mobile Menu Toggle -->
-                <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">
+
+                <button class="base-mobile-menu-toggle" id="baseMobileMenuToggle" onclick="toggleBaseMobileMenu()">
                     <span></span>
                     <span></span>
                     <span></span>
@@ -49,48 +494,190 @@
     {% endif %}
 
     <!-- Main Content -->
-    <main class="main-content">
+    <main>
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
     {% if not hide_nav %}
-    <footer class="main-footer">
-        <div class="footer-container">
-            <div class="footer-content">
-                <div class="footer-brand">
-                    <img src="{{ url_for('static', filename='images/wapco-logo.png') }}" alt="Wapco" class="footer-logo">
-                    <span>&copy; 2024 Wapco - GeoSphereAI</span>
+    <!-- Enhanced Footer -->
+    <footer class="base-footer">
+        <div class="base-footer-container">
+            <div class="base-footer-content">
+                <div class="base-footer-info">
+                    <div class="base-footer-brand">
+                        <div class="base-footer-logo">
+                            <i class="fas fa-globe-americas"></i>
+                        </div>
+                        <span class="base-footer-brand-text">GeoSphereAI</span>
+                    </div>
+                    <div class="base-footer-copyright">
+                        © 2024 GeoSphereAI. تمامی حقوق محفوظ است.
+                    </div>
+                    <div class="base-footer-description">
+                        سیستم هوشمند تشخیص و طبقه‌بندی تصاویر جغرافیایی با استفاده از تکنولوژی‌های پیشرفته یادگیری ماشین
+                    </div>
                 </div>
-                <div class="footer-links">
-                    <a href="#" class="footer-link">راهنما</a>
-                    <a href="#" class="footer-link">پشتیبانی</a>
-                    <a href="#" class="footer-link">تماس با ما</a>
+                
+                <div class="base-footer-links">
+                    <a href="{{ url_for('index') }}" class="base-footer-link">
+                        <i class="fas fa-info-circle"></i>
+                        درباره ما
+                    </a>
+                    <a href="{{ url_for('index') }}" class="base-footer-link">
+                        <i class="fas fa-question-circle"></i>
+                        راهنما
+                    </a>
+                    <a href="{{ url_for('index') }}" class="base-footer-link">
+                        <i class="fas fa-envelope"></i>
+                        تماس
+                    </a>
                 </div>
             </div>
         </div>
     </footer>
     {% endif %}
 
+    <!-- JavaScript -->
     <script>
-        function toggleMobileMenu() {
-            const navMenu = document.querySelector('.nav-menu');
-            const toggle = document.querySelector('.mobile-menu-toggle');
+        // Mobile Menu Toggle
+        function toggleBaseMobileMenu() {
+            const navMenu = document.getElementById('baseNavMenu');
+            const menuToggle = document.getElementById('baseMobileMenuToggle');
             
             navMenu.classList.toggle('active');
-            toggle.classList.toggle('active');
+            menuToggle.classList.toggle('active');
         }
-        
+
         // Close mobile menu when clicking outside
-        document.addEventListener('click', function(e) {
-            const navMenu = document.querySelector('.nav-menu');
-            const toggle = document.querySelector('.mobile-menu-toggle');
+        document.addEventListener('click', function(event) {
+            const navMenu = document.getElementById('baseNavMenu');
+            const menuToggle = document.getElementById('baseMobileMenuToggle');
+            const nav = document.querySelector('.base-header-nav');
             
-            if (!navMenu.contains(e.target) && !toggle.contains(e.target)) {
+            if (!nav.contains(event.target) && navMenu.classList.contains('active')) {
                 navMenu.classList.remove('active');
-                toggle.classList.remove('active');
+                menuToggle.classList.remove('active');
             }
         });
+
+        // Close mobile menu when pressing Escape
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const navMenu = document.getElementById('baseNavMenu');
+                const menuToggle = document.getElementById('baseMobileMenuToggle');
+                
+                if (navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    menuToggle.classList.remove('active');
+                }
+            }
+        });
+
+        // Base Logout function
+        function handleBaseLogout() {
+            if (confirm('آیا از خروج از سیستم اطمینان دارید؟')) {
+                // Try different logout methods
+                try {
+                    // Method 1: Direct POST to logout
+                    fetch('/logout', {
+                        method: 'POST',
+                        credentials: 'same-origin',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    }).then(response => {
+                        if (response.ok || response.redirected) {
+                            window.location.href = '/';
+                        } else {
+                            // Method 2: Form submission fallback
+                            baseLogoutFallback();
+                        }
+                    }).catch(error => {
+                        console.log('Fetch failed, trying fallback');
+                        baseLogoutFallback();
+                    });
+                } catch (error) {
+                    baseLogoutFallback();
+                }
+            }
+        }
+
+        function baseLogoutFallback() {
+            // Create and submit a form
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/logout';
+            form.style.display = 'none';
+            
+            // Add CSRF token if available
+            const csrfToken = document.querySelector('meta[name=csrf-token]');
+            if (csrfToken) {
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrf_token';
+                csrfInput.value = csrfToken.getAttribute('content');
+                form.appendChild(csrfInput);
+            }
+            
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+        // Scroll effect for header
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.base-header-nav');
+            if (header && window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else if (header) {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Active menu item highlighting
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.base-nav-link');
+            
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.style.background = 'linear-gradient(135deg, #007bff 0%, #0056b3 100%)';
+                    link.style.color = 'white';
+                    link.style.boxShadow = '0 4px 15px rgba(0, 123, 255, 0.3)';
+                }
+            });
+        });
+
+        // Close mobile menu on resize
+        window.addEventListener('resize', function() {
+            const navMenu = document.getElementById('baseNavMenu');
+            const menuToggle = document.getElementById('baseMobileMenuToggle');
+            
+            if (window.innerWidth > 768 && navMenu && menuToggle) {
+                navMenu.classList.remove('active');
+                menuToggle.classList.remove('active');
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Prevent conflicts with existing JS
+        if (typeof window.baseNavInitialized === 'undefined') {
+            window.baseNavInitialized = true;
+        }
     </script>
+
+    {% block scripts %}{% endblock %}
 </body>
 </html>

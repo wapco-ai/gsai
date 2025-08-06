@@ -139,7 +139,7 @@ def process_in_metashape(
     }
     ref_mode = mode_map.get(reference_preselection_mode, Metashape.ReferencePreselectionSource)
     chunk.matchPhotos(
-        downscale=1,
+        downscale=2,
         generic_preselection=True,
         reference_preselection=True,
         reference_preselection_mode=ref_mode,
@@ -150,7 +150,7 @@ def process_in_metashape(
 
     # Build depth maps  
     if chunk.cameras:  
-        chunk.buildDepthMaps(downscale=1)  
+        chunk.buildDepthMaps(downscale=2)  
         print("Depth maps built successfully!")  
 
         # Build dense cloud  
@@ -183,7 +183,7 @@ def convert_to_point_cloud(project_path, output_dir, preview_ratio=None, export_
         # Build depth maps (if not already built)  
         if not chunk.depth_maps:  
             print("Building depth maps...")  
-            chunk.buildDepthMaps(downscale=1)  
+            chunk.buildDepthMaps(downscale=2)  
             print("Depth maps built successfully.")  
 
         # Build point cloud  
