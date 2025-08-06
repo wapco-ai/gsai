@@ -485,18 +485,22 @@ def video_upload():
                         extract_process = subprocess.Popen(
                             extract_command,
                             stdout=subprocess.PIPE,
-                            stderr=subprocess.PIPE,
+                            stderr=subprocess.STDOUT,  # drain stderr
+                            text=True,
+                            bufsize=1,
                         )
 
+                        output_lines = []
                         # Monitor frame extraction output - rudimentary progress
                         # You might need to modify metashape_script.py to output more detailed progress
                         total_frames = 0  # You could try to get total frames from video info before extraction
                         extracted_count = 0
-                        for line in iter(extract_process.stdout.readline, b""):
-                            line_str = line.decode().strip()
-                            logging.info(f"ExtractFrames: {line_str}")
+                        for line in iter(extract_process.stdout.readline, ""):
+                            line = line.strip()
+                            output_lines.append(line)
+                            logging.info(f"ExtractFrames: {line}")
                             # Simple check for extracted frame count (depends on script's output format)
-                            if "Extracted frame" in line_str:
+                            if "Extracted frame" in line:
                                 extracted_count += 1
                                 # Update progress based on extracted count if total is known
                                 # if total_frames > 0:
@@ -506,9 +510,7 @@ def video_upload():
                         extract_process.wait()
 
                         if extract_process.returncode != 0:
-                            stderr_output = (
-                                extract_process.stderr.read().decode().strip()
-                            )
+                            stderr_output = "\n".join(output_lines).strip()
                             logging.error(f"Frame extraction error: {stderr_output}")
                             update_process_state(
                                 process_id,
@@ -526,6 +528,8 @@ def video_upload():
                                     proc.duration = (proc.end_time - proc.start_time).total_seconds()
                                 db.session.commit()
                             return  # Stop processing on error
+
+                        update_process_state(process_id, {"progress": 20})
 
                         # --- Check if any images were extracted ---
                         extracted_image_files = [
