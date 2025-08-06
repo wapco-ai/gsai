@@ -396,6 +396,7 @@
         };
 
         // Global variables
+        const MIN_CLASS_POINTS = 200;
         let scene, camera, renderer, controls, pointCloud;
         let raycaster, mouse;
         let classManager = {};
@@ -922,8 +923,12 @@
                 }
                 classManager[point.classId].count++;
             });
+            Object.keys(classManager).forEach(classId => {
+                if (classManager[classId].count < MIN_CLASS_POINTS) {
+                    delete classManager[classId];
+                }
+            });
 
-            // Update class list UI
             updateClassList();
         }
 
@@ -940,25 +945,24 @@
             const classList = document.getElementById('class-list');
             classList.innerHTML = '';
 
-            const sortedClasses = Object.keys(classManager).sort((a, b) => parseInt(a) - parseInt(b));
+            const sortedClasses = Object.entries(classManager)
+                .sort((a, b) => b[1].count - a[1].count);
 
-            sortedClasses.forEach(classId => {
-                const classInfo = classManager[classId];
+            sortedClasses.forEach(([classId, classInfo]) => {
                 const className = CLASS_LABELS_FA[classId] || `کلاس ${classId}`;
 
                 const classItem = document.createElement('div');
                 classItem.className = 'class-item';
 
                 classItem.innerHTML = `
-                    <input type="checkbox" class="class-checkbox" 
-                           ${classInfo.visible ? 'checked' : ''} 
+                    <input type="checkbox" class="class-checkbox"
+                           ${classInfo.visible ? 'checked' : ''}
                            data-class-id="${classId}">
                     <div class="class-color" style="background-color: ${classInfo.color}"></div>
                     <div class="class-name">${className}</div>
                     <div class="class-count">${classInfo.count}</div>
                 `;
 
-                // Add event listener to checkbox
                 const checkbox = classItem.querySelector('.class-checkbox');
                 checkbox.addEventListener('change', (e) => {
                     toggleClass(classId, e.target.checked);
