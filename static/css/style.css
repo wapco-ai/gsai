@@ -6,7 +6,7 @@
 /* Reset and Base */
 * {
     margin: 0;
-    padding: 0;
+    padding: 0 1rem;
     box-sizing: border-box;
 }
 
@@ -28,7 +28,7 @@ body {
 }
 
 .main-nav {
-    padding: 0;
+    padding: 0 1rem;
 }
 
 .nav-container {
@@ -862,4 +862,20 @@ ul.process-list li {
     width: 100%;
     border-radius: 8px;
     object-fit: cover;
+}
+
+/* Class list layout to avoid long scrolling */
+.class-list {
+    column-count: 3;
+    column-gap: 1.5rem;
+    max-height: 60vh;
+    overflow-y: auto;
+    margin: 1rem 0;
+    padding: 0 1rem;
+    list-style-position: inside;
+}
+
+.class-list li {
+    break-inside: avoid;
+    padding: 0.25rem 0;
 }
