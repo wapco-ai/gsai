@@ -42,15 +42,15 @@ def extract_frames(video_path, output_dir, start_time=0, end_time=None, frame_in
     import cv2  
     from tqdm import tqdm  
 
-    fps = 29.97  
-    print(f"Using frame rate: {fps} FPS.")  
+    video = cv2.VideoCapture(video_path)
+    if not video.isOpened():
+        raise ValueError(f"Could not open video file: {video_path}")
 
-    video = cv2.VideoCapture(video_path)  
-    if not video.isOpened():  
-        raise ValueError(f"Could not open video file: {video_path}")  
+    fps = video.get(cv2.CAP_PROP_FPS) or 29.97
+    print(f"Using frame rate: {fps} FPS.")
 
-    total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))  
-    print(f"Total frames in video: {total_frames}")  
+    total_frames = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+    print(f"Total frames in video: {total_frames}")
 
     if end_time is None:  
         end_time = total_frames / fps  
