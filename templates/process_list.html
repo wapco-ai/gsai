@@ -4,13 +4,514 @@
 {% block title %}لیست پردازش‌ها - GeoSphereAI{% endblock %}
 
 {% block content %}
+<!-- اضافه کردن Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- CSS Files -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/global-fixes.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/video-upload.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/zip-upload.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
+<style>
+    :root {
+        --primary-color: #667eea;
+        --secondary-color: #764ba2;
+        --accent-color: #f093fb;
+        --success-color: #10b981;
+        --warning-color: #f59e0b;
+        --error-color: #ef4444;
+        --bg-color: #f8fafc;
+        --card-bg: #ffffff;
+        --text-primary: #1f2937;
+        --text-secondary: #6b7280;
+        --border-color: #e5e7eb;
+        --shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    .page-header {
+        background: var(--card-bg);
+        border-radius: 20px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .page-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+        margin: 0;
+    }
+
+    .processes-card {
+        background: var(--card-bg);
+        border-radius: 20px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .processes-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .table-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+    }
+
+    .table-header th {
+        padding: 1.5rem 1rem;
+        text-align: right;
+        font-weight: 600;
+        font-size: 0.95rem;
+        border-bottom: none;
+        white-space: nowrap;
+    }
+
+    /* وسط چین کردن ستون عملیات */
+    .table-header th:last-child {
+        text-align: center;
+        width: 180px;
+    }
+
+    .table-row {
+        border-bottom: 1px solid var(--border-color);
+        transition: all 0.3s ease;
+    }
+
+    .table-row:hover {
+        background-color: #f8fafc;
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-sm);
+    }
+
+    .table-row:last-child {
+        border-bottom: none;
+    }
+
+    .table-cell {
+        padding: 1.25rem 1rem;
+        text-align: right;
+        vertical-align: middle;
+    }
+
+    .filename {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 0.95rem;
+    }
+
+    .user-name {
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .frame-count {
+        background: linear-gradient(135deg, #e0e7ff, #c7d2fe);
+        color: #4338ca;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        display: inline-block;
+        white-space: nowrap;
+    }
+
+    .status-badge {
+        padding: 0.4rem 1rem;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+        white-space: nowrap;
+        text-align: center;
+        min-width: 90px;
+    }
+
+    .status-completed {
+        background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+        color: #166534;
+        box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
+    }
+
+    .status-processing {
+        background: linear-gradient(135deg, #fef3c7, #fde68a);
+        color: #92400e;
+        box-shadow: 0 2px 4px rgba(245, 158, 11, 0.2);
+        animation: pulse 2s infinite;
+    }
+
+    .status-failed {
+        background: linear-gradient(135deg, #fecaca, #fca5a5);
+        color: #991b1b;
+        box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+    }
+
+    .actions-cell {
+        text-align: center !important;
+        width: 180px;
+        padding: 1rem 0.5rem !important;
+    }
+
+    .action-buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.4rem;
+        flex-wrap: nowrap;
+    }
+
+    .action-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .action-button i {
+        font-size: 13px !important;
+        line-height: 1;
+    }
+
+    .action-button::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        transform: translate(-50%, -50%);
+    }
+
+    .action-button:hover::before {
+        width: 70px;
+        height: 70px;
+    }
+
+    /* دکمه مشاهده نتایج */
+    .btn-view {
+        background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        color: white;
+        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+    }
+
+    .btn-view:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    /* دکمه حذف فایل آپلود */
+    .btn-delete-upload {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: white;
+        box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-delete-upload:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(245, 158, 11, 0.4);
+    }
+
+    /* دکمه پردازش مجدد */
+    .btn-reprocess {
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-reprocess:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(16, 185, 129, 0.4);
+    }
+
+    /* دکمه حذف پروژه */
+    .btn-delete-process {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        box-shadow: 0 4px 8px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-delete-process:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(239, 68, 68, 0.4);
+    }
+
+    /* دکمه مشاهده پردازش در جریان */
+    .btn-processing {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: white;
+        box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
+    }
+
+    .btn-processing:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(139, 92, 246, 0.4);
+    }
+
+    /* دکمه غیرفعال */
+    .btn-disabled {
+        background: #e5e7eb;
+        color: #9ca3af;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .btn-disabled:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .pagination-wrapper {
+        display: flex;
+        justify-content: center;
+        margin: 2rem 0;
+    }
+
+    .pagination {
+        background: var(--card-bg);
+        border-radius: 50px;
+        padding: 1rem 2rem;
+        box-shadow: var(--shadow);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .pagination a {
+        color: var(--primary-color);
+        text-decoration: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+
+    .pagination a:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .pagination-info {
+        color: var(--text-secondary);
+        font-weight: 500;
+    }
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--card-bg);
+        color: var(--primary-color);
+        text-decoration: none;
+        padding: 1rem 2rem;
+        border-radius: 50px;
+        box-shadow: var(--shadow);
+        transition: all 0.3s ease;
+        font-weight: 600;
+        margin-top: 2rem;
+    }
+
+    .back-link:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .time-display {
+        color: var(--text-secondary);
+        font-size: 0.9rem;
+        font-family: 'Courier New', monospace;
+        white-space: nowrap;
+    }
+
+    .duration-badge {
+        background: linear-gradient(135deg, #f3e8ff, #e9d5ff);
+        color: #7c3aed;
+        padding: 0.25rem 0.75rem;
+        border-radius: 15px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        display: inline-block;
+        white-space: nowrap;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.7; }
+        100% { opacity: 1; }
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .loading-spin {
+        animation: spin 1s linear infinite;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1200px) {
+        .action-buttons {
+            gap: 0.3rem;
+        }
+        
+        .action-button {
+            width: 32px;
+            height: 32px;
+            font-size: 12px;
+        }
+
+        .action-button i {
+            font-size: 12px !important;
+        }
+
+        .actions-cell {
+            width: 160px;
+        }
+    }
+
+    @media (max-width: 1024px) {
+        .container {
+            padding: 1rem;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+        }
+        
+        .processes-table {
+            font-size: 0.875rem;
+        }
+        
+        .table-header th,
+        .table-cell {
+            padding: 1rem 0.5rem;
+        }
+
+        .actions-cell {
+            padding: 0.8rem 0.3rem !important;
+            width: 140px;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .processes-card {
+            overflow-x: auto;
+        }
+        
+        .processes-table {
+            min-width: 900px;
+        }
+        
+        .page-title {
+            font-size: 1.75rem;
+        }
+        
+        .action-button {
+            width: 30px;
+            height: 30px;
+            font-size: 11px;
+        }
+
+        .action-button i {
+            font-size: 11px !important;
+        }
+
+        .action-buttons {
+            gap: 0.2rem;
+        }
+
+        .actions-cell {
+            width: 130px;
+        }
+    }
+
+    /* Tooltip برای دکمه‌ها */
+    .action-button[title]:hover::after {
+        content: attr(title);
+        position: absolute;
+        bottom: -45px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 0, 0, 0.9);
+        color: white;
+        padding: 0.5rem 0.75rem;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        z-index: 1000;
+        pointer-events: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+</style>
+
 <div class="container">
-    <h2>لیست پردازش‌ها</h2>
-    <p>تاریخچه تمام پردازش‌های انجام شده را در اینجا مشاهده کنید.</p>
-    
-    <div class="table-responsive">
-        <table class="process-table">
-            <thead>
+    <!-- Header Section -->
+    <div class="page-header">
+        <h1 class="page-title">لیست پردازش‌ها</h1>
+        <p class="page-subtitle">تاریخچه تمام پردازش‌های انجام شده را در اینجا مشاهده کنید.</p>
+    </div>
+
+    <!-- Processes Table -->
+    <div class="processes-card">
+        <table class="processes-table">
+            <thead class="table-header">
                 <tr>
                     <th>نام فایل</th>
                     <th>کاربر</th>
@@ -24,39 +525,81 @@
             </thead>
             <tbody>
                 {% for p in processes %}
-                <tr>
-                    <td class="filename">{{ p.filename }}</td>
-                    <td>{{ p.user }}</td>
-                    <td>{{ p.frame_count }}</td>
-                    <td>{{ p.start_time }}</td>
-                    <td>{{ p.end_time or '-' }}</td>
-                    <td>{% if p.duration %}{{ '%.1f'|format(p.duration) }}{% else %}-{% endif %}</td>
-                    <td>
+                <tr class="table-row">
+                    <td class="table-cell">
+                        <div class="filename">{{ p.filename }}</div>
+                    </td>
+                    <td class="table-cell">
+                        <div class="user-name">{{ p.user }}</div>
+                    </td>
+                    <td class="table-cell">
+                        <span class="frame-count">{{ p.frame_count }}</span>
+                    </td>
+                    <td class="table-cell">
+                        <div class="time-display">{{ p.start_time }}</div>
+                    </td>
+                    <td class="table-cell">
+                        <div class="time-display">{{ p.end_time or '-' }}</div>
+                    </td>
+                    <td class="table-cell">
+                        {% if p.duration %}
+                            <span class="duration-badge">{{ '%.1f'|format(p.duration) }}</span>
+                        {% else %}
+                            <span class="duration-badge">-</span>
+                        {% endif %}
+                    </td>
+                    <td class="table-cell">
                         <span class="status-badge status-{{ p.status.lower() }}">
                             {{ p.status }}
                         </span>
                     </td>
-                    <td>
-                        <div class="file-actions">
+                    <td class="table-cell actions-cell">
+                        <div class="action-buttons">
                             {% if p.status.lower() == 'completed' %}
-                                <a href="{{ url_for('results', output_foldername=p.output_folder) }}" class="btn-small icon-btn" title="مشاهده نتایج">
-                                    <i class="icon-eye"></i>
+                                <!-- مشاهده نتایج -->
+                                <a href="{{ url_for('results', output_foldername=p.output_folder) }}" 
+                                   class="action-button btn-view" 
+                                   title="مشاهده نتایج">
+                                    <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ url_for('delete_upload', process_id=p.id) }}" class="btn-small icon-btn{% if not p.has_upload %} disabled{% endif %}" title="حذف فایل" onclick="return confirm('آیا از حذف فایل مطمئن هستید؟');">
-                                    <i class="icon-trash"></i>
+                                
+                                <!-- حذف فایل آپلود -->
+                                <a href="{{ url_for('delete_upload', process_id=p.id) }}" 
+                                   class="action-button btn-delete-upload{% if not p.has_upload %} btn-disabled{% endif %}" 
+                                   title="حذف فایل آپلود"
+                                   onclick="return confirm('آیا از حذف فایل آپلود مطمئن هستید؟');">
+                                    <i class="fas fa-trash-alt"></i>
                                 </a>
-                                <a href="{{ url_for('reprocess', process_id=p.id) }}" class="btn-small icon-btn" title="پردازش مجدد">
-                                    <i class="icon-refresh"></i>
+                                
+                                <!-- پردازش مجدد -->
+                                <a href="{{ url_for('reprocess', process_id=p.id) }}" 
+                                   class="action-button btn-reprocess" 
+                                   title="پردازش مجدد">
+                                    <i class="fas fa-redo"></i>
                                 </a>
-                                <a href="{{ url_for('delete_process', process_id=p.id) }}" class="btn-small icon-btn" title="حذف پروژه" onclick="return confirm('آیا از حذف پروژه و تمام فایل‌ها مطمئن هستید؟');">
-                                    <i class="icon-delete"></i>
+                                
+                                <!-- حذف پروژه -->
+                                <a href="{{ url_for('delete_process', process_id=p.id) }}" 
+                                   class="action-button btn-delete-process" 
+                                   title="حذف پروژه"
+                                   onclick="return confirm('آیا از حذف پروژه و تمام فایل‌ها مطمئن هستید؟');">
+                                    <i class="fas fa-times-circle"></i>
                                 </a>
+                                
                             {% else %}
-                                <a href="{{ url_for('processing', process_id=p.id) }}" class="btn-small icon-btn" title="مشاهده پردازش">
-                                    <i class="icon-eye"></i>
+                                <!-- مشاهده پردازش در حال انجام -->
+                                <a href="{{ url_for('processing', process_id=p.id) }}" 
+                                   class="action-button btn-processing" 
+                                   title="مشاهده پردازش">
+                                    <i class="fas fa-eye"></i>
                                 </a>
-                                <a href="{{ url_for('delete_process', process_id=p.id) }}" class="btn-small icon-btn" title="حذف پردازش" onclick="return confirm('آیا از حذف این پردازش ناتمام مطمئن هستید؟');">
-                                    <i class="icon-delete"></i>
+                                
+                                <!-- حذف پردازش ناتمام -->
+                                <a href="{{ url_for('delete_process', process_id=p.id) }}" 
+                                   class="action-button btn-delete-process" 
+                                   title="حذف پردازش ناتمام"
+                                   onclick="return confirm('آیا از حذف این پردازش ناتمام مطمئن هستید؟');">
+                                    <i class="fas fa-times-circle"></i>
                                 </a>
                             {% endif %}
                         </div>
@@ -67,20 +610,107 @@
         </table>
     </div>
 
-    {% if pagination.pages > 1 %}
-    <div class="pagination">
-        {% if pagination.has_prev %}
-            <a href="{{ url_for('process_list', page=pagination.prev_num) }}" class="pagination-link">« قبلی</a>
-        {% endif %}
-        <span class="pagination-info">صفحه {{ pagination.page }} از {{ pagination.pages }}</span>
-        {% if pagination.has_next %}
-            <a href="{{ url_for('process_list', page=pagination.next_num) }}" class="pagination-link">بعدی »</a>
-        {% endif %}
+    <!-- Pagination -->
+    {% if pagination and pagination.pages > 1 %}
+    <div class="pagination-wrapper">
+        <div class="pagination">
+            {% if pagination.has_prev %}
+                <a href="{{ url_for('process_list', page=pagination.prev_num) }}">
+                    <i class="fas fa-chevron-right"></i> قبلی
+                </a>
+            {% endif %}
+            
+            <span class="pagination-info">
+                صفحه {{ pagination.page }} از {{ pagination.pages }}
+            </span>
+            
+            {% if pagination.has_next %}
+                <a href="{{ url_for('process_list', page=pagination.next_num) }}">
+                    بعدی <i class="fas fa-chevron-left"></i>
+                </a>
+            {% endif %}
+        </div>
     </div>
     {% endif %}
 
-    <div class="navigation-links">
-        <a href="{{ url_for('index') }}" class="back-link">&larr; بازگشت به صفحه اصلی</a>
+    <!-- Back to Home -->
+    <div style="text-align: center;">
+        <a href="{{ url_for('index') }}" class="back-link">
+            <i class="fas fa-arrow-right"></i>
+            بازگشت به خانه
+        </a>
     </div>
 </div>
+
+<script>
+// ویژگی‌های تعاملی
+document.addEventListener('DOMContentLoaded', function() {
+    // انیمیشن loading برای دکمه‌ها
+    const actionButtons = document.querySelectorAll('.action-button:not(.btn-disabled)');
+    actionButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // فقط برای لینک‌های مشاهده نتایج و مشاهده پردازش
+            if (this.classList.contains('btn-view') || this.classList.contains('btn-processing')) {
+                const icon = this.querySelector('i');
+                const originalClass = icon.className;
+                
+                // تغییر آیکون به loading
+                icon.className = 'fas fa-spinner loading-spin';
+                this.style.opacity = '0.7';
+                
+                // بازگرداندن آیکون اصلی بعد از 2 ثانیه
+                setTimeout(() => {
+                    icon.className = originalClass;
+                    this.style.opacity = '1';
+                }, 2000);
+            }
+        });
+    });
+
+    // Smooth scroll برای pagination
+    const paginationLinks = document.querySelectorAll('.pagination a');
+    paginationLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    });
+
+    // Auto-refresh برای پردازش‌های در حال انجام (هر 30 ثانیه)
+    const processingItems = document.querySelectorAll('.status-processing').length;
+    if (processingItems > 0) {
+        console.log(`${processingItems} پردازش در حال انجام - بازخوانی خودکار در 30 ثانیه`);
+        setTimeout(() => {
+            window.location.reload();
+        }, 30000);
+    }
+
+    // بررسی دسترسی به دکمه‌های حذف فایل آپلود
+    const deleteUploadButtons = document.querySelectorAll('.btn-delete-upload');
+    deleteUploadButtons.forEach(button => {
+        if (button.classList.contains('btn-disabled')) {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('فایل آپلود برای این پردازش وجود ندارد');
+            });
+        }
+    });
+
+    // اضافه کردن پیام‌های تأیید برای عملیات حذف
+    const deleteButtons = document.querySelectorAll('[onclick*="confirm"]');
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // اضافه کردن loading به دکمه حذف بعد از تأیید
+            setTimeout(() => {
+                const icon = this.querySelector('i');
+                if (icon) {
+                    icon.className = 'fas fa-spinner loading-spin';
+                }
+                this.style.opacity = '0.5';
+                this.style.pointerEvents = 'none';
+            }, 100);
+        });
+    });
+});
+</script>
+
 {% endblock %}

@@ -150,7 +150,7 @@ def classify_image(image_path, model_name: str = DEFAULT_MODEL_NAME):
         predicted_mask = np.where(predicted_mask > 149, 0, predicted_mask)
 
         # Apply neighbourhood smoothing to reduce isolated class outliers
-        predicted_mask = apply_neighborhood_smoothing(predicted_mask)
+        # predicted_mask = apply_neighborhood_smoothing(predicted_mask)
 
         return predicted_mask
 

@@ -1244,6 +1244,18 @@ def process_list():
     return render_template("process_list.html", processes=processes, pagination=pagination)
 
 
+# viewer list route
+@app.route("/viewer")
+def viewer():
+    if not session.get("logged_in"):
+        flash("لطفاً ابتدا وارد شوید.")
+        return redirect(url_for("index"))
+
+
+    return render_template("viewer.html")
+
+
+
 # Route to delete uploaded files for a given process
 @app.route("/delete-upload/<process_id>")
 def delete_upload(process_id):
