@@ -1,6 +1,6 @@
 # GeoSphereAI
 
-GeoSphereAI is a Flask application that processes images or video to generate 3D point clouds with Agisoft Metashape and performs semantic segmentation using NVIDIA SegFormer. This document explains how to install the project, configure Metashape and SpatiaLite, and run the app.
+GeoSphereAI is a Flask application that processes images or video to generate 3D point clouds with Agisoft Metashape and performs semantic segmentation using NVIDIA SegFormer. The application supports common video formats such as MP4, AVI, MOV, MKV, and 360 files. This document explains how to install the project, configure Metashape and SpatiaLite, and run the app.
 
 ## Installation
 
