@@ -760,54 +760,17 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // Downsample geometry by randomly keeping a fraction of points
-        function downsampleGeometry(geometry, ratio = 0.1) {
-            const positions = geometry.attributes.position.array;
-            const colors = geometry.attributes.color ? geometry.attributes.color.array : null;
-
-            const sampledPositions = [];
-            const sampledColors = [];
-
-            for (let i = 0; i < positions.length; i += 3) {
-                if (Math.random() <= ratio) {
-                    sampledPositions.push(positions[i], positions[i + 1], positions[i + 2]);
-                    if (colors) {
-                        sampledColors.push(colors[i], colors[i + 1], colors[i + 2]);
-                    }
-                }
-            }
-
-            const downsampled = new THREE.BufferGeometry();
-            downsampled.setAttribute(
-                'position',
-                new THREE.Float32BufferAttribute(sampledPositions, 3)
-            );
-            if (colors) {
-                downsampled.setAttribute(
-                    'color',
-                    new THREE.Float32BufferAttribute(sampledColors, 3)
-                );
-            }
-            downsampled.computeBoundingSphere();
-
-            return downsampled;
-        }
-
         // Load PCD file data (for manual upload)
         function loadPCDData(buffer) {
             const loader = new PCDLoader();
             loader.load(URL.createObjectURL(new Blob([buffer])), function(points) {
                 // Apply transformations
-                let geometry = points.geometry;
+                const geometry = points.geometry;
                 geometry.rotateX(0);
                 geometry.rotateY(0);
                 geometry.center();
-
-                geometry = downsampleGeometry(geometry, 0.1);
-                const material = points.material || new THREE.PointsMaterial({ size: 2, vertexColors: true });
-                const sampledPoints = new THREE.Points(geometry, material);
-
-                processPointCloud(sampledPoints);
+                
+                processPointCloud(points);
             }, undefined, function(error) {
                 console.error('PCD loading error:', error);
                 showError('خطا در بارگذاری فایل PCD: ' + error.message);
@@ -824,8 +787,7 @@
                 geometry.rotateX(0);
                 geometry.rotateY(0);
                 geometry.center();
-
-                geometry = downsampleGeometry(geometry, 0.1);
+                
                 const material = new THREE.PointsMaterial({ size: 2, vertexColors: true });
                 const points = new THREE.Points(geometry, material);
                 processPointCloud(points);
