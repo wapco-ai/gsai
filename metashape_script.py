@@ -280,7 +280,11 @@ def process_in_metashape(
 
     if reference_file:
         try:
-            chunk.importReference(path=reference_file, format=Metashape.ReferenceFormatCSV)
+            chunk.importReference(
+                path=reference_file,
+                format=Metashape.ReferenceFormatCSV,
+                delimiter=",",
+            )
             chunk.crs = Metashape.CoordinateSystem("EPSG::4326")
             print(f"Reference data imported from {reference_file}")
         except Exception as e:
