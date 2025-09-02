@@ -246,6 +246,7 @@ def process_in_metashape(
     output_dir,
     reference_preselection_mode="source",
     sensor_type="Frame",
+    reference_file=None,
 ):
     import Metashape
     
@@ -276,6 +277,14 @@ def process_in_metashape(
         ]
     )
     print(f"Loaded {len(chunk.cameras)} images")
+
+    if reference_file:
+        try:
+            chunk.importReference(path=reference_file, format=Metashape.ReferenceFormatCSV)
+            chunk.crs = Metashape.CoordinateSystem("EPSG::4326")
+            print(f"Reference data imported from {reference_file}")
+        except Exception as e:
+            print(f"Failed to import reference file: {e}")
 
     # Set sensor type for all sensors
     type_map = {
@@ -472,10 +481,15 @@ if __name__ == "__main__":
         if "--sensor_type" in sys.argv
         else "Frame"
     )
-    if "--extract_frames" in sys.argv:  
-        # Extract frames from video  
-        video_path = sys.argv[sys.argv.index("--extract_frames") + 1]  
-        image_dir = sys.argv[sys.argv.index("--image_dir") + 1]  
+    reference_file = (
+        sys.argv[sys.argv.index("--reference_file") + 1]
+        if "--reference_file" in sys.argv
+        else None
+    )
+    if "--extract_frames" in sys.argv:
+        # Extract frames from video
+        video_path = sys.argv[sys.argv.index("--extract_frames") + 1]
+        image_dir = sys.argv[sys.argv.index("--image_dir") + 1]
         start_time = float(sys.argv[sys.argv.index("--start_time") + 1]) if "--start_time" in sys.argv else 0  
         end_time = float(sys.argv[sys.argv.index("--end_time") + 1]) if "--end_time" in sys.argv else None  
         frame_interval = float(sys.argv[sys.argv.index("--frame_interval") + 1]) if "--frame_interval" in sys.argv else 1  
@@ -488,7 +502,7 @@ if __name__ == "__main__":
         image_dir = sys.argv[sys.argv.index("--image_dir") + 1]
         output_dir = sys.argv[sys.argv.index("--output_dir") + 1]
         process_in_metashape(
-            image_dir, output_dir, reference_preselection_mode, sensor_type
+            image_dir, output_dir, reference_preselection_mode, sensor_type, reference_file
         )
 
     if "--convert_to_point_cloud" in sys.argv:  
@@ -508,7 +522,7 @@ if __name__ == "__main__":
         image_dir = sys.argv[sys.argv.index("--image_dir") + 1]
         output_dir = sys.argv[sys.argv.index("--output_dir") + 1]
         process_in_metashape(
-            image_dir, output_dir, reference_preselection_mode, sensor_type
+            image_dir, output_dir, reference_preselection_mode, sensor_type, reference_file
         )
         
         # Convert to point cloud  
@@ -539,10 +553,10 @@ if __name__ == "__main__":
             crop_height_ratio=crop_height_ratio  
         )  
 
-        # Process in Metashape  
-        metashape_output_dir = os.path.join(output_base_dir, "project")  
+        # Process in Metashape
+        metashape_output_dir = os.path.join(output_base_dir, "project")
         process_in_metashape(
-            image_dir, metashape_output_dir, reference_preselection_mode, sensor_type
+            image_dir, metashape_output_dir, reference_preselection_mode, sensor_type, reference_file
         )
 
         # Convert to point cloud  
