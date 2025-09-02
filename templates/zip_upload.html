@@ -115,7 +115,7 @@
                     <strong>راهنمای استفاده:</strong>
                     <ul>
                         <li>فایل ZIP باید حاوی تصاویر با فرمت JPG، PNG، یا JPEG باشد</li>
-                        <li>حداکثر حجم فایل: 100 مگابایت</li>
+                        <li>حداکثر حجم فایل: 300 مگابایت</li>
                         <li>تصاویر به صورت خودکار پردازش و تبدیل به مدل سه‌بعدی می‌شوند</li>
                     </ul>
                 </div>
@@ -216,11 +216,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         const file = fileInput.files[0];
-        const maxSize = 100 * 1024 * 1024; // 100MB
+        const maxSize = 300 * 1024 * 1024; // 100MB
         
         if (file.size > maxSize) {
             e.preventDefault();
-            alert('حجم فایل نباید بیش از 100 مگابایت باشد');
+            alert('حجم فایل نباید بیش از 300 مگابایت باشد');
             return false;
         }
         
