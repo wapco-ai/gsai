@@ -372,6 +372,16 @@ def video_upload():
             video_path = os.path.join(upload_process_dir, filename)
             file.save(video_path)
 
+            reference_file = request.files.get("reference_file")
+            reference_file_path = None
+            if reference_file and reference_file.filename:
+                reference_file.stream.seek(0, os.SEEK_END)
+                if reference_file.stream.tell() > 0:
+                    reference_file.stream.seek(0)
+                    ref_filename = secure_filename(reference_file.filename)
+                    reference_file_path = os.path.join(upload_process_dir, ref_filename)
+                    reference_file.save(reference_file_path)
+
             process_id = str(uuid.uuid4())
             output_dir = os.path.join(app.config["OUTPUT_FOLDER"], process_id)
             os.makedirs(output_dir, exist_ok=True)
@@ -452,6 +462,7 @@ def video_upload():
                 export_pcd,
                 preselection_mode,
                 sensor_type,
+                reference_file_path,
             ):
                 with app.app_context():
                     try:
@@ -699,6 +710,8 @@ def video_upload():
                             "--sensor_type",
                             sensor_type,
                         ])
+                        if reference_file_path:
+                            metashape_command.extend(["--reference_file", reference_file_path])
                         if generate_preview:
                             metashape_command.extend(["--preview_ratio", "0.1"])
                         if export_ply:
@@ -827,6 +840,7 @@ def video_upload():
                     export_pcd,
                     preselection_mode,
                     sensor_type,
+                    reference_file_path,
                 ),
             ).start()
 
@@ -874,6 +888,16 @@ def zip_upload():
             flash("مشکلی در ذخیره‌سازی فایل ZIP رخ داد.")
             return redirect(request.url)
 
+        reference_file = request.files.get("reference_file")
+        reference_file_path = None
+        if reference_file and reference_file.filename:
+            reference_file.stream.seek(0, os.SEEK_END)
+            if reference_file.stream.tell() > 0:
+                reference_file.stream.seek(0)
+                ref_filename = secure_filename(reference_file.filename)
+                reference_file_path = os.path.join(upload_process_dir, ref_filename)
+                reference_file.save(reference_file_path)
+
         output_dir = os.path.join(app.config["OUTPUT_FOLDER"], process_uuid)
         os.makedirs(output_dir, exist_ok=True)
 
@@ -919,6 +943,7 @@ def zip_upload():
             segformer_model,
             preselection_mode,
             sensor_type,
+            reference_file_path,
         ):
             with app.app_context():
                 try:
@@ -1083,6 +1108,8 @@ def zip_upload():
                         "--sensor_type",
                         sensor_type,
                     ])
+                    if reference_file_path:
+                        metashape_command.extend(["--reference_file", reference_file_path])
                     if generate_preview:
                         metashape_command.extend(["--preview_ratio", "0.1"])
                     if export_ply:
@@ -1207,6 +1234,7 @@ def zip_upload():
                 segformer_model,
                 preselection_mode,
                 sensor_type,
+                reference_file_path,
             ),
         ).start()
 
