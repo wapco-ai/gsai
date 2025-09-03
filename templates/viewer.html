@@ -298,7 +298,7 @@
                 <div class="file-input-container">
                     <input type="file" id="fileInput" accept=".pcd,.ply" />
                 </div>
-                <div class="info-box">
+                <div class="info-box" id="classification-info">
                     راهنمای مشاهده ابر نقاط: کانال سبز RGB نمایانگر کلاس هر نقطه است.
                     برای مشاهده نام کلاس هر نقطه روی آن کلیک کنید.
                 </div>
@@ -323,7 +323,7 @@
                 <div id="error-message-url" class="error-message"></div>
             </div>
 
-            <div class="control-section">
+            <div class="control-section" id="class-management">
                 <h3>مدیریت کلاس‌ها</h3>
                 <div>
                     <button class="button" id="showAllBtn">نمایش همه</button>
@@ -396,6 +396,7 @@
         };
 
         // Global variables
+        const HAS_CLASSIFICATION = {{ has_classification | tojson }};
         const MIN_CLASS_POINTS = 200;
         let scene, camera, renderer, controls, pointCloud;
         let raycaster, mouse;
@@ -848,26 +849,25 @@
                 let classId = 0; // Default class
                 const pointIndex = i / 3;
 
-                if (labels) {
-                    classId = Math.round(labels[pointIndex]);
-                } else { // if (colors)
-                    const colorIndex = i;
-                    const g_float = colors[colorIndex + 1]; // مقدار g بین 0.0 و 1.0
+                if (HAS_CLASSIFICATION) {
+                    if (labels) {
+                        classId = Math.round(labels[pointIndex]);
+                    } else {
+                        const colorIndex = i;
+                        const g_float = colors[colorIndex + 1]; // مقدار g بین 0.0 و 1.0
 
-                    // ذخیره مقادیر g برای دیباگ
-                    if (pointIndex < 1000) { // فقط برای 1000 نقطه اول تا کنسول شلوغ نشود
-                        uniqueGValues.add(g_float);
+                        if (pointIndex < 1000) { // فقط برای 1000 نقطه اول تا کنسول شلوغ نشود
+                            uniqueGValues.add(g_float);
+                        }
+
+                        classId = Math.round(g_float * 255);
                     }
 
-                    // تبدیل مقدار نرمال‌شده به شناسه کلاس اصلی
-                    classId = Math.round(g_float * 255);
+                    if (!classDistribution[classId]) {
+                        classDistribution[classId] = 0;
+                    }
+                    classDistribution[classId]++;
                 }
-
-                // ردیابی توزیع کلاس‌ها
-                if (!classDistribution[classId]) {
-                    classDistribution[classId] = 0;
-                }
-                classDistribution[classId]++;
 
                 pointsData.push({
                     index: pointIndex,
@@ -885,21 +885,20 @@
                 });
             }
 
-            // لاگ‌های مهم برای دیباگ
-            console.log("--- گزارش استخراج کلاس ---");
-            console.log("توزیع کلاس‌های محاسبه شده:", classDistribution);
+            if (HAS_CLASSIFICATION) {
+                console.log("--- گزارش استخراج کلاس ---");
+                console.log("توزیع کلاس‌های محاسبه شده:", classDistribution);
 
-            // مقادیر g را به ترتیب چاپ کن تا ببینیم آیا مقداری نزدیک به 20/255 داریم یا نه
-            const sortedGValues = Array.from(uniqueGValues).sort();
-            console.log("مقادیر منحصر به فرد کانال سبز (g) در 1000 نقطه اول (مرتب شده):", sortedGValues);
+                const sortedGValues = Array.from(uniqueGValues).sort();
+                console.log("مقادیر منحصر به فرد کانال سبز (g) در 1000 نقطه اول (مرتب شده):", sortedGValues);
 
-            // بررسی وجود کلاس 20
-            if (classDistribution[20]) {
-                console.log(`✅ کلاس 20 (خودرو) با تعداد ${classDistribution[20]} نقطه پیدا شد.`);
-            } else {
-                console.warn("⚠️ هشدار: کلاس 20 (خودرو) در بین نقاط محاسبه شده یافت نشد.");
+                if (classDistribution[20]) {
+                    console.log(`✅ کلاس 20 (خودرو) با تعداد ${classDistribution[20]} نقطه پیدا شد.`);
+                } else {
+                    console.warn("⚠️ هشدار: کلاس 20 (خودرو) در بین نقاط محاسبه شده یافت نشد.");
+                }
+                console.log("--------------------------");
             }
-            console.log("--------------------------");
 
 
             // Update debug info (این بخش بدون تغییر باقی می‌ماند)
@@ -1068,46 +1067,78 @@
             const pointInfo = document.getElementById('point-info');
             const pointDetails = document.getElementById('point-details');
 
-            const className = CLASS_LABELS_FA[point.classId] || `کلاس ${point.classId}`;
-
-            pointDetails.innerHTML = `
-                <div class="point-info-item">
-                    <span>کلاس:</span>
-                    <span class="point-info-label">${className}</span>
-                </div>
-                <div class="point-info-item">
-                    <span>شناسه کلاس:</span>
-                    <span class="point-info-label">${point.classId}</span>
-                </div>
-                <div class="point-info-item">
-                    <span>موقعیت X:</span>
-                    <span class="point-info-label">${point.position.x.toFixed(3)}</span>
-                </div>
-                <div class="point-info-item">
-                    <span>موقعیت Y:</span>
-                    <span class="point-info-label">${point.position.y.toFixed(3)}</span>
-                </div>
-                <div class="point-info-item">
-                    <span>موقعیت Z:</span>
-                    <span class="point-info-label">${point.position.z.toFixed(3)}</span>
-                </div>
-                <div class="point-info-item">
-                    <span>رنگ RGB:</span>
-                    <span class="point-info-label">
-                        (${Math.round(point.color.r * 255)}, 
-                         ${Math.round(point.color.g * 255)}, 
-                         ${Math.round(point.color.b * 255)})
-                    </span>
-                </div>
-                <div class="point-info-item">
-                    <span>کانال سبز (کلاس):</span>
-                    <span class="point-info-label">${Math.round(point.color.g * 255)}</span>
-                </div>
-                <div class="point-info-item">
-                    <span>ایندکس:</span>
-                    <span class="point-info-label">${point.index}</span>
-                </div>
-            `;
+            if (HAS_CLASSIFICATION) {
+                const className = CLASS_LABELS_FA[point.classId] || `کلاس ${point.classId}`;
+                pointDetails.innerHTML = `
+                    <div class="point-info-item">
+                        <span>کلاس:</span>
+                        <span class="point-info-label">${className}</span>
+                    </div>
+                    <div class="point-info-item">
+                        <span>شناسه کلاس:</span>
+                        <span class="point-info-label">${point.classId}</span>
+                    </div>
+                    <div class="point-info-item">
+                        <span>موقعیت X:</span>
+                        <span class="point-info-label">${point.position.x.toFixed(3)}</span>
+                    </div>
+                    <div class="point-info-item">
+                        <span>موقعیت Y:</span>
+                        <span class="point-info-label">${point.position.y.toFixed(3)}</span>
+                    </div>
+                    <div class="point-info-item">
+                        <span>موقعیت Z:</span>
+                        <span class="point-info-label">${point.position.z.toFixed(3)}</span>
+                    </div>
+                    <div class="point-info-item">
+                        <span>رنگ RGB:</span>
+                        <span class="point-info-label">
+                            (${Math.round(point.color.r * 255)},
+                             ${Math.round(point.color.g * 255)},
+                             ${Math.round(point.color.b * 255)})
+                        </span>
+                    </div>
+                    <div class="point-info-item">
+                        <span>کانال سبز (کلاس):</span>
+                        <span class="point-info-label">${Math.round(point.color.g * 255)}</span>
+                    </div>
+                    <div class="point-info-item">
+                        <span>ایندکس:</span>
+                        <span class="point-info-label">${point.index}</span>
+                    </div>
+                `;
+            } else {
+                pointDetails.innerHTML = `
+                    <div class="point-info-item">
+                        <span>کلاس:</span>
+                        <span class="point-info-label">بدون طبقه‌بندی</span>
+                    </div>
+                    <div class="point-info-item">
+                        <span>موقعیت X:</span>
+                        <span class="point-info-label">${point.position.x.toFixed(3)}</span>
+                    </div>
+                    <div class="point-info-item">
+                        <span>موقعیت Y:</span>
+                        <span class="point-info-label">${point.position.y.toFixed(3)}</span>
+                    </div>
+                    <div class="point-info-item">
+                        <span>موقعیت Z:</span>
+                        <span class="point-info-label">${point.position.z.toFixed(3)}</span>
+                    </div>
+                    <div class="point-info-item">
+                        <span>رنگ RGB:</span>
+                        <span class="point-info-label">
+                            (${Math.round(point.color.r * 255)},
+                             ${Math.round(point.color.g * 255)},
+                             ${Math.round(point.color.b * 255)})
+                        </span>
+                    </div>
+                    <div class="point-info-item">
+                        <span>ایندکس:</span>
+                        <span class="point-info-label">${point.index}</span>
+                    </div>
+                `;
+            }
 
             pointInfo.style.display = 'block';
             pointInfo.style.left = Math.min(x + 10, window.innerWidth - 320) + 'px';
@@ -1157,14 +1188,21 @@
         // Update statistics
         function updateStats() {
             const totalPoints = pointsData.length;
-            const uniqueClasses = Object.keys(classManager).length;
-            let visiblePoints = 0;
+            let uniqueClasses;
+            let visiblePoints;
 
-            Object.keys(classManager).forEach(classId => {
-                if (classManager[classId].visible) {
-                    visiblePoints += classManager[classId].count;
-                }
-            });
+            if (HAS_CLASSIFICATION) {
+                uniqueClasses = Object.keys(classManager).length;
+                visiblePoints = 0;
+                Object.keys(classManager).forEach(classId => {
+                    if (classManager[classId].visible) {
+                        visiblePoints += classManager[classId].count;
+                    }
+                });
+            } else {
+                uniqueClasses = 1;
+                visiblePoints = totalPoints;
+            }
 
             document.getElementById('total-points').textContent = totalPoints.toLocaleString();
             document.getElementById('visible-points').textContent = visiblePoints.toLocaleString();
@@ -1236,6 +1274,12 @@
 
         // Initialize the application
         init();
+        if (!HAS_CLASSIFICATION) {
+            const classSection = document.getElementById('class-management');
+            if (classSection) classSection.style.display = 'none';
+            const infoBox = document.getElementById('classification-info');
+            if (infoBox) infoBox.style.display = 'none';
+        }
     </script>
 </body>
 

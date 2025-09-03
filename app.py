@@ -153,6 +153,7 @@ class Process(db.Model):
     output_folder = db.Column(db.String)
     progress = db.Column(db.Integer, default=0)
     message = db.Column(db.String)
+    has_classification = db.Column(db.Boolean, default=False)
 
 
 # Helper function to check allowed files
@@ -400,6 +401,7 @@ def video_upload():
                 start_time=datetime.utcnow(),
                 status="processing",
                 output_folder=process_id,
+                has_classification=classify_images,
             )
             db.session.add(db_process)
 
@@ -919,6 +921,7 @@ def zip_upload():
             start_time=datetime.utcnow(),
             status="processing",
             output_folder=process_uuid,
+            has_classification=classify_images,
         )
         db.session.add(db_process)
 
@@ -1283,8 +1286,7 @@ def viewer():
         flash("لطفاً ابتدا وارد شوید.")
         return redirect(url_for("index"))
 
-
-    return render_template("viewer.html")
+    return render_template("viewer.html", has_classification=True)
 
 
 
@@ -1385,6 +1387,7 @@ def reprocess(process_id):
         start_time=datetime.utcnow(),
         status="processing",
         output_folder=new_id,
+        has_classification=orig.has_classification if hasattr(orig, 'has_classification') else False,
     )
     db.session.add(db_process)
     db.session.commit()
@@ -1628,8 +1631,13 @@ def ply(output_foldername, file_path):
         return redirect(url_for("results", output_foldername=output_foldername))
 
     if os.path.exists(full_file_path) and os.path.isfile(full_file_path):
+        proc = Process.query.filter_by(output_folder=output_foldername).first()
+        has_classification = proc.has_classification if proc else False
         return render_template(
-            "viewer.html", output_foldername=output_foldername, file_path=file_path
+            "viewer.html",
+            output_foldername=output_foldername,
+            file_path=file_path,
+            has_classification=has_classification,
         )
     else:
         flash("PLY file not found.")
@@ -1654,8 +1662,13 @@ def pcd_viewer(output_foldername, file_path):
         return redirect(url_for("results", output_foldername=output_foldername))
 
     if os.path.exists(full_file_path) and os.path.isfile(full_file_path):
+        proc = Process.query.filter_by(output_folder=output_foldername).first()
+        has_classification = proc.has_classification if proc else False
         return render_template(
-            "viewer.html", output_foldername=output_foldername, file_path=file_path
+            "viewer.html",
+            output_foldername=output_foldername,
+            file_path=file_path,
+            has_classification=has_classification,
         )
     else:
         flash("pcd file not found.")
