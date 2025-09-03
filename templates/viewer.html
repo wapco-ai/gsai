@@ -8,13 +8,14 @@
 
     <!-- Import Map for Local Three.js -->
     <script type="importmap">
-        {  
-            "imports": {  
-                "three": "/static/threejs/build/three.module.js",  
-                "three/addons/": "/static/threejs/jsm/" 
-            }  
-        }  
+        {
+            "imports": {
+                "three": "/static/threejs/build/three.module.js",
+                "three/addons/": "/static/threejs/jsm/"
+            }
+        }
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/potree@1.8/build/potree/potree.min.js"></script>
 
     <style>
         body {
@@ -298,12 +299,20 @@
                 <div class="file-input-container">
                     <input type="file" id="fileInput" accept=".pcd,.ply" />
                 </div>
+                <div id="large-file-warning" class="error-message" style="display:none;">
+                    فایل انتخاب شده بزرگ است. برای جلوگیری از کندی، یکی از گزینه‌ها را انتخاب کنید.
+                    <div style="margin-top:5px;">
+                        <button class="button" id="warn-downsample">کاهش حجم</button>
+                        <button class="button" id="warn-load-full">بارگذاری کامل</button>
+                    </div>
+                </div>
                 <div class="info-box" id="classification-info">
                     راهنمای مشاهده ابر نقاط: کانال سبز RGB نمایانگر کلاس هر نقطه است.
                     برای مشاهده نام کلاس هر نقطه روی آن کلیک کنید.
                 </div>
                 <div id="debug-info" class="debug-info" style="display: none;"></div>
                 <div id="error-message" class="error-message"></div>
+                <button class="button hidden" id="loadFullBtn">بارگذاری نسخه کامل</button>
             </div>
 
             <div id="url-load-section" class="control-section hidden">
@@ -408,6 +417,12 @@
         let debugMode = false;
         let urlDebugMode = false;
         let isUrlMode = false;
+        const worker = new Worker('/static/js/pointcloud-worker.js', { type: 'module' });
+        let fullFileUrl = null;
+        let previewLoaded = false;
+        let pendingFile = null;
+        let downsampleRequested = false;
+        const LARGE_FILE_THRESHOLD = 50 * 1024 * 1024; // 50MB
 
         // Check URL for file parameter and load if present
         function checkUrlForFile() {
@@ -505,10 +520,20 @@
                 try {
                     updateLoadingStatus(`تلاش ${i + 1}/${urls.length}: ${url}`);
 
-                    // Check if URL is accessible
+                    const previewUrl = url.replace(/(\.ply|\.pcd)$/i, '_preview.$1');
+                    const previewHead = await fetch(previewUrl, { method: 'HEAD' });
+                    if (previewHead.ok && !previewLoaded) {
+                        fullFileUrl = url;
+                        await loadFileFromUrl(previewUrl, fileExtension);
+                        previewLoaded = true;
+                        document.getElementById('loadFullBtn').classList.remove('hidden');
+                        return;
+                    }
+
                     const response = await fetch(url, { method: 'HEAD' });
                     if (response.ok) {
                         console.log(`✅ URL accessible: ${url}`);
+                        fullFileUrl = url;
                         await loadFileFromUrl(url, fileExtension);
                         return; // موفقیت آمیز بود، خروج از حلقه
                     } else {
@@ -563,65 +588,64 @@
 
         // Load PCD from URL
         function loadPCDFromUrl(filePath) {
-            return new Promise((resolve, reject) => {
-                const loader = new PCDLoader();
-
-                updateLoadingStatus('در حال پردازش فایل PCD...');
-
-                loader.load(filePath, function (points) {
-                    // Apply transformations like in your original code
-                    const geometry = points.geometry;
-                    geometry.rotateX(0);
-                    geometry.rotateY(0);
-                    geometry.center();
-
+            return new Promise(async (resolve, reject) => {
+                try {
+                    updateLoadingStatus('در حال دانلود فایل PCD...');
+                    const response = await fetch(filePath);
+                    const buffer = await response.arrayBuffer();
+                    const geometry = await parseWithWorker(buffer, 'pcd');
+                    const material = new THREE.PointsMaterial({ size: 0.01, vertexColors: true });
+                    const points = new THREE.Points(geometry, material);
                     processPointCloud(points);
                     resolve(points);
-                },
-                    function (progress) {
-                        console.log('Loading progress:', progress);
-                        if (progress.lengthComputable) {
-                            const percent = Math.round((progress.loaded / progress.total) * 100);
-                            updateLoadingStatus(`در حال دانلود: ${percent}%`);
-                        }
-                    },
-                    function (error) {
-                        console.error('PCD loading error:', error);
-                        reject(new Error('خطا در بارگذاری فایل PCD: ' + error.message));
-                    });
+                } catch (error) {
+                    console.error('PCD loading error:', error);
+                    reject(new Error('خطا در بارگذاری فایل PCD: ' + error.message));
+                }
             });
         }
 
         // Load PLY from URL
         function loadPLYFromUrl(filePath) {
             return new Promise((resolve, reject) => {
-                const loader = new PLYLoader();
-                loader.setCustomPropertyNameMapping({ label: ['class'] });
-
-                updateLoadingStatus('در حال پردازش فایل PLY...');
-
-                loader.load(filePath, function (geometry) {
-                    // Apply transformations
-                    geometry.rotateX(0);
-                    geometry.rotateY(0);
-                    geometry.center();
-
-                    const material = new THREE.PointsMaterial({ size: 0.01, vertexColors: true });
-                    const points = new THREE.Points(geometry, material);
-                    processPointCloud(points);
-                    resolve(points);
-                },
-                    function (progress) {
-                        console.log('Loading progress:', progress);
-                        if (progress.lengthComputable) {
-                            const percent = Math.round((progress.loaded / progress.total) * 100);
-                            updateLoadingStatus(`در حال دانلود: ${percent}%`);
-                        }
-                    },
-                    function (error) {
-                        console.error('PLY loading error:', error);
-                        reject(new Error('خطا در بارگذاری فایل PLY: ' + error.message));
+                if (window.Potree && Potree.loadPointCloud) {
+                    Potree.loadPointCloud(filePath, "pointcloud", e => {
+                        const points = e.pointcloud;
+                        processPointCloud(points);
+                        resolve(points);
+                    }, undefined, err => {
+                        console.error('PLY loading error:', err);
+                        reject(new Error('خطا در بارگذاری فایل PLY: ' + err.message));
                     });
+                } else {
+                    const loader = new PLYLoader();
+                    loader.setCustomPropertyNameMapping({ label: ['class'] });
+
+                    updateLoadingStatus('در حال پردازش فایل PLY...');
+
+                    loader.load(filePath, function (geometry) {
+                        // Apply transformations
+                        geometry.rotateX(0);
+                        geometry.rotateY(0);
+                        geometry.center();
+
+                        const material = new THREE.PointsMaterial({ size: 0.01, vertexColors: true });
+                        const points = new THREE.Points(geometry, material);
+                        processPointCloud(points);
+                        resolve(points);
+                    },
+                        function (progress) {
+                            console.log('Loading progress:', progress);
+                            if (progress.lengthComputable) {
+                                const percent = Math.round((progress.loaded / progress.total) * 100);
+                                updateLoadingStatus(`در حال دانلود: ${percent}%`);
+                            }
+                        },
+                        function (error) {
+                            console.error('PLY loading error:', error);
+                            reject(new Error('خطا در بارگذاری فایل PLY: ' + error.message));
+                        });
+                }
             });
         }
 
@@ -630,6 +654,50 @@
             if (isUrlMode) {
                 document.getElementById('loading-status').textContent = status;
             }
+        }
+
+        function parseWithWorker(buffer, type) {
+            return new Promise((resolve, reject) => {
+                worker.onmessage = function (e) {
+                    if (e.data.success) {
+                        const geometry = new THREE.BufferGeometry();
+                        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(e.data.position), 3));
+                        if (e.data.color) geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(e.data.color), 3, true));
+                        if (e.data.label) geometry.setAttribute('label', new THREE.BufferAttribute(new Float32Array(e.data.label), 1));
+                        resolve(geometry);
+                    } else {
+                        reject(new Error(e.data.error));
+                    }
+                };
+                worker.postMessage({ buffer, type }, [buffer]);
+            });
+        }
+
+        function downsampleGeometry(geometry, ratio) {
+            const total = geometry.attributes.position.count;
+            const keep = Math.floor(total * ratio);
+            const oldPos = geometry.attributes.position.array;
+            const newPos = new Float32Array(keep * 3);
+            let newColor, oldColor, newLabel, oldLabel;
+            if (geometry.attributes.color) {
+                oldColor = geometry.attributes.color.array;
+                newColor = new Float32Array(keep * 3);
+            }
+            if (geometry.attributes.label) {
+                oldLabel = geometry.attributes.label.array;
+                newLabel = new Float32Array(keep);
+            }
+            for (let i = 0; i < keep; i++) {
+                const idx = Math.floor(Math.random() * total);
+                newPos.set(oldPos.slice(idx * 3, idx * 3 + 3), i * 3);
+                if (newColor) newColor.set(oldColor.slice(idx * 3, idx * 3 + 3), i * 3);
+                if (newLabel) newLabel[i] = oldLabel[idx];
+            }
+            const newGeom = new THREE.BufferGeometry();
+            newGeom.setAttribute('position', new THREE.BufferAttribute(newPos, 3));
+            if (newColor) newGeom.setAttribute('color', new THREE.BufferAttribute(newColor, 3));
+            if (newLabel) newGeom.setAttribute('label', new THREE.BufferAttribute(newLabel, 1));
+            return newGeom;
         }
 
         // Show error for URL mode
@@ -709,6 +777,22 @@
 
             // Point size slider
             document.getElementById('pointSize').addEventListener('input', (e) => updatePointSize(e.target.value));
+
+            document.getElementById('warn-downsample').addEventListener('click', () => {
+                downsampleRequested = true;
+                document.getElementById('large-file-warning').style.display = 'none';
+                if (pendingFile) processSelectedFile(pendingFile);
+            });
+            document.getElementById('warn-load-full').addEventListener('click', () => {
+                downsampleRequested = false;
+                document.getElementById('large-file-warning').style.display = 'none';
+                if (pendingFile) processSelectedFile(pendingFile);
+            });
+            document.getElementById('loadFullBtn').addEventListener('click', () => {
+                if (fullFileUrl) {
+                    loadFileFromUrl(fullFileUrl, fullFileUrl.split('.').pop().toLowerCase());
+                }
+            });
         }
 
         // Animation loop
@@ -732,10 +816,17 @@
         function onFileLoad(event) {
             const file = event.target.files[0];
             if (!file) return;
-
-            showLoading(true);
+            pendingFile = file;
             hideError();
+            if (file.size > LARGE_FILE_THRESHOLD) {
+                document.getElementById('large-file-warning').style.display = 'block';
+                return;
+            }
+            processSelectedFile(file);
+        }
 
+        function processSelectedFile(file) {
+            showLoading(true);
             const fileExtension = file.name.split('.').pop().toLowerCase();
             const reader = new FileReader();
 
@@ -764,41 +855,34 @@
         }
 
         // Load PCD file data (for manual upload)
-        function loadPCDData(buffer) {
-            const loader = new PCDLoader();
-            loader.load(URL.createObjectURL(new Blob([buffer])), function (points) {
-                // Apply transformations
-                const geometry = points.geometry;
-                geometry.rotateX(0);
-                geometry.rotateY(0);
-                geometry.center();
-
-                processPointCloud(points);
-            }, undefined, function (error) {
-                console.error('PCD loading error:', error);
-                showError('خطا در بارگذاری فایل PCD: ' + error.message);
-                showLoading(false);
-            });
-        }
-
-        // Load PLY file data (for manual upload)
-        function loadPLYData(buffer) {
-            const loader = new PLYLoader();
-            loader.setCustomPropertyNameMapping({ label: ['class'] });
-            loader.load(URL.createObjectURL(new Blob([buffer])), function (geometry) {
-                // Apply transformations
-                geometry.rotateX(0);
-                geometry.rotateY(0);
-                geometry.center();
-
+        async function loadPCDData(buffer) {
+            try {
+                const geometry = await parseWithWorker(buffer, 'pcd');
                 const material = new THREE.PointsMaterial({ size: 2, vertexColors: true });
                 const points = new THREE.Points(geometry, material);
                 processPointCloud(points);
-            }, undefined, function (error) {
+            } catch (error) {
+                console.error('PCD loading error:', error);
+                showError('خطا در بارگذاری فایل PCD: ' + error.message);
+                showLoading(false);
+            }
+        }
+
+        // Load PLY file data (for manual upload)
+        async function loadPLYData(buffer) {
+            try {
+                let geometry = await parseWithWorker(buffer, 'ply');
+                if (downsampleRequested) {
+                    geometry = downsampleGeometry(geometry, 0.1);
+                }
+                const material = new THREE.PointsMaterial({ size: 2, vertexColors: true });
+                const points = new THREE.Points(geometry, material);
+                processPointCloud(points);
+            } catch (error) {
                 console.error('PLY loading error:', error);
                 showError('خطا در بارگذاری فایل PLY: ' + error.message);
                 showLoading(false);
-            });
+            }
         }
 
         // Process loaded point cloud
