@@ -1,22 +1,21 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مشاهده‌گر ابر نقاط پیشرفته</title>
-
+    
     <!-- Import Map for Local Three.js -->
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "/static/threejs/build/three.module.js",
-                "three/addons/": "/static/threejs/jsm/"
-            }
-        }
+    <script type="importmap">  
+        {  
+            "imports": {  
+                "three": "/static/threejs/build/three.module.js",  
+                "three/addons/": "/static/threejs/jsm/" 
+            }  
+        }  
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/potree@1.8/build/potree/potree.min.js"></script>
-
+    
     <style>
         body {
             margin: 0;
@@ -277,7 +276,6 @@
         }
     </style>
 </head>
-
 <body>
     <div id="container">
         <div id="viewer">
@@ -299,20 +297,12 @@
                 <div class="file-input-container">
                     <input type="file" id="fileInput" accept=".pcd,.ply" />
                 </div>
-                <div id="large-file-warning" class="error-message" style="display:none;">
-                    فایل انتخاب شده بزرگ است. برای جلوگیری از کندی، یکی از گزینه‌ها را انتخاب کنید.
-                    <div style="margin-top:5px;">
-                        <button class="button" id="warn-downsample">کاهش حجم</button>
-                        <button class="button" id="warn-load-full">بارگذاری کامل</button>
-                    </div>
-                </div>
-                <div class="info-box" id="classification-info">
+                <div class="info-box">
                     راهنمای مشاهده ابر نقاط: کانال سبز RGB نمایانگر کلاس هر نقطه است.
                     برای مشاهده نام کلاس هر نقطه روی آن کلیک کنید.
                 </div>
                 <div id="debug-info" class="debug-info" style="display: none;"></div>
                 <div id="error-message" class="error-message"></div>
-                <button class="button hidden" id="loadFullBtn">بارگذاری نسخه کامل</button>
             </div>
 
             <div id="url-load-section" class="control-section hidden">
@@ -332,7 +322,7 @@
                 <div id="error-message-url" class="error-message"></div>
             </div>
 
-            <div class="control-section" id="class-management">
+            <div class="control-section">
                 <h3>مدیریت کلاس‌ها</h3>
                 <div>
                     <button class="button" id="showAllBtn">نمایش همه</button>
@@ -349,8 +339,8 @@
                 <h3>تنظیمات نمایش</h3>
                 <div>
                     <label>اندازه نقاط:</label>
-                    <input type="range" id="pointSize" min="1" max="10" value="2" step="0.5"
-                        style="width: 100%; margin: 5px 0;">
+                    <input type="range" id="pointSize" min="1" max="10" value="2" step="0.5" 
+                           style="width: 100%; margin: 5px 0;">
                     <span id="pointSizeValue">2</span>
                 </div>
                 <div style="margin-top: 10px;">
@@ -405,8 +395,6 @@
         };
 
         // Global variables
-        const HAS_CLASSIFICATION = {{ has_classification | tojson }};
-        const MIN_CLASS_POINTS = 200;
         let scene, camera, renderer, controls, pointCloud;
         let raycaster, mouse;
         let classManager = {};
@@ -417,21 +405,15 @@
         let debugMode = false;
         let urlDebugMode = false;
         let isUrlMode = false;
-        const worker = new Worker('/static/js/pointcloud-worker.js', { type: 'module' });
-        let fullFileUrl = null;
-        let previewLoaded = false;
-        let pendingFile = null;
-        let downsampleRequested = false;
-        const LARGE_FILE_THRESHOLD = 50 * 1024 * 1024; // 50MB
 
         // Check URL for file parameter and load if present
         function checkUrlForFile() {
             const currentUrl = window.location.pathname;
             const currentFullUrl = window.location.href;
-
+            
             console.log('Current URL:', currentUrl);
             console.log('Full URL:', currentFullUrl);
-
+            
             // Pattern های مختلف که ممکن است استفاده شوند
             const patterns = [
                 // Pattern 1: /prefix/uuid/filename.ext
@@ -441,10 +423,10 @@
                 // Pattern 3: /any_folder/uuid/filename.ext
                 /\/([^\/]+)\/([a-f0-9\-]{8,})\/([^\/]+\.(pcd|ply))$/i
             ];
-
+            
             let match = null;
             let patternUsed = -1;
-
+            
             for (let i = 0; i < patterns.length; i++) {
                 match = currentUrl.match(patterns[i]);
                 if (match) {
@@ -453,10 +435,10 @@
                     break;
                 }
             }
-
+            
             if (match) {
                 let outputFoldername, filePath, prefix = '';
-
+                
                 // تحلیل بر اساس pattern استفاده شده
                 if (patternUsed === 0) {
                     // Pattern 1: /prefix/uuid/filename.ext
@@ -473,41 +455,41 @@
                     outputFoldername = match[2];
                     filePath = match[3];
                 }
-
+                
                 const filename = filePath.split('/').pop();
-
+                
                 isUrlMode = true;
-
+                
                 // Hide file upload section and show URL load section
                 document.getElementById('file-upload-section').classList.add('hidden');
                 document.getElementById('url-load-section').classList.remove('hidden');
-
+                
                 // Update UI with file info
                 document.getElementById('loaded-filename').textContent = filename;
                 document.getElementById('loaded-filepath').textContent = filePath;
                 document.getElementById('loading-status').textContent = 'در حال بارگذاری...';
-
+                
                 // Update debug info
                 updateUrlDebugInfo(currentUrl, outputFoldername, filePath, prefix, patternUsed + 1);
-
+                
                 // تولید URL فایل با روش‌های مختلف
                 const possibleUrls = generatePossibleUrls(outputFoldername, filePath, prefix);
-
+                
                 console.log('Possible URLs:', possibleUrls);
-
+                
                 // تلاش برای بارگذاری با URL های مختلف
                 tryLoadingUrls(possibleUrls, filename.split('.').pop().toLowerCase());
-
+                
                 return true;
             }
-
+            
             console.log('No file pattern found in URL');
             return false;
         }
 
         // تولید URL های احتمالی
         function generatePossibleUrls(outputFoldername, filePath, prefix = '') {
-
+           
             return [`/outputs/${outputFoldername}/${filePath}`];
         }
 
@@ -516,24 +498,14 @@
             for (let i = 0; i < urls.length; i++) {
                 const url = urls[i];
                 console.log(`Trying URL ${i + 1}/${urls.length}: ${url}`);
-
+                
                 try {
                     updateLoadingStatus(`تلاش ${i + 1}/${urls.length}: ${url}`);
-
-                    const previewUrl = url.replace(/(\.ply|\.pcd)$/i, '_preview.$1');
-                    const previewHead = await fetch(previewUrl, { method: 'HEAD' });
-                    if (previewHead.ok && !previewLoaded) {
-                        fullFileUrl = url;
-                        await loadFileFromUrl(previewUrl, fileExtension);
-                        previewLoaded = true;
-                        document.getElementById('loadFullBtn').classList.remove('hidden');
-                        return;
-                    }
-
+                    
+                    // Check if URL is accessible
                     const response = await fetch(url, { method: 'HEAD' });
                     if (response.ok) {
                         console.log(`✅ URL accessible: ${url}`);
-                        fullFileUrl = url;
                         await loadFileFromUrl(url, fileExtension);
                         return; // موفقیت آمیز بود، خروج از حلقه
                     } else {
@@ -544,7 +516,7 @@
                     continue;
                 }
             }
-
+            
             // اگر هیچ URL کار نکرد
             throw new Error(`هیچ یک از مسیرهای احتمالی در دسترس نیست. تلاش شده: ${urls.length} مسیر`);
         }
@@ -567,7 +539,7 @@
             try {
                 showLoading(true);
                 updateLoadingStatus(`در حال بارگذاری از: ${filePath}`);
-
+                
                 if (fileExtension === 'pcd') {
                     await loadPCDFromUrl(filePath);
                 } else if (fileExtension === 'ply') {
@@ -575,9 +547,9 @@
                 } else {
                     throw new Error('فرمت فایل پشتیبانی نمی‌شود');
                 }
-
+                
                 updateLoadingStatus('✅ بارگذاری موفق');
-
+                
             } catch (error) {
                 console.error('Error loading file from URL:', error);
                 updateLoadingStatus('❌ خطا در بارگذاری');
@@ -588,64 +560,65 @@
 
         // Load PCD from URL
         function loadPCDFromUrl(filePath) {
-            return new Promise(async (resolve, reject) => {
-                try {
-                    updateLoadingStatus('در حال دانلود فایل PCD...');
-                    const response = await fetch(filePath);
-                    const buffer = await response.arrayBuffer();
-                    const geometry = await parseWithWorker(buffer, 'pcd');
-                    const material = new THREE.PointsMaterial({ size: 0.01, vertexColors: true });
-                    const points = new THREE.Points(geometry, material);
+            return new Promise((resolve, reject) => {
+                const loader = new PCDLoader();
+                
+                updateLoadingStatus('در حال پردازش فایل PCD...');
+                
+                loader.load(filePath, function (points) {
+                    // Apply transformations like in your original code
+                    const geometry = points.geometry;
+                    geometry.rotateX(0);
+                    geometry.rotateY(0);
+                    geometry.center();
+                    
                     processPointCloud(points);
                     resolve(points);
-                } catch (error) {
+                }, 
+                function(progress) {
+                    console.log('Loading progress:', progress);
+                    if (progress.lengthComputable) {
+                        const percent = Math.round((progress.loaded / progress.total) * 100);
+                        updateLoadingStatus(`در حال دانلود: ${percent}%`);
+                    }
+                }, 
+                function(error) {
                     console.error('PCD loading error:', error);
                     reject(new Error('خطا در بارگذاری فایل PCD: ' + error.message));
-                }
+                });
             });
         }
 
         // Load PLY from URL
         function loadPLYFromUrl(filePath) {
             return new Promise((resolve, reject) => {
-                if (window.Potree && Potree.loadPointCloud) {
-                    Potree.loadPointCloud(filePath, "pointcloud", e => {
-                        const points = e.pointcloud;
-                        processPointCloud(points);
-                        resolve(points);
-                    }, undefined, err => {
-                        console.error('PLY loading error:', err);
-                        reject(new Error('خطا در بارگذاری فایل PLY: ' + err.message));
-                    });
-                } else {
-                    const loader = new PLYLoader();
-                    loader.setCustomPropertyNameMapping({ label: ['class'] });
+                const loader = new PLYLoader();
+                loader.setCustomPropertyNameMapping({ label: ['class'] });
 
-                    updateLoadingStatus('در حال پردازش فایل PLY...');
+                updateLoadingStatus('در حال پردازش فایل PLY...');
 
-                    loader.load(filePath, function (geometry) {
-                        // Apply transformations
-                        geometry.rotateX(0);
-                        geometry.rotateY(0);
-                        geometry.center();
-
-                        const material = new THREE.PointsMaterial({ size: 0.01, vertexColors: true });
-                        const points = new THREE.Points(geometry, material);
-                        processPointCloud(points);
-                        resolve(points);
-                    },
-                        function (progress) {
-                            console.log('Loading progress:', progress);
-                            if (progress.lengthComputable) {
-                                const percent = Math.round((progress.loaded / progress.total) * 100);
-                                updateLoadingStatus(`در حال دانلود: ${percent}%`);
-                            }
-                        },
-                        function (error) {
-                            console.error('PLY loading error:', error);
-                            reject(new Error('خطا در بارگذاری فایل PLY: ' + error.message));
-                        });
-                }
+                loader.load(filePath, function (geometry) {
+                    // Apply transformations
+                    geometry.rotateX(0);
+                    geometry.rotateY(0);
+                    geometry.center();
+                    
+                    const material = new THREE.PointsMaterial({ size: 0.02, vertexColors: true, sizeAttenuation: true });
+                    const points = new THREE.Points(geometry, material);
+                    processPointCloud(points);
+                    resolve(points);
+                },
+                function(progress) {
+                    console.log('Loading progress:', progress);
+                    if (progress.lengthComputable) {
+                        const percent = Math.round((progress.loaded / progress.total) * 100);
+                        updateLoadingStatus(`در حال دانلود: ${percent}%`);
+                    }
+                },
+                function(error) {
+                    console.error('PLY loading error:', error);
+                    reject(new Error('خطا در بارگذاری فایل PLY: ' + error.message));
+                });
             });
         }
 
@@ -654,50 +627,6 @@
             if (isUrlMode) {
                 document.getElementById('loading-status').textContent = status;
             }
-        }
-
-        function parseWithWorker(buffer, type) {
-            return new Promise((resolve, reject) => {
-                worker.onmessage = function (e) {
-                    if (e.data.success) {
-                        const geometry = new THREE.BufferGeometry();
-                        geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(e.data.position), 3));
-                        if (e.data.color) geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(e.data.color), 3, true));
-                        if (e.data.label) geometry.setAttribute('label', new THREE.BufferAttribute(new Float32Array(e.data.label), 1));
-                        resolve(geometry);
-                    } else {
-                        reject(new Error(e.data.error));
-                    }
-                };
-                worker.postMessage({ buffer, type }, [buffer]);
-            });
-        }
-
-        function downsampleGeometry(geometry, ratio) {
-            const total = geometry.attributes.position.count;
-            const keep = Math.floor(total * ratio);
-            const oldPos = geometry.attributes.position.array;
-            const newPos = new Float32Array(keep * 3);
-            let newColor, oldColor, newLabel, oldLabel;
-            if (geometry.attributes.color) {
-                oldColor = geometry.attributes.color.array;
-                newColor = new Float32Array(keep * 3);
-            }
-            if (geometry.attributes.label) {
-                oldLabel = geometry.attributes.label.array;
-                newLabel = new Float32Array(keep);
-            }
-            for (let i = 0; i < keep; i++) {
-                const idx = Math.floor(Math.random() * total);
-                newPos.set(oldPos.slice(idx * 3, idx * 3 + 3), i * 3);
-                if (newColor) newColor.set(oldColor.slice(idx * 3, idx * 3 + 3), i * 3);
-                if (newLabel) newLabel[i] = oldLabel[idx];
-            }
-            const newGeom = new THREE.BufferGeometry();
-            newGeom.setAttribute('position', new THREE.BufferAttribute(newPos, 3));
-            if (newColor) newGeom.setAttribute('color', new THREE.BufferAttribute(newColor, 3));
-            if (newLabel) newGeom.setAttribute('label', new THREE.BufferAttribute(newLabel, 1));
-            return newGeom;
         }
 
         // Show error for URL mode
@@ -749,7 +678,7 @@
 
             // Check if file should be loaded from URL
             const hasUrlFile = checkUrlForFile();
-
+            
             // Setup event listeners
             setupEventListeners();
 
@@ -762,46 +691,30 @@
             renderer.domElement.addEventListener('click', onPointClick);
             renderer.domElement.addEventListener('mousemove', onMouseMove);
             window.addEventListener('resize', onWindowResize);
-
+            
             // File input (only if not in URL mode)
             if (!isUrlMode) {
                 document.getElementById('fileInput').addEventListener('change', onFileLoad);
             }
-
+            
             // Control buttons
             document.getElementById('showAllBtn').addEventListener('click', () => toggleAllClasses(true));
             document.getElementById('hideAllBtn').addEventListener('click', () => toggleAllClasses(false));
             document.getElementById('resetCameraBtn').addEventListener('click', resetCamera);
             document.getElementById('toggleDebugBtn').addEventListener('click', toggleDebugInfo);
             document.getElementById('toggleUrlDebugBtn').addEventListener('click', toggleUrlDebugInfo);
-
+            
             // Point size slider
             document.getElementById('pointSize').addEventListener('input', (e) => updatePointSize(e.target.value));
-
-            document.getElementById('warn-downsample').addEventListener('click', () => {
-                downsampleRequested = true;
-                document.getElementById('large-file-warning').style.display = 'none';
-                if (pendingFile) processSelectedFile(pendingFile);
-            });
-            document.getElementById('warn-load-full').addEventListener('click', () => {
-                downsampleRequested = false;
-                document.getElementById('large-file-warning').style.display = 'none';
-                if (pendingFile) processSelectedFile(pendingFile);
-            });
-            document.getElementById('loadFullBtn').addEventListener('click', () => {
-                if (fullFileUrl) {
-                    loadFileFromUrl(fullFileUrl, fullFileUrl.split('.').pop().toLowerCase());
-                }
-            });
         }
 
         // Animation loop
         function animate() {
             requestAnimationFrame(animate);
-
+            
             controls.update();
             renderer.render(scene, camera);
-
+            
             // Update FPS counter
             frameCount++;
             const currentTime = Date.now();
@@ -816,21 +729,14 @@
         function onFileLoad(event) {
             const file = event.target.files[0];
             if (!file) return;
-            pendingFile = file;
-            hideError();
-            if (file.size > LARGE_FILE_THRESHOLD) {
-                document.getElementById('large-file-warning').style.display = 'block';
-                return;
-            }
-            processSelectedFile(file);
-        }
 
-        function processSelectedFile(file) {
             showLoading(true);
+            hideError();
+
             const fileExtension = file.name.split('.').pop().toLowerCase();
             const reader = new FileReader();
 
-            reader.onload = function (e) {
+            reader.onload = function(e) {
                 try {
                     if (fileExtension === 'pcd') {
                         loadPCDData(e.target.result);
@@ -846,7 +752,7 @@
                 }
             };
 
-            reader.onerror = function () {
+            reader.onerror = function() {
                 showError('خطا در خواندن فایل');
                 showLoading(false);
             };
@@ -855,34 +761,41 @@
         }
 
         // Load PCD file data (for manual upload)
-        async function loadPCDData(buffer) {
-            try {
-                const geometry = await parseWithWorker(buffer, 'pcd');
-                const material = new THREE.PointsMaterial({ size: 2, vertexColors: true });
-                const points = new THREE.Points(geometry, material);
+        function loadPCDData(buffer) {
+            const loader = new PCDLoader();
+            loader.load(URL.createObjectURL(new Blob([buffer])), function(points) {
+                // Apply transformations
+                const geometry = points.geometry;
+                geometry.rotateX(0);
+                geometry.rotateY(0);
+                geometry.center();
+                
                 processPointCloud(points);
-            } catch (error) {
+            }, undefined, function(error) {
                 console.error('PCD loading error:', error);
                 showError('خطا در بارگذاری فایل PCD: ' + error.message);
                 showLoading(false);
-            }
+            });
         }
 
         // Load PLY file data (for manual upload)
-        async function loadPLYData(buffer) {
-            try {
-                let geometry = await parseWithWorker(buffer, 'ply');
-                if (downsampleRequested) {
-                    geometry = downsampleGeometry(geometry, 0.1);
-                }
-                const material = new THREE.PointsMaterial({ size: 2, vertexColors: true });
+        function loadPLYData(buffer) {
+            const loader = new PLYLoader();
+            loader.setCustomPropertyNameMapping({ label: ['class'] });
+            loader.load(URL.createObjectURL(new Blob([buffer])), function(geometry) {
+                // Apply transformations
+                geometry.rotateX(0);
+                geometry.rotateY(0);
+                geometry.center();
+                
+                const material = new THREE.PointsMaterial({ size: 0.02, vertexColors: true, sizeAttenuation: true });
                 const points = new THREE.Points(geometry, material);
                 processPointCloud(points);
-            } catch (error) {
+            }, undefined, function(error) {
                 console.error('PLY loading error:', error);
                 showError('خطا در بارگذاری فایل PLY: ' + error.message);
                 showLoading(false);
-            }
+            });
         }
 
         // Process loaded point cloud
@@ -911,9 +824,6 @@
             updateDebugInfo();
         }
 
-
-        
-
         // Extract point data for analysis - prefers label attribute over color
         function extractPointData() {
             pointsData = [];
@@ -922,36 +832,26 @@
             const labels = pointCloud.geometry.attributes.label ? pointCloud.geometry.attributes.label.array : null;
 
             let classDistribution = {};
-            let uniqueGValues = new Set(); // برای دیدن مقادیر منحصر به فرد g
-
-            if (!colors) {
-                console.error("ابر نقاط فاقد اطلاعات رنگ است. کلاس‌ها قابل استخراج نیستند.");
-                return;
-            }
 
             for (let i = 0; i < positions.length; i += 3) {
                 let classId = 0; // Default class
                 const pointIndex = i / 3;
 
-                if (HAS_CLASSIFICATION) {
-                    if (labels) {
-                        classId = Math.round(labels[pointIndex]);
-                    } else {
-                        const colorIndex = i;
-                        const g_float = colors[colorIndex + 1]; // مقدار g بین 0.0 و 1.0
+                if (labels) {
+                    classId = Math.round(labels[pointIndex]);
+                } else if (colors) {
+                    const colorIndex = i; // Color array has same indexing as position
+                    const g = colors[colorIndex + 1]; // GREEN CHANNEL = CLASS
 
-                        if (pointIndex < 1000) { // فقط برای 1000 نقطه اول تا کنسول شلوغ نشود
-                            uniqueGValues.add(g_float);
-                        }
-
-                        classId = Math.round(g_float * 255);
-                    }
-
-                    if (!classDistribution[classId]) {
-                        classDistribution[classId] = 0;
-                    }
-                    classDistribution[classId]++;
+                    // Convert green channel (0-1) to class ID (0-255)
+                    classId = Math.round(g * 255);
                 }
+
+                // Track class distribution for debugging
+                if (!classDistribution[classId]) {
+                    classDistribution[classId] = 0;
+                }
+                classDistribution[classId]++;
 
                 pointsData.push({
                     index: pointIndex,
@@ -960,41 +860,41 @@
                         y: positions[i + 1],
                         z: positions[i + 2]
                     },
-                    color: { // همیشه رنگ را از colors اصلی بخوان
+                    color: colors ? {
                         r: colors[i],
                         g: colors[i + 1],
                         b: colors[i + 2]
-                    },
+                    } : { r: 1, g: 1, b: 1 },
                     classId: classId
                 });
             }
 
-            if (HAS_CLASSIFICATION) {
-                console.log("--- گزارش استخراج کلاس ---");
-                console.log("توزیع کلاس‌های محاسبه شده:", classDistribution);
-
-                const sortedGValues = Array.from(uniqueGValues).sort();
-                console.log("مقادیر منحصر به فرد کانال سبز (g) در 1000 نقطه اول (مرتب شده):", sortedGValues);
-
-                if (classDistribution[20]) {
-                    console.log(`✅ کلاس 20 (خودرو) با تعداد ${classDistribution[20]} نقطه پیدا شد.`);
-                } else {
-                    console.warn("⚠️ هشدار: کلاس 20 (خودرو) در بین نقاط محاسبه شده یافت نشد.");
-                }
-                console.log("--------------------------");
-            }
-
-
-            // Update debug info (این بخش بدون تغییر باقی می‌ماند)
+            // Log class distribution for debugging
+            console.log('Class Distribution:', classDistribution);
+            
+            // Update debug info
             if (debugMode) {
-                // ...
+                const debugElement = isUrlMode ? 
+                    document.getElementById('debug-info-url') : 
+                    document.getElementById('debug-info');
+                    
+                const sortedClasses = Object.entries(classDistribution)
+                    .sort((a, b) => parseInt(a[0]) - parseInt(b[0]))
+                    .slice(0, 10); // Show top 10 classes
+                
+                debugElement.innerHTML = `
+                    <strong>کلاس‌های شناسایی شده (10 مورد اول):</strong><br>
+                    ${sortedClasses.map(([classId, count]) => 
+                        `کلاس ${classId}: ${count} نقطه`
+                    ).join('<br>')}
+                `;
             }
         }
 
         // Initialize class manager
         function initializeClassManager() {
             classManager = {};
-
+            
             // Count points per class
             pointsData.forEach(point => {
                 if (!classManager[point.classId]) {
@@ -1006,12 +906,8 @@
                 }
                 classManager[point.classId].count++;
             });
-            Object.keys(classManager).forEach(classId => {
-                if (classManager[classId].count < MIN_CLASS_POINTS) {
-                    delete classManager[classId];
-                }
-            });
 
+            // Update class list UI
             updateClassList();
         }
 
@@ -1028,29 +924,30 @@
             const classList = document.getElementById('class-list');
             classList.innerHTML = '';
 
-            const sortedClasses = Object.entries(classManager)
-                .sort((a, b) => b[1].count - a[1].count);
-
-            sortedClasses.forEach(([classId, classInfo]) => {
+            const sortedClasses = Object.keys(classManager).sort((a, b) => parseInt(a) - parseInt(b));
+            
+            sortedClasses.forEach(classId => {
+                const classInfo = classManager[classId];
                 const className = CLASS_LABELS_FA[classId] || `کلاس ${classId}`;
-
+                
                 const classItem = document.createElement('div');
                 classItem.className = 'class-item';
-
+                
                 classItem.innerHTML = `
-                    <input type="checkbox" class="class-checkbox"
-                           ${classInfo.visible ? 'checked' : ''}
+                    <input type="checkbox" class="class-checkbox" 
+                           ${classInfo.visible ? 'checked' : ''} 
                            data-class-id="${classId}">
                     <div class="class-color" style="background-color: ${classInfo.color}"></div>
                     <div class="class-name">${className}</div>
                     <div class="class-count">${classInfo.count}</div>
                 `;
-
+                
+                // Add event listener to checkbox
                 const checkbox = classItem.querySelector('.class-checkbox');
                 checkbox.addEventListener('change', (e) => {
                     toggleClass(classId, e.target.checked);
                 });
-
+                
                 classList.appendChild(classItem);
             });
         }
@@ -1058,7 +955,7 @@
         // Toggle class visibility
         function toggleClass(classId, visible) {
             if (!classManager[classId]) return;
-
+            
             classManager[classId].visible = visible;
             updatePointCloudVisibility();
             updateStats();
@@ -1069,12 +966,12 @@
             Object.keys(classManager).forEach(classId => {
                 classManager[classId].visible = visible;
             });
-
+            
             // Update checkboxes
             document.querySelectorAll('.class-checkbox').forEach(checkbox => {
                 checkbox.checked = visible;
             });
-
+            
             updatePointCloudVisibility();
             updateStats();
         }
@@ -1085,7 +982,7 @@
 
             const visiblePoints = [];
             const visibleColors = [];
-
+            
             pointsData.forEach(point => {
                 if (classManager[point.classId] && classManager[point.classId].visible) {
                     visiblePoints.push(point.position.x, point.position.y, point.position.z);
@@ -1096,7 +993,7 @@
             // Create new geometry with visible points
             const geometry = new THREE.BufferGeometry();
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(visiblePoints, 3));
-
+            
             if (visibleColors.length > 0) {
                 geometry.setAttribute('color', new THREE.Float32BufferAttribute(visibleColors, 3));
             }
@@ -1118,11 +1015,11 @@
             if (intersects.length > 0) {
                 const intersection = intersects[0];
                 const pointIndex = intersection.index;
-
+                
                 // Find the corresponding point in our original data
                 let targetPoint = null;
                 let currentVisibleIndex = 0;
-
+                
                 for (let i = 0; i < pointsData.length; i++) {
                     if (classManager[pointsData[i].classId] && classManager[pointsData[i].classId].visible) {
                         if (currentVisibleIndex === pointIndex) {
@@ -1132,7 +1029,7 @@
                         currentVisibleIndex++;
                     }
                 }
-
+                
                 if (targetPoint) {
                     showPointInfo(targetPoint, event.clientX, event.clientY);
                 }
@@ -1150,80 +1047,48 @@
         function showPointInfo(point, x, y) {
             const pointInfo = document.getElementById('point-info');
             const pointDetails = document.getElementById('point-details');
-
-            if (HAS_CLASSIFICATION) {
-                const className = CLASS_LABELS_FA[point.classId] || `کلاس ${point.classId}`;
-                pointDetails.innerHTML = `
-                    <div class="point-info-item">
-                        <span>کلاس:</span>
-                        <span class="point-info-label">${className}</span>
-                    </div>
-                    <div class="point-info-item">
-                        <span>شناسه کلاس:</span>
-                        <span class="point-info-label">${point.classId}</span>
-                    </div>
-                    <div class="point-info-item">
-                        <span>موقعیت X:</span>
-                        <span class="point-info-label">${point.position.x.toFixed(3)}</span>
-                    </div>
-                    <div class="point-info-item">
-                        <span>موقعیت Y:</span>
-                        <span class="point-info-label">${point.position.y.toFixed(3)}</span>
-                    </div>
-                    <div class="point-info-item">
-                        <span>موقعیت Z:</span>
-                        <span class="point-info-label">${point.position.z.toFixed(3)}</span>
-                    </div>
-                    <div class="point-info-item">
-                        <span>رنگ RGB:</span>
-                        <span class="point-info-label">
-                            (${Math.round(point.color.r * 255)},
-                             ${Math.round(point.color.g * 255)},
-                             ${Math.round(point.color.b * 255)})
-                        </span>
-                    </div>
-                    <div class="point-info-item">
-                        <span>کانال سبز (کلاس):</span>
-                        <span class="point-info-label">${Math.round(point.color.g * 255)}</span>
-                    </div>
-                    <div class="point-info-item">
-                        <span>ایندکس:</span>
-                        <span class="point-info-label">${point.index}</span>
-                    </div>
-                `;
-            } else {
-                pointDetails.innerHTML = `
-                    <div class="point-info-item">
-                        <span>کلاس:</span>
-                        <span class="point-info-label">بدون طبقه‌بندی</span>
-                    </div>
-                    <div class="point-info-item">
-                        <span>موقعیت X:</span>
-                        <span class="point-info-label">${point.position.x.toFixed(3)}</span>
-                    </div>
-                    <div class="point-info-item">
-                        <span>موقعیت Y:</span>
-                        <span class="point-info-label">${point.position.y.toFixed(3)}</span>
-                    </div>
-                    <div class="point-info-item">
-                        <span>موقعیت Z:</span>
-                        <span class="point-info-label">${point.position.z.toFixed(3)}</span>
-                    </div>
-                    <div class="point-info-item">
-                        <span>رنگ RGB:</span>
-                        <span class="point-info-label">
-                            (${Math.round(point.color.r * 255)},
-                             ${Math.round(point.color.g * 255)},
-                             ${Math.round(point.color.b * 255)})
-                        </span>
-                    </div>
-                    <div class="point-info-item">
-                        <span>ایندکس:</span>
-                        <span class="point-info-label">${point.index}</span>
-                    </div>
-                `;
-            }
-
+            
+            const className = CLASS_LABELS_FA[point.classId] || `کلاس ${point.classId}`;
+            
+            pointDetails.innerHTML = `
+                <div class="point-info-item">
+                    <span>کلاس:</span>
+                    <span class="point-info-label">${className}</span>
+                </div>
+                <div class="point-info-item">
+                    <span>شناسه کلاس:</span>
+                    <span class="point-info-label">${point.classId}</span>
+                </div>
+                <div class="point-info-item">
+                    <span>موقعیت X:</span>
+                    <span class="point-info-label">${point.position.x.toFixed(3)}</span>
+                </div>
+                <div class="point-info-item">
+                    <span>موقعیت Y:</span>
+                    <span class="point-info-label">${point.position.y.toFixed(3)}</span>
+                </div>
+                <div class="point-info-item">
+                    <span>موقعیت Z:</span>
+                    <span class="point-info-label">${point.position.z.toFixed(3)}</span>
+                </div>
+                <div class="point-info-item">
+                    <span>رنگ RGB:</span>
+                    <span class="point-info-label">
+                        (${Math.round(point.color.r * 255)}, 
+                         ${Math.round(point.color.g * 255)}, 
+                         ${Math.round(point.color.b * 255)})
+                    </span>
+                </div>
+                <div class="point-info-item">
+                    <span>کانال سبز (کلاس):</span>
+                    <span class="point-info-label">${Math.round(point.color.g * 255)}</span>
+                </div>
+                <div class="point-info-item">
+                    <span>ایندکس:</span>
+                    <span class="point-info-label">${point.index}</span>
+                </div>
+            `;
+            
             pointInfo.style.display = 'block';
             pointInfo.style.left = Math.min(x + 10, window.innerWidth - 320) + 'px';
             pointInfo.style.top = Math.min(y + 10, window.innerHeight - 250) + 'px';
@@ -1259,11 +1124,11 @@
             const box = new THREE.Box3().setFromObject(pointCloud);
             const center = box.getCenter(new THREE.Vector3());
             const size = box.getSize(new THREE.Vector3());
-
+            
             const maxDim = Math.max(size.x, size.y, size.z);
             const fov = camera.fov * (Math.PI / 180);
             let cameraZ = Math.abs(maxDim / 2 / Math.tan(fov / 2));
-
+            
             camera.position.set(center.x, center.y, center.z + cameraZ * 2);
             controls.target.set(center.x, center.y, center.z);
             controls.update();
@@ -1272,22 +1137,15 @@
         // Update statistics
         function updateStats() {
             const totalPoints = pointsData.length;
-            let uniqueClasses;
-            let visiblePoints;
-
-            if (HAS_CLASSIFICATION) {
-                uniqueClasses = Object.keys(classManager).length;
-                visiblePoints = 0;
-                Object.keys(classManager).forEach(classId => {
-                    if (classManager[classId].visible) {
-                        visiblePoints += classManager[classId].count;
-                    }
-                });
-            } else {
-                uniqueClasses = 1;
-                visiblePoints = totalPoints;
-            }
-
+            const uniqueClasses = Object.keys(classManager).length;
+            let visiblePoints = 0;
+            
+            Object.keys(classManager).forEach(classId => {
+                if (classManager[classId].visible) {
+                    visiblePoints += classManager[classId].count;
+                }
+            });
+            
             document.getElementById('total-points').textContent = totalPoints.toLocaleString();
             document.getElementById('visible-points').textContent = visiblePoints.toLocaleString();
             document.getElementById('unique-classes').textContent = uniqueClasses;
@@ -1296,10 +1154,10 @@
         // Toggle debug info
         function toggleDebugInfo() {
             debugMode = !debugMode;
-            const debugElement = isUrlMode ?
-                document.getElementById('debug-info-url') :
+            const debugElement = isUrlMode ? 
+                document.getElementById('debug-info-url') : 
                 document.getElementById('debug-info');
-
+                
             debugElement.style.display = debugMode ? 'block' : 'none';
             if (debugMode && pointsData.length > 0) {
                 updateDebugInfo();
@@ -1309,23 +1167,23 @@
         // Update debug info
         function updateDebugInfo() {
             if (!debugMode) return;
-
-            const debugElement = isUrlMode ?
-                document.getElementById('debug-info-url') :
+            
+            const debugElement = isUrlMode ? 
+                document.getElementById('debug-info-url') : 
                 document.getElementById('debug-info');
-
+                
             const classCount = Object.keys(classManager).length;
             const sampleClasses = Object.keys(classManager)
                 .sort((a, b) => classManager[b].count - classManager[a].count)
                 .slice(0, 5);
-
+            
             debugElement.innerHTML = `
                 <strong>اطلاعات دیباگ:</strong><br>
                 تعداد کل کلاس‌ها: ${classCount}<br>
                 کلاس‌های پربسامد:<br>
-                ${sampleClasses.map(classId =>
-                `${CLASS_LABELS_FA[classId] || 'کلاس ' + classId} (${classId}): ${classManager[classId].count}`
-            ).join('<br>')}
+                ${sampleClasses.map(classId => 
+                    `${CLASS_LABELS_FA[classId] || 'کلاس ' + classId} (${classId}): ${classManager[classId].count}`
+                ).join('<br>')}
             `;
         }
 
@@ -1333,7 +1191,7 @@
         function onWindowResize() {
             const width = window.innerWidth - 300;
             const height = window.innerHeight;
-
+            
             camera.aspect = width / height;
             camera.updateProjectionMatrix();
             renderer.setSize(width, height);
@@ -1358,13 +1216,6 @@
 
         // Initialize the application
         init();
-        if (!HAS_CLASSIFICATION) {
-            const classSection = document.getElementById('class-management');
-            if (classSection) classSection.style.display = 'none';
-            const infoBox = document.getElementById('classification-info');
-            if (infoBox) infoBox.style.display = 'none';
-        }
     </script>
 </body>
-
 </html>
