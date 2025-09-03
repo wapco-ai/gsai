@@ -35,6 +35,46 @@ def downsample_point_cloud(input_path, output_path, ratio=0.1):
     return True
 
 
+def validate_ply_file(ply_path):
+    """Validate PLY header and ensure correct point count and format."""
+    try:
+        from plyfile import PlyData
+
+        ply = PlyData.read(ply_path)
+        vertex = ply['vertex']
+        header_count = vertex.count
+        actual_count = len(vertex.data)
+
+        # Rewrite file if header count or format is inconsistent
+        needs_rewrite = header_count != actual_count or ply.header['format'] != 'binary_little_endian'
+        if needs_rewrite:
+            PlyData(ply.elements, text=False).write(ply_path)
+            ply = PlyData.read(ply_path)
+            vertex = ply['vertex']
+            header_count = vertex.count
+            actual_count = len(vertex.data)
+
+        # Optional verification with Open3D
+        try:
+            import open3d as o3d
+            pcd = o3d.io.read_point_cloud(ply_path)
+            if len(pcd.points) != actual_count:
+                print(
+                    f"Point count mismatch: header {actual_count}, Open3D {len(pcd.points)}"
+                )
+        except Exception as exc:
+            print(f"Open3D validation skipped: {exc}")
+
+        fields = vertex.data.dtype.names
+        print(
+            f"Validated PLY file {ply_path}: {actual_count} points, fields {list(fields)}"
+        )
+        return True
+    except Exception as exc:
+        print(f"Failed to validate PLY file {ply_path}: {exc}")
+        return False
+
+
 def add_class_field_to_ply222222(ply_path):
     """Duplicate green channel into 'class' and 'label' fields in a PLY file."""
     try:
@@ -75,6 +115,9 @@ def add_class_field_to_ply(ply_path):
         import numpy as np
         from plyfile import PlyData, PlyElement
 
+        # Ensure PLY header is valid before processing
+        validate_ply_file(ply_path)
+
         output_ply_path = ply_path.replace('.ply', '_with_class.ply')
 
         plydata_in = PlyData.read(ply_path)
@@ -112,6 +155,7 @@ def add_class_field_to_ply(ply_path):
         
         # فایل را در مسیر خروجی جدید می‌نویسیم
         plydata_out.write(output_ply_path)
+        validate_ply_file(output_ply_path)
         print(f"SUCCESS: Added class field to PLY and saved to {output_ply_path}")
 
     except Exception as exc:

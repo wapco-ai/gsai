@@ -41,6 +41,7 @@ else:
 
 # Import the new image classifier module
 import image_classifier
+from metashape_script import downsample_point_cloud, validate_ply_file
 
 
 def apply_windows_proxy():
@@ -1632,6 +1633,26 @@ def ply(output_foldername, file_path):
         return redirect(url_for("results", output_foldername=output_foldername))
 
     if os.path.exists(full_file_path) and os.path.isfile(full_file_path):
+        try:
+            validate_ply_file(full_file_path)
+        except Exception as exc:
+            logging.warning(f"PLY validation failed for {full_file_path}: {exc}")
+
+        size_limit = 50 * 1024 * 1024  # 50 MB
+        file_size = os.path.getsize(full_file_path)
+        if file_size > size_limit and not file_path.endswith("_preview.ply"):
+            preview_name = os.path.splitext(file_path)[0] + "_preview.ply"
+            preview_path = os.path.join(output_dir, preview_name)
+            if not os.path.exists(preview_path):
+                try:
+                    downsample_point_cloud(full_file_path, preview_path, ratio=0.1)
+                    validate_ply_file(preview_path)
+                except Exception as exc:
+                    logging.warning(f"Failed to create preview PLY: {exc}")
+            return redirect(
+                url_for("ply", output_foldername=output_foldername, file_path=preview_name)
+            )
+
         proc = Process.query.filter_by(output_folder=output_foldername).first()
         has_classification = bool(proc.has_classification) if proc else False
         return render_template(
