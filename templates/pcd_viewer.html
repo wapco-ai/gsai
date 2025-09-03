@@ -489,8 +489,9 @@
 
         // تولید URL های احتمالی
         function generatePossibleUrls(outputFoldername, filePath, prefix = '') {
-           
-            return [`/outputs/${outputFoldername}/${filePath}`];
+            const url = `/outputs/${outputFoldername}/${filePath}`;
+            const previewUrl = url.replace(/(\.ply|\.pcd)$/i, '_preview$1');
+            return [url, previewUrl];
         }
 
         // تلاش برای بارگذاری با URL های مختلف
