@@ -603,7 +603,7 @@
                     geometry.rotateY(0);
                     geometry.center();
                     
-                    const material = new THREE.PointsMaterial({ size: 2, vertexColors: true });
+                    const material = new THREE.PointsMaterial({ size: 0.02, vertexColors: true, sizeAttenuation: true });
                     const points = new THREE.Points(geometry, material);
                     processPointCloud(points);
                     resolve(points);
@@ -788,7 +788,7 @@
                 geometry.rotateY(0);
                 geometry.center();
                 
-                const material = new THREE.PointsMaterial({ size: 2, vertexColors: true });
+                const material = new THREE.PointsMaterial({ size: 0.02, vertexColors: true, sizeAttenuation: true });
                 const points = new THREE.Points(geometry, material);
                 processPointCloud(points);
             }, undefined, function(error) {
