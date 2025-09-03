@@ -395,7 +395,7 @@
         };
 
         // Global variables
-        let scene, camera, renderer, controls, pointCloud;
+        let scene, camera, renderer, controls, pointCloud, defaultClassPoints;
         let raycaster, mouse;
         let classManager = {};
         let pointsData = [];
@@ -804,6 +804,10 @@
             if (pointCloud) {
                 scene.remove(pointCloud);
             }
+            if (defaultClassPoints) {
+                scene.remove(defaultClassPoints);
+                defaultClassPoints = null;
+            }
 
             pointCloud = points;
             originalGeometry = points.geometry.clone();
@@ -827,10 +831,22 @@
         // Extract point data for analysis - prefers label attribute over color
         function extractPointData() {
             pointsData = [];
-            const positions = pointCloud.geometry.attributes.position.array;
-            const colors = pointCloud.geometry.attributes.color ? pointCloud.geometry.attributes.color.array : null;
-            const labels = pointCloud.geometry.attributes.label ? pointCloud.geometry.attributes.label.array : null;
+            const geometry = pointCloud.geometry;
+            const positions = geometry.attributes.position.array;
+            const hasColors = geometry.attributes.color !== undefined;
+            const colors = hasColors ? geometry.attributes.color.array : null;
+            const labels = geometry.attributes.label ? geometry.attributes.label.array : null;
 
+            // If no color attribute, use a default grey material
+            if (!hasColors) {
+                pointCloud.material = new THREE.PointsMaterial({
+                    size: 2,
+                    vertexColors: false,
+                    color: 0x888888
+                });
+            }
+
+            const defaultClassPositions = [];
             let classDistribution = {};
 
             for (let i = 0; i < positions.length; i += 3) {
@@ -847,11 +863,27 @@
                     classId = Math.round(g * 255);
                 }
 
+                // Collect positions for default class points
+                if (classId === 0) {
+                    defaultClassPositions.push(
+                        positions[i],
+                        positions[i + 1],
+                        positions[i + 2]
+                    );
+                }
+
                 // Track class distribution for debugging
                 if (!classDistribution[classId]) {
                     classDistribution[classId] = 0;
                 }
                 classDistribution[classId]++;
+
+                // Assign distinct color and size for default class
+                const pointColor = colors ? {
+                    r: colors[i],
+                    g: colors[i + 1],
+                    b: colors[i + 2]
+                } : (classId === 0 ? { r: 1, g: 0, b: 0 } : { r: 0.5, g: 0.5, b: 0.5 });
 
                 pointsData.push({
                     index: pointIndex,
@@ -860,13 +892,23 @@
                         y: positions[i + 1],
                         z: positions[i + 2]
                     },
-                    color: colors ? {
-                        r: colors[i],
-                        g: colors[i + 1],
-                        b: colors[i + 2]
-                    } : { r: 1, g: 1, b: 1 },
+                    color: pointColor,
+                    size: classId === 0 ? 0.5 : 2,
                     classId: classId
                 });
+            }
+
+            // Create a separate point cloud for default class points to highlight them
+            if (defaultClassPoints) {
+                scene.remove(defaultClassPoints);
+                defaultClassPoints = null;
+            }
+            if (defaultClassPositions.length > 0) {
+                const geom0 = new THREE.BufferGeometry();
+                geom0.setAttribute('position', new THREE.Float32BufferAttribute(defaultClassPositions, 3));
+                const mat0 = new THREE.PointsMaterial({ size: 0.5, vertexColors: false, color: 0xff0000 });
+                defaultClassPoints = new THREE.Points(geom0, mat0);
+                scene.add(defaultClassPoints);
             }
 
             // Log class distribution for debugging
@@ -982,23 +1024,31 @@
 
             const visiblePoints = [];
             const visibleColors = [];
-            
+            const useVertexColors = pointCloud.material.vertexColors;
+
             pointsData.forEach(point => {
                 if (classManager[point.classId] && classManager[point.classId].visible) {
                     visiblePoints.push(point.position.x, point.position.y, point.position.z);
-                    visibleColors.push(point.color.r, point.color.g, point.color.b);
+                    if (useVertexColors) {
+                        visibleColors.push(point.color.r, point.color.g, point.color.b);
+                    }
                 }
             });
 
             // Create new geometry with visible points
             const geometry = new THREE.BufferGeometry();
             geometry.setAttribute('position', new THREE.Float32BufferAttribute(visiblePoints, 3));
-            
-            if (visibleColors.length > 0) {
+
+            if (useVertexColors && visibleColors.length > 0) {
                 geometry.setAttribute('color', new THREE.Float32BufferAttribute(visibleColors, 3));
             }
 
             pointCloud.geometry = geometry;
+
+            // Handle visibility of default class highlight points
+            if (defaultClassPoints && classManager[0]) {
+                defaultClassPoints.visible = classManager[0].visible;
+            }
         }
 
         // Handle point click
