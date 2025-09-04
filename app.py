@@ -1533,6 +1533,14 @@ def results(output_foldername):
 
     logging.info(f"Found {len(file_paths)} relevant files in results directory.")
 
+    # Detect Potree output by searching for cloud.js
+    potree_path = None
+    for subdir, _, files in os.walk(output_dir):
+        if "cloud.js" in files:
+            potree_path = os.path.relpath(os.path.join(subdir, "cloud.js"), output_dir)
+            potree_path = potree_path.replace("\\", "/")
+            break
+
     original_filename = "Processed Files"
     process = Process.query.filter_by(output_folder=output_foldername).first()
     if process:
@@ -1551,6 +1559,7 @@ def results(output_foldername):
         filename=original_filename,
         output_foldername=output_foldername,
         file_paths=file_paths,
+        potree_path=potree_path,
     )
 
 
@@ -1703,6 +1712,19 @@ def pcd_viewer(output_foldername, file_path):
     else:
         flash("pcd file not found.")
         return redirect(url_for("results", output_foldername=output_foldername))
+
+
+# Route to display Potree point clouds
+@app.route("/potree/<output_foldername>/<path:potree_file_path>")
+def potree_viewer(output_foldername, potree_file_path):
+    if not session.get("logged_in"):
+        flash("لطفاً ابتدا وارد شوید.")
+        return redirect(url_for("index"))
+
+    cloud_js_url = url_for(
+        "serve_output_file", output_foldername=output_foldername, file_path=potree_file_path
+    )
+    return render_template("potree_viewer.html", cloud_js_url=cloud_js_url)
 
 
 # Gallery route to display frames and blended images

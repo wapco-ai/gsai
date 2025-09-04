@@ -7,16 +7,19 @@
     <h2>نتایج پردازش</h2>
     <p>پردازش با موفقیت کامل شد.</p>
 
-    <div class="button-group">
-        <a href="{{ url_for('gallery', output_foldername=output_foldername) }}" class="btn">مشاهده گالری</a>
-        <a href="{{ url_for('download_pointcloud_zip', output_foldername=output_foldername) }}"
-            class="btn btn-download">
-            <i class="icon-download"></i>دانلود همه ابرنقاط
-        </a>
-        <a href="{{ url_for('download_images_zip', output_foldername=output_foldername) }}" class="btn btn-download">
-            <i class="icon-download"></i>دانلود همه تصاویر
-        </a>
-    </div>
+      <div class="button-group">
+          <a href="{{ url_for('gallery', output_foldername=output_foldername) }}" class="btn">مشاهده گالری</a>
+          <a href="{{ url_for('download_pointcloud_zip', output_foldername=output_foldername) }}"
+              class="btn btn-download">
+              <i class="icon-download"></i>دانلود همه ابرنقاط
+          </a>
+          <a href="{{ url_for('download_images_zip', output_foldername=output_foldername) }}" class="btn btn-download">
+              <i class="icon-download"></i>دانلود همه تصاویر
+          </a>
+          {% if potree_path %}
+          <a href="{{ url_for('potree_viewer', output_foldername=output_foldername, potree_file_path=potree_path) }}" class="btn" target="_blank">نمایش در Potree</a>
+          {% endif %}
+      </div>
 
     <div class="results-grid">
         {% for file in file_paths %}
