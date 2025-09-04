@@ -1,6 +1,6 @@
 @echo off
 REM — ensure drive is correct
-cd /d D:\AI\3dRecognition\geoSphereAi_v1.0.1
+cd /d D:\AI\3dRecognition\geoSphereAi_v1.0.2
 
 REM — activate conda environment
 CALL conda activate geosphereai

@@ -424,7 +424,7 @@ def convert_to_point_cloud(
             chunk.exportPointCloud(
                 output_path,
                 format=Metashape.PointCloudFormatPLY,  # Point cloud format (PLY)
-                crs=chunk.crs,  # Coordinate Reference System
+                crs=Metashape.CoordinateSystem("EPSG::32640"), #chunk.crs,  # Coordinate Reference System
                 binary=True,
                 save_point_classification=True,
                 save_point_color=True,
@@ -437,12 +437,24 @@ def convert_to_point_cloud(
             chunk.exportPointCloud(
                 output_path,
                 format=Metashape.PointCloudFormatPCD,  # Point cloud format (pcd)
-                crs=chunk.crs,  # Coordinate Reference System
+                crs=Metashape.CoordinateSystem("EPSG::32640"), #chunk.crs,  # Coordinate Reference System
                 binary=True,
                 save_point_color=True
             )
             add_class_field_to_pcd(output_path)
             print(f"pcd Point cloud exported to {output_path}")
+            
+        if export_potree:
+            potree_dir = os.path.join(output_dir, "potree")
+            os.makedirs(potree_dir, exist_ok=True)
+            chunk.exportPointCloud(
+                potree_dir,
+                format=Metashape.PointCloudFormatPotree,
+                crs=Metashape.CoordinateSystem("EPSG::32640"), #chunk.crs,
+                save_point_classification=True,
+                save_point_color=True,
+            )
+            print(f"Potree point cloud exported to {potree_dir}")
 
         if preview_ratio:
             if export_ply:
@@ -464,17 +476,6 @@ def convert_to_point_cloud(
                     if os.path.exists(preview_pcd_with_class):
                         os.replace(preview_pcd_with_class, preview_pcd)
 
-        if export_potree:
-            potree_dir = os.path.join(output_dir, "potree")
-            os.makedirs(potree_dir, exist_ok=True)
-            chunk.exportPointCloud(
-                potree_dir,
-                format=Metashape.PointCloudFormatPotree,
-                crs=chunk.crs,
-                save_point_classification=True,
-                save_point_color=True,
-            )
-            print(f"Potree point cloud exported to {potree_dir}")
 
     except Exception as e:
         print(f"Error exporting point cloud: {e}")
