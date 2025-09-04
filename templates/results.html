@@ -45,6 +45,18 @@
         </div>
         {% endif %}
         {% endfor %}
+        {% if potree_exists %}
+        <div class="result-item">
+            <div class="file-info">
+                <h3 class="file-name">Potree</h3>
+                <div class="file-actions">
+                    <a href="{{ url_for('potree_viewer', output_foldername=output_foldername) }}" class="btn btn-viewer" target="_blank" title="مشاهده Potree">
+                        <i class="icon-eye"></i>مشاهده
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 
     <div class="navigation-links">
