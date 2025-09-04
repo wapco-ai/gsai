@@ -1564,6 +1564,7 @@ def results(output_foldername):
         output_foldername=output_foldername,
         file_paths=file_paths,
         potree_exists=potree_exists,
+
     )
 
 

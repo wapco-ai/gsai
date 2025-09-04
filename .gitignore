@@ -2,6 +2,7 @@
 /saved_model
 /instance
 /uploads
+/static/docs
 !/static/css/
 !/static/css/style.css
 /__pycache__
