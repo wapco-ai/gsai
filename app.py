@@ -397,6 +397,7 @@ def video_upload():
             generate_preview = request.form.get("generate_preview") == "on"
             export_ply = "export_ply" in request.form
             export_pcd = "export_pcd" in request.form
+            export_potree = "export_potree" in request.form
 
             db_process = Process(
                 id=process_id,
@@ -468,6 +469,7 @@ def video_upload():
                 generate_preview,
                 export_ply,
                 export_pcd,
+                export_potree,
                 preselection_mode,
                 sensor_type,
                 reference_file_path,
@@ -726,6 +728,8 @@ def video_upload():
                             metashape_command.append("--export_ply")
                         if export_pcd:
                             metashape_command.append("--export_pcd")
+                        if export_potree:
+                            metashape_command.append("--export_potree")
 
                         logging.info(
                             f"Running geoSphereAi command: {' '.join(metashape_command)}"
@@ -844,12 +848,13 @@ def video_upload():
                     segformer_model,
                     classify_images,
                     generate_preview,
-                    export_ply,
-                    export_pcd,
-                    preselection_mode,
-                    sensor_type,
-                    reference_file_path,
-                ),
+                export_ply,
+                export_pcd,
+                export_potree,
+                preselection_mode,
+                sensor_type,
+                reference_file_path,
+            ),
             ).start()
 
             return redirect(url_for("processing", process_id=process_id))
@@ -913,6 +918,7 @@ def zip_upload():
         generate_preview = request.form.get("generate_preview") == "on"
         export_ply = "export_ply" in request.form
         export_pcd = "export_pcd" in request.form
+        export_potree = "export_potree" in request.form
         segformer_model = request.form.get("segformer_model", DEFAULT_SEGFORMER_MODEL)
         preselection_mode = request.form.get("preselection_mode", "source")
         sensor_type = request.form.get("sensor_type", "Frame")
@@ -949,6 +955,7 @@ def zip_upload():
             generate_preview,
             export_ply,
             export_pcd,
+            export_potree,
             segformer_model,
             preselection_mode,
             sensor_type,
@@ -1125,6 +1132,8 @@ def zip_upload():
                         metashape_command.append("--export_ply")
                     if export_pcd:
                         metashape_command.append("--export_pcd")
+                    if export_potree:
+                        metashape_command.append("--export_potree")
 
                     logging.info(
                         f"Running Metashape command: {' '.join(metashape_command)}"
@@ -1240,6 +1249,7 @@ def zip_upload():
                 generate_preview,
                 export_ply,
                 export_pcd,
+                export_potree,
                 segformer_model,
                 preselection_mode,
                 sensor_type,
@@ -1533,13 +1543,7 @@ def results(output_foldername):
 
     logging.info(f"Found {len(file_paths)} relevant files in results directory.")
 
-    # Detect Potree output by searching for cloud.js
-    potree_path = None
-    for subdir, _, files in os.walk(output_dir):
-        if "cloud.js" in files:
-            potree_path = os.path.relpath(os.path.join(subdir, "cloud.js"), output_dir)
-            potree_path = potree_path.replace("\\", "/")
-            break
+    potree_exists = os.path.exists(os.path.join(output_dir, "potree", "cloud.js"))
 
     original_filename = "Processed Files"
     process = Process.query.filter_by(output_folder=output_foldername).first()
@@ -1559,7 +1563,8 @@ def results(output_foldername):
         filename=original_filename,
         output_foldername=output_foldername,
         file_paths=file_paths,
-        potree_path=potree_path,
+        potree_exists=potree_exists,
+
     )
 
 
@@ -1714,17 +1719,39 @@ def pcd_viewer(output_foldername, file_path):
         return redirect(url_for("results", output_foldername=output_foldername))
 
 
-# Route to display Potree point clouds
-@app.route("/potree/<output_foldername>/<path:potree_file_path>")
-def potree_viewer(output_foldername, potree_file_path):
+# Route for Potree viewer
+@app.route("/potree_viewer/<output_foldername>")
+def potree_viewer(output_foldername):
     if not session.get("logged_in"):
         flash("لطفاً ابتدا وارد شوید.")
         return redirect(url_for("index"))
 
-    cloud_js_url = url_for(
-        "serve_output_file", output_foldername=output_foldername, file_path=potree_file_path
-    )
-    return render_template("potree_viewer.html", cloud_js_url=cloud_js_url)
+    potree_dir = os.path.join(app.config["OUTPUT_FOLDER"], output_foldername, "potree")
+    cloud_js = os.path.join(potree_dir, "cloud.js")
+    if os.path.exists(cloud_js):
+        return render_template("potree_viewer.html", output_foldername=output_foldername)
+    flash("Potree output not found.")
+    return redirect(url_for("results", output_foldername=output_foldername))
+
+
+@app.route("/potree/<output_foldername>/<path:filename>")
+def potree_file(output_foldername, filename):
+    potree_dir = os.path.join(app.config["OUTPUT_FOLDER"], output_foldername, "potree")
+    full_path = os.path.join(potree_dir, filename)
+
+    if not os.path.abspath(full_path).startswith(os.path.abspath(potree_dir)):
+        logging.warning(
+            f"Attempted directory traversal in potree route: {output_foldername}/{filename}"
+        )
+        return "Unauthorized", 401
+
+    if os.path.exists(full_path) and os.path.isfile(full_path):
+        directory = os.path.dirname(full_path)
+        file_name = os.path.basename(full_path)
+        return send_from_directory(directory, file_name)
+    else:
+        flash("Potree file not found.")
+        return redirect(url_for("results", output_foldername=output_foldername))
 
 
 # Gallery route to display frames and blended images
