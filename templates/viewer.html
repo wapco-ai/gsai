@@ -600,7 +600,7 @@
                     const head = await fetch(filePath, { method: 'HEAD' });
                     const size = head.headers.get('content-length');
                     const sizeMB = size ? parseInt(size, 10) / (1024 * 1024) : 0;
-                    const MAX_PLY_SIZE_MB = 50;
+                    const MAX_PLY_SIZE_MB = 500;
                     if (sizeMB > MAX_PLY_SIZE_MB) {
                         showUrlError(`حجم فایل حدود ${sizeMB.toFixed(2)} مگابایت است و از حد مجاز ${MAX_PLY_SIZE_MB} مگابایت بیشتر است. لطفاً حجم فایل را کاهش دهید یا از نسخه‌ی Potree/Downsample شده استفاده کنید.`);
                         return reject(new Error('File too large'));
