@@ -444,11 +444,19 @@ def convert_to_point_cloud(project_path, output_dir, preview_ratio=None, export_
                 preview_path = os.path.join(output_dir, "point_cloud_preview.ply")
                 if os.path.exists(ply_path):
                     downsample_point_cloud(ply_path, preview_path, preview_ratio)
+                    add_class_field_to_ply(preview_path)
+                    preview_with_class = preview_path.replace('.ply', '_with_class.ply')
+                    if os.path.exists(preview_with_class):
+                        os.replace(preview_with_class, preview_path)
             if export_pcd:
                 pcd_path = os.path.join(output_dir, "point_cloud.pcd")
                 preview_pcd = os.path.join(output_dir, "point_cloud_preview.pcd")
                 if os.path.exists(pcd_path):
                     downsample_point_cloud(pcd_path, preview_pcd, preview_ratio)
+                    add_class_field_to_pcd(preview_pcd)
+                    preview_pcd_with_class = preview_pcd.replace('.pcd', '_with_class.pcd')
+                    if os.path.exists(preview_pcd_with_class):
+                        os.replace(preview_pcd_with_class, preview_pcd)
     
     except Exception as e:  
         print(f"Error exporting point cloud: {e}") 

@@ -41,7 +41,11 @@ else:
 
 # Import the new image classifier module
 import image_classifier
-from metashape_script import downsample_point_cloud, validate_ply_file
+from metashape_script import (
+    downsample_point_cloud,
+    validate_ply_file,
+    add_class_field_to_ply,
+)
 
 
 def apply_windows_proxy():
@@ -1646,6 +1650,10 @@ def ply(output_foldername, file_path):
             if not os.path.exists(preview_path):
                 try:
                     downsample_point_cloud(full_file_path, preview_path, ratio=0.1)
+                    add_class_field_to_ply(preview_path)
+                    preview_with_class = preview_path.replace('.ply', '_with_class.ply')
+                    if os.path.exists(preview_with_class):
+                        os.replace(preview_with_class, preview_path)
                     validate_ply_file(preview_path)
                 except Exception as exc:
                     logging.warning(f"Failed to create preview PLY: {exc}")
