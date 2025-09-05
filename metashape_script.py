@@ -448,14 +448,15 @@ def convert_to_point_cloud(
         if export_potree:
             potree_dir = os.path.join(output_dir, "potree")
             os.makedirs(potree_dir, exist_ok=True)
+            potree_path = os.path.join(potree_dir, "cloud.js")
             chunk.exportPointCloud(
-                potree_dir,
+                potree_path,
                 format=Metashape.PointCloudFormatPotree,
                 crs=Metashape.CoordinateSystem("EPSG::32640"), #chunk.crs,
                 save_point_classification=True,
                 save_point_color=True,
             )
-            print(f"Potree point cloud exported to {potree_dir}")
+            print(f"Potree point cloud exported to {potree_path}")
 
         if preview_ratio:
             if export_ply:
