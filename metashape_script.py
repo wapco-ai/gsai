@@ -12,6 +12,13 @@ import os
 import sys
 import logging
 import shutil
+from typing import Any, Dict
+
+try:
+    # Local helper to invoke Open3D in an external Python environment
+    from open3d_bridge import run_o3d_worker
+except Exception:  # pragma: no cover - bridge is optional at runtime
+    run_o3d_worker = None  # type: ignore
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -20,22 +27,33 @@ def downsample_point_cloud(input_path, output_path, ratio=0.1):
     """Create a simplified preview of a point cloud using Open3D."""
     try:
         import open3d as o3d
+
+        if ratio <= 0 or ratio >= 1:
+            raise ValueError("ratio must be between 0 and 1")
+
+        pcd = o3d.io.read_point_cloud(input_path)
+        if len(pcd.points) == 0:
+            print("No points found in point cloud for downsampling")
+            return False
+
+        sampled = pcd.random_down_sample(ratio)
+        o3d.io.write_point_cloud(output_path, sampled)
+        print(f"Preview point cloud saved to {output_path}")
+        return True
     except Exception as exc:
-        print(f"Open3D not available for downsampling: {exc}")
-        return False
-
-    if ratio <= 0 or ratio >= 1:
-        raise ValueError("ratio must be between 0 and 1")
-
-    pcd = o3d.io.read_point_cloud(input_path)
-    if len(pcd.points) == 0:
-        print("No points found in point cloud for downsampling")
-        return False
-
-    sampled = pcd.random_down_sample(ratio)
-    o3d.io.write_point_cloud(output_path, sampled)
-    print(f"Preview point cloud saved to {output_path}")
-    return True
+        if run_o3d_worker is None:
+            print(f"Open3D not available for downsampling: {exc}")
+            return False
+        try:
+            res: Dict[str, Any] = run_o3d_worker("downsample", input_path, output_path, ratio)
+            if not res.get("ok"):
+                print(f"Open3D worker failed: {res}")
+                return False
+            print(f"Preview point cloud saved to {output_path}")
+            return True
+        except Exception as worker_exc:
+            print(f"Open3D worker not available: {worker_exc}")
+            return False
 
 
 def validate_ply_file(ply_path):
@@ -72,7 +90,19 @@ def validate_ply_file(ply_path):
                     f"Point count mismatch: header {actual_count}, Open3D {len(pcd.points)}"
                 )
         except Exception as exc:
-            print(f"Open3D validation skipped: {exc}")
+            if run_o3d_worker is not None:
+                try:
+                    res: Dict[str, Any] = run_o3d_worker("count", ply_path)
+                    if res.get("ok") and res.get("points") != actual_count:
+                        print(
+                            f"Point count mismatch: header {actual_count}, Open3D {res.get('points')}"
+                        )
+                    elif not res.get("ok"):
+                        print(f"Open3D worker error: {res}")
+                except Exception as worker_exc:
+                    print(f"Open3D validation skipped: {worker_exc}")
+            else:
+                print(f"Open3D validation skipped: {exc}")
 
         fields = vertex.data.dtype.names
         print(
