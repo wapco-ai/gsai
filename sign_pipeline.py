@@ -80,6 +80,9 @@ def process_sign_pipeline(
                     ply_path = os.path.join(root, file)
                     try:
                         add_class_field_to_ply(ply_path)
+                        with_class = os.path.splitext(ply_path)[0] + "_with_class.ply"
+                        if os.path.exists(with_class):
+                            ply_path = with_class
                     except Exception:
                         pass
                     break
