@@ -329,7 +329,7 @@ def process_in_metashape(
                 delimiter=",",
             )
             chunk.crs = Metashape.CoordinateSystem("EPSG::4326")
-            # chunk.updateTransform() # for update and aply the refrence
+            chunk.updateTransform() # for update and aply the refrence
             print(f"Reference data imported from {reference_file}")
         except Exception as e:
             print(f"Failed to import reference file: {e}")
