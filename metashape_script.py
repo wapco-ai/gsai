@@ -44,8 +44,14 @@ def validate_ply_file(ply_path):
         header_count = vertex.count
         actual_count = len(vertex.data)
 
+        # Safely determine PLY format without assuming header is a dict
+        if isinstance(getattr(ply, "header", None), dict) and "format" in ply.header:
+            ply_format = ply.header["format"][0]
+        else:
+            ply_format = "ascii" if getattr(ply, "text", False) else "binary_little_endian"
+
         # Rewrite file if header count or format is inconsistent
-        needs_rewrite = header_count != actual_count or ply.header['format'] != 'binary_little_endian'
+        needs_rewrite = header_count != actual_count or ply_format != "binary_little_endian"
         if needs_rewrite:
             PlyData(ply.elements, text=False).write(ply_path)
             ply = PlyData.read(ply_path)
