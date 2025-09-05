@@ -32,6 +32,17 @@
     </div>
     {% endif %}
 
+    {% if analysis_files %}
+    <div class="analysis-results">
+        <h3>خروجی تحلیل‌ها</h3>
+        <ul>
+            {% for file in analysis_files %}
+            <li><a href="{{ url_for('download', output_foldername=output_foldername, file_path=file) }}">{{ file }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
     <div class="results-grid">
         {% for file in file_paths %}
         {% if file.lower().endswith('.ply') or file.lower().endswith('.pcd') %}

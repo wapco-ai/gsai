@@ -399,6 +399,7 @@ def video_upload():
             export_ply = "export_ply" in request.form
             export_pcd = "export_pcd" in request.form
             export_potree = "export_potree" in request.form
+            selected_analyses = request.form.getlist("analyses")
 
             db_process = Process(
                 id=process_id,
@@ -474,6 +475,7 @@ def video_upload():
                 preselection_mode,
                 sensor_type,
                 reference_file_path,
+                analyses,
             ):
                 with app.app_context():
                     try:
@@ -797,7 +799,9 @@ def video_upload():
 
                         try:
                             sign_summary = sign_pipeline.process_sign_pipeline(
-                                images_to_process_dir, output_dir
+                                images_to_process_dir,
+                                output_dir,
+                                analyses=analyses,
                             )
                             if sign_summary:
                                 proc_db = Process.query.get(process_id)
@@ -861,18 +865,23 @@ def video_upload():
                     segformer_model,
                     classify_images,
                     generate_preview,
-                export_ply,
-                export_pcd,
-                export_potree,
-                preselection_mode,
-                sensor_type,
-                reference_file_path,
-            ),
+                    export_ply,
+                    export_pcd,
+                    export_potree,
+                    preselection_mode,
+                    sensor_type,
+                    reference_file_path,
+                    selected_analyses,
+                ),
             ).start()
 
             return redirect(url_for("processing", process_id=process_id))
 
-    return render_template("video_upload.html", segformer_models=SEGFORMER_MODELS)
+    return render_template(
+        "video_upload.html",
+        segformer_models=SEGFORMER_MODELS,
+        analyses=sign_pipeline.available_analyses(),
+    )
 
 
 # ZIP upload page
@@ -935,6 +944,7 @@ def zip_upload():
         segformer_model = request.form.get("segformer_model", DEFAULT_SEGFORMER_MODEL)
         preselection_mode = request.form.get("preselection_mode", "source")
         sensor_type = request.form.get("sensor_type", "Frame")
+        selected_analyses = request.form.getlist("analyses")
 
         process_id = str(uuid.uuid4())
         db_process = Process(
@@ -973,6 +983,7 @@ def zip_upload():
             preselection_mode,
             sensor_type,
             reference_file_path,
+            analyses,
         ):
             with app.app_context():
                 try:
@@ -1213,7 +1224,9 @@ def zip_upload():
 
                     try:
                         sign_summary = sign_pipeline.process_sign_pipeline(
-                            images_to_process_dir, output_dir
+                            images_to_process_dir,
+                            output_dir,
+                            analyses=analyses,
                         )
                         if sign_summary:
                             proc_db = Process.query.get(process_id)
@@ -1279,12 +1292,17 @@ def zip_upload():
                 preselection_mode,
                 sensor_type,
                 reference_file_path,
+                selected_analyses,
             ),
         ).start()
 
         return redirect(url_for("processing", process_id=process_id))
 
-    return render_template("zip_upload.html", segformer_models=SEGFORMER_MODELS)
+    return render_template(
+        "zip_upload.html",
+        segformer_models=SEGFORMER_MODELS,
+        analyses=sign_pipeline.available_analyses(),
+    )
 
 
 # New processing page route
@@ -1592,6 +1610,12 @@ def results(output_foldername):
         except Exception as e:
             logging.warning(f"Failed to read sign summary: {e}")
 
+    analysis_files = [
+        f
+        for f in os.listdir(output_dir)
+        if f.endswith(".json") and f != "signs.json"
+    ]
+
     return render_template(
         "results.html",
         filename=original_filename,
@@ -1599,6 +1623,7 @@ def results(output_foldername):
         file_paths=file_paths,
         potree_exists=potree_exists,
         sign_summary=sign_summary,
+        analysis_files=analysis_files,
 
     )
 

@@ -117,3 +117,26 @@ metashape -r metashape_script.py --image_full_pipeline \
 
 The documentation for Metashape (user guide and Python API) is available in `static/docs/`.
 
+## Optional analyses
+
+The sign processing pipeline supports optional analysis steps. Use
+`sign_pipeline.available_analyses()` to list the registered analyses and
+pass the desired names to `process_sign_pipeline` via the `analyses`
+parameter. For example:
+
+```python
+from sign_pipeline import process_sign_pipeline
+
+process_sign_pipeline(
+    image_dir="images",
+    output_dir="outputs/run1",
+    analyses=["sign_bbox"],
+)
+```
+
+The provided `sign_bbox` analysis computes a bounding box around traffic
+sign points (label `43`) and writes the results to `sign_bboxes.json` in
+the output directory. When uploading a ZIP or video through the web
+interface, available analyses appear under **تحلیل‌های اختیاری** so users
+can select them without writing code.
+
