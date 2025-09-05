@@ -11,3 +11,4 @@
 *.db
 instance/app.db
 /instance
+*.db
