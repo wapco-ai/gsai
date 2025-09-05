@@ -5,7 +5,8 @@ import sys
 from typing import Any, Dict
 
 # Path to Python interpreter with Open3D installed. Set via environment variable.
-GEO3D_PY = os.environ.get("GEO3D_PY")
+# GEO3D_PY = os.environ.get("GEO3D_PY")
+GEO3D_PY = r"D:\ProgramData\anaconda3\envs\geo3d\python.exe"
 
 # Path to the worker script (same directory as this file by default)
 O3D_WORKER = os.path.join(os.path.dirname(__file__), "o3d_worker.py")
