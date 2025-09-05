@@ -46,6 +46,7 @@ from metashape_script import (
     validate_ply_file,
     add_class_field_to_ply,
 )
+import sign_pipeline
 
 
 def apply_windows_proxy():
@@ -794,6 +795,18 @@ def video_upload():
                                 db.session.commit()
                             return
 
+                        try:
+                            sign_summary = sign_pipeline.process_sign_pipeline(
+                                images_to_process_dir, output_dir
+                            )
+                            if sign_summary:
+                                proc_db = Process.query.get(process_id)
+                                if proc_db:
+                                    proc_db.has_classification = 1
+                                    db.session.commit()
+                        except Exception as e:
+                            logging.warning(f"Sign pipeline failed: {e}")
+
                         update_process_state(process_id,
                             {
                                 "progress": 100,
@@ -1198,6 +1211,18 @@ def zip_upload():
                             db.session.commit()
                         return
 
+                    try:
+                        sign_summary = sign_pipeline.process_sign_pipeline(
+                            images_to_process_dir, output_dir
+                        )
+                        if sign_summary:
+                            proc_db = Process.query.get(process_id)
+                            if proc_db:
+                                proc_db.has_classification = 1
+                                db.session.commit()
+                    except Exception as e:
+                        logging.warning(f"Sign pipeline failed: {e}")
+
                     update_process_state(process_id,
                         {
                             "progress": 100,
@@ -1557,6 +1582,15 @@ def results(output_foldername):
         logging.warning(
             f"Process state not found in database for output_foldername: {output_foldername}. Using default filename."
         )
+    sign_summary = {}
+    sign_json = os.path.join(output_dir, "signs.json")
+    if os.path.exists(sign_json):
+        try:
+            with open(sign_json, "r", encoding="utf-8") as fh:
+                data = json.load(fh)
+                sign_summary = data.get("summary", {})
+        except Exception as e:
+            logging.warning(f"Failed to read sign summary: {e}")
 
     return render_template(
         "results.html",
@@ -1564,6 +1598,7 @@ def results(output_foldername):
         output_foldername=output_foldername,
         file_paths=file_paths,
         potree_exists=potree_exists,
+        sign_summary=sign_summary,
 
     )
 

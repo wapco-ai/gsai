@@ -21,6 +21,17 @@
           {% endif %}
       </div>
 
+    {% if sign_summary %}
+    <div class="sign-summary">
+        <h3>تابلوهای شناسایی‌شده</h3>
+        <ul>
+            {% for cls, count in sign_summary.items() %}
+            <li>{{ cls }}: {{ count }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
     <div class="results-grid">
         {% for file in file_paths %}
         {% if file.lower().endswith('.ply') or file.lower().endswith('.pcd') %}
