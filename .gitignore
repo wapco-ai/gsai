@@ -1,6 +1,5 @@
 /outputs
 /saved_model
-/instance
 /uploads
 /static/docs
 !/static/css/
