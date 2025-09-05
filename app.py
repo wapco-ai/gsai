@@ -401,6 +401,10 @@ def video_upload():
             export_potree = "export_potree" in request.form
             selected_analyses = request.form.getlist("analyses")
 
+            options_path = os.path.join(output_dir, "options.json")
+            with open(options_path, "w") as f:
+                json.dump({"generate_preview": generate_preview}, f)
+
             db_process = Process(
                 id=process_id,
                 process_uuid=process_uuid,
@@ -945,6 +949,10 @@ def zip_upload():
         preselection_mode = request.form.get("preselection_mode", "source")
         sensor_type = request.form.get("sensor_type", "Frame")
         selected_analyses = request.form.getlist("analyses")
+
+        options_path = os.path.join(output_dir, "options.json")
+        with open(options_path, "w") as f:
+            json.dump({"generate_preview": generate_preview}, f)
 
         process_id = str(uuid.uuid4())
         db_process = Process(
@@ -1716,9 +1724,23 @@ def ply(output_foldername, file_path):
         except Exception as exc:
             logging.warning(f"PLY validation failed for {full_file_path}: {exc}")
 
+        options_path = os.path.join(output_dir, "options.json")
+        generate_preview = False
+        if os.path.exists(options_path):
+            try:
+                with open(options_path) as f:
+                    opts = json.load(f)
+                    generate_preview = opts.get("generate_preview", False)
+            except Exception:
+                generate_preview = False
+
         size_limit = 50 * 1024 * 1024  # 50 MB
         file_size = os.path.getsize(full_file_path)
-        if file_size > size_limit and not file_path.endswith("_preview.ply"):
+        if (
+            generate_preview
+            and file_size > size_limit
+            and not file_path.endswith("_preview.ply")
+        ):
             preview_name = os.path.splitext(file_path)[0] + "_preview.ply"
             preview_path = os.path.join(output_dir, preview_name)
             if not os.path.exists(preview_path):
