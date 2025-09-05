@@ -1763,8 +1763,15 @@ def potree_viewer(output_foldername):
 
     potree_dir = os.path.join(app.config["OUTPUT_FOLDER"], output_foldername, "potree")
     cloud_js = os.path.join(potree_dir, "cloud.js")
-    if os.path.exists(cloud_js):
+    data_exists = any(
+        os.path.isdir(os.path.join(potree_dir, d)) and d.lower().startswith("data")
+        for d in os.listdir(potree_dir)
+    ) if os.path.isdir(potree_dir) else False
+
+    if os.path.exists(cloud_js) and data_exists:
         return render_template("potree_viewer.html", output_foldername=output_foldername)
+
+    logging.error(f"Incomplete Potree output for {output_foldername} at {potree_dir}")
     flash("Potree output not found.")
     return redirect(url_for("results", output_foldername=output_foldername))
 
@@ -1772,21 +1779,20 @@ def potree_viewer(output_foldername):
 @app.route("/potree/<output_foldername>/<path:filename>")
 def potree_file(output_foldername, filename):
     potree_dir = os.path.join(app.config["OUTPUT_FOLDER"], output_foldername, "potree")
-    full_path = os.path.join(potree_dir, filename)
+    safe_path = os.path.abspath(os.path.join(potree_dir, filename))
 
-    if not os.path.abspath(full_path).startswith(os.path.abspath(potree_dir)):
+    if not safe_path.startswith(os.path.abspath(potree_dir)):
         logging.warning(
             f"Attempted directory traversal in potree route: {output_foldername}/{filename}"
         )
         return "Unauthorized", 401
 
-    if os.path.exists(full_path) and os.path.isfile(full_path):
-        directory = os.path.dirname(full_path)
-        file_name = os.path.basename(full_path)
-        return send_from_directory(directory, file_name)
-    else:
-        flash("Potree file not found.")
-        return redirect(url_for("results", output_foldername=output_foldername))
+    if os.path.isfile(safe_path):
+        return send_from_directory(potree_dir, filename)
+
+    logging.error(f"Potree file not found: {safe_path}")
+    flash("Potree file not found.")
+    return redirect(url_for("results", output_foldername=output_foldername))
 
 
 # Gallery route to display frames and blended images

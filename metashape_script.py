@@ -10,6 +10,9 @@ metashape -r "D:\AI\3dRecognition\pycode\metashaspe-v3.py" --create_and_export_3
 '''  
 import os
 import sys
+import logging
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
 def downsample_point_cloud(input_path, output_path, ratio=0.1):
@@ -419,15 +422,32 @@ def convert_to_point_cloud(
         if export_potree:
             potree_dir = os.path.join(output_dir, "potree")
             os.makedirs(potree_dir, exist_ok=True)
-            potree_path = os.path.join(potree_dir, "cloud.js")
             chunk.exportPointCloud(
-                potree_path,
+                potree_dir,
                 format=Metashape.PointCloudFormatPotree,
                 crs=Metashape.CoordinateSystem("EPSG::32640"), #chunk.crs,
                 save_point_classification=True,
                 save_point_color=True,
             )
-            print(f"Potree point cloud exported to {potree_path}")
+
+            cloud_js = os.path.join(potree_dir, "cloud.js")
+            data_dirs = [
+                d
+                for d in os.listdir(potree_dir)
+                if os.path.isdir(os.path.join(potree_dir, d)) and d.lower().startswith("data")
+            ]
+
+            if not os.path.exists(cloud_js) or not data_dirs:
+                missing = []
+                if not os.path.exists(cloud_js):
+                    missing.append("cloud.js")
+                if not data_dirs:
+                    missing.append("data folder")
+                logging.error(
+                    f"Incomplete Potree export at {potree_dir}: missing {', '.join(missing)}"
+                )
+            else:
+                print(f"Potree point cloud exported to {potree_dir}")
 
         if preview_ratio:
             if export_ply:
