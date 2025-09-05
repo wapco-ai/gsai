@@ -13,9 +13,10 @@ from __future__ import annotations
 
 import os
 import json
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from metashape_script import add_class_field_to_ply
+import analysis
 
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
 
@@ -42,7 +43,9 @@ def _summarise(detections: List[Dict[str, str]]) -> Dict[str, int]:
     return summary
 
 
-def process_sign_pipeline(image_dir: str, output_dir: str) -> Dict[str, int]:
+def process_sign_pipeline(
+    image_dir: str, output_dir: str, analyses: Optional[List[str]] = None
+) -> Dict[str, int]:
     """Run the sign detection pipeline.
 
     Args:
@@ -62,12 +65,18 @@ def process_sign_pipeline(image_dir: str, output_dir: str) -> Dict[str, int]:
     if summary:
         json_path = os.path.join(output_dir, "signs.json")
         with open(json_path, "w", encoding="utf-8") as fh:
-            json.dump({"detections": detections, "summary": summary}, fh, ensure_ascii=False, indent=2)
+            json.dump(
+                {"detections": detections, "summary": summary},
+                fh,
+                ensure_ascii=False,
+                indent=2,
+            )
 
         # Locate first PLY point cloud and add classification fields
+        ply_path = None
         for root, _, files in os.walk(output_dir):
             for file in files:
-                if file.lower().endswith('.ply') and not file.lower().endswith('_with_class.ply'):
+                if file.lower().endswith(".ply") and not file.lower().endswith("_with_class.ply"):
                     ply_path = os.path.join(root, file)
                     try:
                         add_class_field_to_ply(ply_path)
@@ -78,4 +87,16 @@ def process_sign_pipeline(image_dir: str, output_dir: str) -> Dict[str, int]:
                 continue
             break
 
+        if analyses and ply_path:
+            for name in analyses:
+                try:
+                    analysis.run_analysis(name, ply_path, output_dir)
+                except Exception:
+                    pass
+
     return summary
+
+
+def available_analyses() -> List[Dict[str, str]]:
+    """Expose registered analysis options for user selection."""
+    return analysis.list_available()

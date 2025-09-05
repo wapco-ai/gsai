@@ -110,6 +110,17 @@
                 </div>
             </div>
 
+            {% if analyses %}
+            <div class="input-group">
+                <label>تحلیل‌های اختیاری</label>
+                <div class="checkbox-group">
+                    {% for a in analyses %}
+                    <label><input type="checkbox" name="analyses" value="{{ a.name }}"> {{ a.description }}</label>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
             <div class="info-box">
                 <div class="info-icon">💡</div>
                 <div class="info-content">
