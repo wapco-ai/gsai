@@ -1,5 +1,5 @@
 import os
-from PIL import Image
+from PIL import Image, ExifTags
 import numpy as np
 import tensorflow as tf
 from transformers import (
@@ -7,6 +7,7 @@ from transformers import (
     SegformerImageProcessor
 )
 import logging
+import json
 from tqdm import tqdm
 import matplotlib.pyplot as plt  # Import matplotlib for colormap
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -168,6 +169,30 @@ def fill_holes_in_class(
         filled_mask[holes] = cls
 
     return filled_mask
+
+
+def extract_exif_data(image_path: str) -> dict:
+    """Extract EXIF metadata from an image.
+
+    Args:
+        image_path (str): Path to the image file.
+
+    Returns:
+        dict: A dictionary mapping EXIF tags to their values. Returns an empty
+        dict if no EXIF data is found or an error occurs.
+    """
+    try:
+        img = Image.open(image_path)
+        exif_data = {}
+        info = img._getexif()
+        if info:
+            for tag_id, value in info.items():
+                tag = ExifTags.TAGS.get(tag_id, tag_id)
+                exif_data[tag] = str(value)
+        return exif_data
+    except Exception as e:
+        logging.warning(f"Could not extract EXIF data from {image_path}: {e}")
+        return {}
 
 
 def classify_image(image_path, model_name: str = DEFAULT_MODEL_NAME):
@@ -438,7 +463,9 @@ def create_colored_mask_and_blend(original_image_path, raw_mask, blended_output_
          str or None: Path to the saved blended image, or None if an error occurred.
      """
      try:
-        original_image = Image.open(original_image_path).convert("RGB")
+        original_image = Image.open(original_image_path)
+        original_exif = original_image.info.get("exif")
+        original_image = original_image.convert("RGB")
         original_size = original_image.size # (width, height)
 
         # Resize raw mask to match the original image size
@@ -460,7 +487,10 @@ def create_colored_mask_and_blend(original_image_path, raw_mask, blended_output_
 
         # Save the blended image
         try:
-            blended.save(blended_save_path)
+            if original_exif:
+                blended.save(blended_save_path, exif=original_exif)
+            else:
+                blended.save(blended_save_path)
             # logging.info(f"✅ Saved blended image for {base_filename} to {blended_save_path}")
             return blended_save_path # Return the path to the saved blended image
         except Exception as e:
@@ -474,11 +504,15 @@ def create_colored_mask_and_blend(original_image_path, raw_mask, blended_output_
 
 # Helper for parallel processing
 def process_single_image(image_path, blended_output_folder, model_name):
-    """Classify a single image and return the blended output path."""
+    """Classify a single image and return its blended path with EXIF data."""
     predicted_mask = classify_image(image_path, model_name)
+    exif = extract_exif_data(image_path)
+    blended_path = None
     if predicted_mask is not None:
-        return create_colored_mask_and_blend(image_path, predicted_mask, blended_output_folder)
-    return None
+        blended_path = create_colored_mask_and_blend(
+            image_path, predicted_mask, blended_output_folder
+        )
+    return {"original_path": image_path, "blended_path": blended_path, "exif": exif}
 
 
 # --- Modify classify_images_in_folder again to use create_colored_mask_and_blend ---
@@ -492,7 +526,8 @@ def classify_images_in_folder(image_folder, blended_output_folder, model_name: s
         blended_output_folder (str): Path to the folder where blended images will be saved.
 
     Returns:
-        list[str]: A list of paths to the saved blended images.
+        list[dict]: A list containing dictionaries with keys 'original_path',
+        'blended_path', and 'exif'.
     """
     logging.info(f"Starting image classification and blending for images in: {image_folder}")
     os.makedirs(blended_output_folder, exist_ok=True) # Ensure blended output folder exists
@@ -512,7 +547,7 @@ def classify_images_in_folder(image_folder, blended_output_folder, model_name: s
         return [] # Return empty list on model load failure
 
     logging.info(f"Found {len(image_files)} images to classify and blend.")
-    blended_image_paths = []
+    results = []
 
     image_paths = [os.path.join(image_folder, f) for f in image_files]
     num_workers = max(1, (os.cpu_count() or 1) - 1)
@@ -525,11 +560,19 @@ def classify_images_in_folder(image_folder, blended_output_folder, model_name: s
         with tqdm(total=len(futures), desc="Classifying and Blending Images") as pbar:
             for future in as_completed(futures):
                 result = future.result()
-                if result:
-                    blended_image_paths.append(result)
+                if result.get("blended_path"):
+                    results.append(result)
                 pbar.update(1)
 
-    return blended_image_paths # Return the list of blended image paths
+    # Save classification results with EXIF data to a JSON file
+    results_json_path = os.path.join(blended_output_folder, "classification_results.json")
+    try:
+        with open(results_json_path, "w", encoding="utf-8") as f:
+            json.dump(results, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        logging.error(f"Failed to save classification results JSON: {e}")
+
+    return results # Return the list of result dictionaries
 
 
 if __name__ == "__main__":
