@@ -57,6 +57,20 @@ export HTTP_PROXY=http://proxy.example.com:8080
 export HTTPS_PROXY=http://proxy.example.com:8080
 ```
 
+### Using Open3D
+
+The default environment for GeoSphereAI uses Python 3.7, which is too old for
+`open3d`.  To enable Open3D features such as point‑cloud downsampling and
+validation, install Open3D in a separate Python environment (e.g. Python 3.11)
+and set the path to its interpreter via the `GEO3D_PY` environment variable:
+
+```bash
+export GEO3D_PY=/path/to/python-with-open3d
+```
+
+When `GEO3D_PY` is set, Open3D operations are executed through the helper
+script `o3d_worker.py` in that external environment.
+
 ## Starting the application
 
 Run the Flask server from the project directory:
