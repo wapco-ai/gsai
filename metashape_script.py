@@ -78,42 +78,7 @@ def validate_ply_file(ply_path):
     except Exception as exc:
         print(f"Failed to validate PLY file {ply_path}: {exc}")
         return False
-
-
-def add_class_field_to_ply222222(ply_path):
-    """Duplicate green channel into 'class' and 'label' fields in a PLY file."""
-    try:
-        import numpy as np
-        from plyfile import PlyData, PlyElement
-
-        plydata = PlyData.read(ply_path)
-        vertex = plydata['vertex']
-        if 'green' not in vertex.data.dtype.names:
-            print("No green channel found in PLY; skipping class field addition")
-            return
-
-        g = vertex['green']
-        fields = list(vertex.data.dtype.names)
-        dtype_descr = list(vertex.data.dtype.descr)
-
-        if 'class' not in fields:
-            dtype_descr.append(('class', 'u1'))
-        if 'label' not in fields:
-            dtype_descr.append(('label', 'u1'))
-
-        new_data = np.empty(vertex.count, dtype=dtype_descr)
-        for name in vertex.data.dtype.names:
-            new_data[name] = vertex[name]
-        new_data['class'] = g
-        new_data['label'] = g
-
-        plydata['vertex'] = PlyElement.describe(new_data, 'vertex')
-        plydata.write(ply_path)
-        print(f"Added class field to {ply_path}")
-    except Exception as exc:
-        print(f"Failed to add class field to PLY: {exc}")
-        
-        
+ 
 def add_class_field_to_ply(ply_path):
     """Duplicate green channel into 'class' and 'label' fields in a PLY file."""
     try:

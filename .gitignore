@@ -10,3 +10,5 @@
 *.docx
 *.h5
 *.db
+instance/app.db
+/instance
