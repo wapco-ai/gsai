@@ -11,6 +11,7 @@ metashape -r "D:\AI\3dRecognition\pycode\metashaspe-v3.py" --create_and_export_3
 import os
 import sys
 import logging
+import shutil
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
@@ -174,7 +175,6 @@ def add_class_field_to_pcd(pcd_path):
         if len(new_dtype) == len(old_dtype):
             print("Fields 'class' and 'label' already exist. Skipping.")
             # فایل اصلی را در مسیر خروجی کپی می‌کنیم تا گردش کار ادامه یابد
-            import shutil
             output_pcd_path = pcd_path.replace('.pcd', '_with_class.pcd')
             shutil.copy(pcd_path, output_pcd_path)
             return
@@ -421,7 +421,8 @@ def convert_to_point_cloud(
             
         if export_potree:
             potree_dir = os.path.join(output_dir, "potree")
-            os.makedirs(potree_dir, exist_ok=True)
+            if os.path.exists(potree_dir):
+                shutil.rmtree(potree_dir)
             chunk.exportPointCloud(
                 potree_dir,
                 format=Metashape.PointCloudFormatPotree,
