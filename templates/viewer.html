@@ -387,6 +387,7 @@
                     <input type="checkbox" id="showSignBBoxes">
                     <label for="showSignBBoxes">نمایش تابلوها</label>
                 </div>
+                <div id="signBboxStatus" class="stats">بارگذاری تابلوها ممکن است زمان‌بر باشد</div>
             </div>
 
             <div class="control-section">
@@ -466,6 +467,7 @@
         let measurementObjects = [];
         let signBboxGroup;
         let signBboxesLoaded = false;
+        let signBboxStatusEl;
         let centeringOffset = new THREE.Vector3();
         const SERVER_OUTPUT_FOLDER = {{ output_foldername|tojson if output_foldername is defined else 'null' }};
         const SERVER_FILE_PATH = {{ file_path|tojson if file_path is defined else 'null' }};
@@ -705,6 +707,7 @@
             signBboxGroup = new THREE.Group();
             signBboxGroup.visible = false;
             scene.add(signBboxGroup);
+            signBboxStatusEl = document.getElementById('signBboxStatus');
 
             // Camera setup
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -731,6 +734,7 @@
 
             // Check if file should be loaded from URL
             const hasUrlFile = checkUrlForFile();
+            checkSignBBoxesAvailability();
 
             // Setup event listeners
             setupEventListeners();
@@ -884,6 +888,7 @@
 
             console.log('Point cloud loaded successfully');
             updateDebugInfo();
+            checkSignBBoxesAvailability();
         }
 
 
@@ -1178,6 +1183,28 @@
             return area;
         }
 
+        async function checkSignBBoxesAvailability() {
+            const toggle = document.getElementById('showSignBBoxes');
+            if (!currentOutputFolder) {
+                toggle.disabled = true;
+                if (signBboxStatusEl) signBboxStatusEl.textContent = 'فایل تابلو یافت نشد';
+                return;
+            }
+            try {
+                const resp = await fetch(`/outputs/${currentOutputFolder}/sign_bboxes.json`, { method: 'HEAD' });
+                if (resp.ok) {
+                    toggle.disabled = false;
+                    if (signBboxStatusEl) signBboxStatusEl.textContent = 'برای مشاهده، تیک بزنید';
+                } else {
+                    toggle.disabled = true;
+                    if (signBboxStatusEl) signBboxStatusEl.textContent = 'فایل تابلو یافت نشد';
+                }
+            } catch (e) {
+                toggle.disabled = true;
+                if (signBboxStatusEl) signBboxStatusEl.textContent = 'خطا در بررسی تابلوها';
+            }
+        }
+
         async function loadSignBBoxes() {
             if (signBboxesLoaded) {
                 signBboxGroup.visible = true;
@@ -1188,9 +1215,11 @@
                 return;
             }
             try {
+                if (signBboxStatusEl) signBboxStatusEl.textContent = 'در حال بارگذاری...';
                 const response = await fetch(`/outputs/${currentOutputFolder}/sign_bboxes.json`);
                 if (!response.ok) {
                     console.warn('sign_bboxes.json not found');
+                    if (signBboxStatusEl) signBboxStatusEl.textContent = 'فایل تابلو یافت نشد';
                     return;
                 }
                 const boxes = await response.json();
@@ -1201,27 +1230,27 @@
                     const dy = max.y - min.y;
                     const dz = max.z - min.z;
                     const area = dx * dy;
-                    
-                    const geometry = new THREE.PlaneGeometry(dx, dy);
+                    const geometry = new THREE.BoxGeometry(dx, dy, dz);
                     const material = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.15, side: THREE.DoubleSide });
-                    const plane = new THREE.Mesh(geometry, material);
+                    const boxMesh = new THREE.Mesh(geometry, material);
                     const center = new THREE.Vector3().addVectors(min, max).multiplyScalar(0.5);
-                    plane.position.copy(center);
-                    console.log(geometry)
+                    boxMesh.position.copy(center);
                     const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), new THREE.LineBasicMaterial({ color: 0xff0000 }));
-                    plane.add(edges);
+                    boxMesh.add(edges);
 
-                    const label = createTextSprite(`W:${dx.toFixed(2)} H:${dy.toFixed(2)} A:${area.toFixed(2)}`);
-                    label.position.set(0, 0, dz / 2 + 0.01);
-                    plane.add(label);
+                    const label = createTextSprite(`X:${dx.toFixed(2)} Y:${dy.toFixed(2)} Z:${dz.toFixed(2)} A:${area.toFixed(2)}`);
+                    label.position.set(0, dy / 2 + 0.02, 0);
+                    boxMesh.add(label);
 
-                    plane.userData.box3 = new THREE.Box3(min, max);
-                    signBboxGroup.add(plane);
+                    boxMesh.userData.box3 = new THREE.Box3(min, max);
+                    signBboxGroup.add(boxMesh);
                 });
                 signBboxGroup.visible = true;
                 signBboxesLoaded = true;
+                if (signBboxStatusEl) signBboxStatusEl.textContent = 'تابلوها نمایش داده شدند';
             } catch (err) {
                 console.error('Error loading sign_bboxes', err);
+                if (signBboxStatusEl) signBboxStatusEl.textContent = 'خطا در بارگذاری تابلوها';
             }
         }
 
@@ -1230,6 +1259,7 @@
                 loadSignBBoxes();
             } else if (signBboxGroup) {
                 signBboxGroup.visible = false;
+                if (signBboxStatusEl) signBboxStatusEl.textContent = 'تابلوها پنهان شدند';
             }
         }
 
