@@ -2,13 +2,16 @@ import json
 import sys
 import open3d as o3d
 import numpy as np
+from settings import PLY_ROUND_COORDS, PLY_ROUND_DECIMALS
 
 
 def downsample(in_path: str, out_path: str, ratio: float):
     pcd = o3d.io.read_point_cloud(in_path)
     sampled = pcd.random_down_sample(ratio)
     points = np.asarray(sampled.points)
-    sampled.points = o3d.utility.Vector3dVector(np.round(points, 2))
+    if PLY_ROUND_COORDS:
+        points = np.round(points, PLY_ROUND_DECIMALS)
+    sampled.points = o3d.utility.Vector3dVector(points)
     o3d.io.write_point_cloud(out_path, sampled, write_ascii=True)
     return {
         "ok": True,
