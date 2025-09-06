@@ -1,4 +1,3 @@
-
 {% extends "base.html" %}
 
 {% block title %}بارگذاری فایل ZIP حاوی تصاویر - GeoSphereAI{% endblock %}
@@ -7,7 +6,7 @@
 <div class="container">
     <h2>بارگذاری فایل ZIP حاوی تصاویر</h2>
     <p>فایل ZIP حاوی تصاویر را انتخاب کنید و تنظیمات مورد نظر را اعمال کنید.</p>
-    
+
     <!-- نمایش پیام‌های خطا -->
     <!-- {% with messages = get_flashed_messages() %}
     {% if messages %}
@@ -23,7 +22,7 @@
     </div>
     {% endif %}
     {% endwith %} -->
-    
+
     <form action="/zip-upload" method="POST" enctype="multipart/form-data">
         <!-- بخش آپلود فایل ZIP -->
         <div class="upload-area">
@@ -39,58 +38,58 @@
 
         <div class="settings-container">
             <h3>تنظیمات پردازش</h3>
-            
+
             <div class="toggle-group">
                 <label class="toggle-label" for="classify_images">
                     <span class="toggle-content">
                         <span class="toggle-text">انجام طبقه‌بندی تصویر (Segformer)</span>
                         <span class="toggle-description">برای تشخیص و جداسازی اجزای مختلف تصاویر</span>
                     </span>
-                <input type="checkbox" class="toggle-input" id="classify_images" name="classify_images">
-                <span class="toggle-switch"></span>
-            </label>
-        </div>
-        <div class="input-group" id="segformer-model-group" style="display:none;">
-            <label for="segformer_model">انتخاب مدل SegFormer</label>
-            <div class="select-container">
-                <select name="segformer_model" id="segformer_model" class="modern-select">
-                    {% for val, label in segformer_models %}
-                    <option value="{{ val }}" {% if loop.first %}selected{% endif %}>{{ label }}</option>
-                    {% endfor %}
-                </select>
+                    <input type="checkbox" class="toggle-input" id="classify_images" name="classify_images">
+                    <span class="toggle-switch"></span>
+                </label>
             </div>
-        </div>
-
-        <div class="input-group">
-            <label for="preselection_mode">حالت پیش‌انتخاب تصاویر</label>
-            <div class="select-container">
-                <select name="preselection_mode" id="preselection_mode" class="modern-select">
-                    <option value="source">حالت پیش‌انتخاب منبع</option>
-                    <option value="estimated">پیش‌انتخاب تخمینی</option>
-                    <option value="sequential">پیش‌انتخاب متوالی</option>
-                </select>
+            <div class="input-group" id="segformer-model-group" style="display:none;">
+                <label for="segformer_model">انتخاب مدل SegFormer</label>
+                <div class="select-container">
+                    <select name="segformer_model" id="segformer_model" class="modern-select">
+                        {% for val, label in segformer_models %}
+                        <option value="{{ val }}" {% if loop.first %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
-        </div>
 
-        <div class="input-group">
-            <label for="sensor_type">نوع دوربین</label>
-            <div class="select-container">
-                <select name="sensor_type" id="sensor_type" class="modern-select">
-                    <option value="Frame">Frame</option>
-                    <option value="Fisheye">Fisheye</option>
-                    <option value="Spherical">Spherical</option>
-                    <option value="Cylindrical">Cylindrical</option>
-                </select>
+            <div class="input-group">
+                <label for="preselection_mode">حالت پیش‌انتخاب تصاویر</label>
+                <div class="select-container">
+                    <select name="preselection_mode" id="preselection_mode" class="modern-select">
+                        <option value="source">حالت پیش‌انتخاب منبع</option>
+                        <option value="estimated">پیش‌انتخاب تخمینی</option>
+                        <option value="sequential">پیش‌انتخاب متوالی</option>
+                    </select>
+                </div>
             </div>
-        </div>
 
-        <div class="input-group">
-            <label for="reference_file">فایل مختصات <span style="font-weight: normal;">(اختیاری)</span></label>
-            <input type="file" name="reference_file" id="reference_file">
-            <small>در صورت عدم انتخاب فایل، پردازش بدون مختصات ادامه می‌یابد.</small>
-        </div>
+            <div class="input-group">
+                <label for="sensor_type">نوع دوربین</label>
+                <div class="select-container">
+                    <select name="sensor_type" id="sensor_type" class="modern-select">
+                        <option value="Frame">Frame</option>
+                        <option value="Fisheye">Fisheye</option>
+                        <option value="Spherical">Spherical</option>
+                        <option value="Cylindrical">Cylindrical</option>
+                    </select>
+                </div>
+            </div>
 
-            <div class="toggle-group">
+            <div class="input-group">
+                <label for="reference_file">فایل مختصات <span style="font-weight: normal;">(اختیاری)</span></label>
+                <input type="file" name="reference_file" id="reference_file">
+                <small>در صورت عدم انتخاب فایل، پردازش بدون مختصات ادامه می‌یابد.</small>
+            </div>
+
+            <!-- <div class="toggle-group">
                 <label class="toggle-label" for="generate_preview">
                     <span class="toggle-content">
                         <span class="toggle-text">تولید نسخه پیش‌نمایش ابر نقاط</span>
@@ -99,14 +98,14 @@
                     <input type="checkbox" class="toggle-input" id="generate_preview" name="generate_preview" checked>
                     <span class="toggle-switch"></span>
                 </label>
-            </div>
+            </div> -->
 
             <div class="input-group">
                 <label>فرمت ابر نقاط خروجی</label>
                 <div class="checkbox-group">
                     <label><input type="checkbox" name="export_ply" checked> PLY</label>
                     <label><input type="checkbox" name="export_pcd"> PCD</label>
-                    <label><input type="checkbox" name="export_potree" checked> Potree</label>
+                    <label><input type="checkbox" name="export_potree"> Potree</label>
                 </div>
             </div>
             <div class="input-group">
@@ -131,7 +130,8 @@
                         <span class="range-current-value" id="ply-preview-display">50٪</span>
                     </div>
                     <div class="range-wrapper">
-                        <input type="range" name="ply_preview_pct" min="1" max="100" value="50" class="modern-range" oninput="updatePreviewValue(this.value, 'ply-preview-display')">
+                        <input type="range" name="ply_preview_pct" min="1" max="100" value="50" class="modern-range"
+                            oninput="updatePreviewValue(this.value, 'ply-preview-display')">
                     </div>
                 </div>
             </div>
@@ -157,7 +157,8 @@
                         <span class="range-current-value" id="pcd-preview-display">50٪</span>
                     </div>
                     <div class="range-wrapper">
-                        <input type="range" name="pcd_preview_pct" min="1" max="100" value="50" class="modern-range" oninput="updatePreviewValue(this.value, 'pcd-preview-display')">
+                        <input type="range" name="pcd_preview_pct" min="1" max="100" value="50" class="modern-range"
+                            oninput="updatePreviewValue(this.value, 'pcd-preview-display')">
                     </div>
                 </div>
             </div>
@@ -194,110 +195,110 @@
             </button>
         </div>
     </form>
-    
+
     <div class="navigation-links">
         <a href="{{ url_for('file_selection') }}" class="back-link">&larr; بازگشت به انتخاب نوع فایل</a>
     </div>
 </div>
 
 <script>
-function updatePreviewValue(value, id) {
-    document.getElementById(id).textContent = value + '٪';
-}
+    function updatePreviewValue(value, id) {
+        document.getElementById(id).textContent = value + '٪';
+    }
 
-// File upload functionality
-document.addEventListener('DOMContentLoaded', function() {
-    const fileInput = document.getElementById('zip');
-    const fileLabel = document.querySelector('.file-label');
-    const classifyCheckbox = document.getElementById('classify_images');
-    const modelGroup = document.getElementById('segformer-model-group');
-
-    function toggleModelSelect() {
-        modelGroup.style.display = classifyCheckbox.checked ? 'block' : 'none';
-    }
-    classifyCheckbox.addEventListener('change', toggleModelSelect);
-    toggleModelSelect();
-    
-    // Drag and drop events
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-        fileLabel.addEventListener(eventName, preventDefaults, false);
-    });
-    
-    function preventDefaults(e) {
-        e.preventDefault();
-        e.stopPropagation();
-    }
-    
-    ['dragenter', 'dragover'].forEach(eventName => {
-        fileLabel.addEventListener(eventName, highlight, false);
-    });
-    
-    ['dragleave', 'drop'].forEach(eventName => {
-        fileLabel.addEventListener(eventName, unhighlight, false);
-    });
-    
-    function highlight(e) {
-        fileLabel.classList.add('drag-over');
-    }
-    
-    function unhighlight(e) {
-        fileLabel.classList.remove('drag-over');
-    }
-    
-    fileLabel.addEventListener('drop', handleDrop, false);
-    
-    function handleDrop(e) {
-        const dt = e.dataTransfer;
-        const files = dt.files;
-        
-        // Check if file is ZIP
-        if (files.length > 0 && files[0].name.toLowerCase().endsWith('.zip')) {
-            fileInput.files = files;
-            updateFileName();
-        } else {
-            alert('لطفاً فقط فایل ZIP انتخاب کنید');
-        }
-    }
-    
-    fileInput.addEventListener('change', updateFileName);
-    
-    function updateFileName() {
-        const fileName = fileInput.files[0]?.name;
-        if (fileName) {
-            document.querySelector('.upload-text strong').textContent = fileName;
-            document.querySelector('.upload-text span').textContent = 'فایل انتخاب شده';
-            
-            // Show file size
-            const fileSize = fileInput.files[0].size;
-            const fileSizeMB = (fileSize / (1024 * 1024)).toFixed(2);
-            document.querySelector('.upload-text span').textContent = `حجم فایل: ${fileSizeMB} مگابایت`;
-        }
-    }
-    
-    // Form validation
-    document.querySelector('form').addEventListener('submit', function(e) {
+    // File upload functionality
+    document.addEventListener('DOMContentLoaded', function () {
         const fileInput = document.getElementById('zip');
-        if (!fileInput.files.length) {
-            e.preventDefault();
-            alert('لطفاً فایل ZIP را انتخاب کنید');
-            return false;
+        const fileLabel = document.querySelector('.file-label');
+        const classifyCheckbox = document.getElementById('classify_images');
+        const modelGroup = document.getElementById('segformer-model-group');
+
+        function toggleModelSelect() {
+            modelGroup.style.display = classifyCheckbox.checked ? 'block' : 'none';
         }
-        
-        const file = fileInput.files[0];
-        const maxSize = 300 * 1024 * 1024; // 100MB
-        
-        if (file.size > maxSize) {
+        classifyCheckbox.addEventListener('change', toggleModelSelect);
+        toggleModelSelect();
+
+        // Drag and drop events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
             e.preventDefault();
-            alert('حجم فایل نباید بیش از 300 مگابایت باشد');
-            return false;
+            e.stopPropagation();
         }
-        
-        if (!file.name.toLowerCase().endsWith('.zip')) {
-            e.preventDefault();
-            alert('لطفاً فقط فایل ZIP انتخاب کنید');
-            return false;
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            fileLabel.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight(e) {
+            fileLabel.classList.add('drag-over');
         }
+
+        function unhighlight(e) {
+            fileLabel.classList.remove('drag-over');
+        }
+
+        fileLabel.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+
+            // Check if file is ZIP
+            if (files.length > 0 && files[0].name.toLowerCase().endsWith('.zip')) {
+                fileInput.files = files;
+                updateFileName();
+            } else {
+                alert('لطفاً فقط فایل ZIP انتخاب کنید');
+            }
+        }
+
+        fileInput.addEventListener('change', updateFileName);
+
+        function updateFileName() {
+            const fileName = fileInput.files[0]?.name;
+            if (fileName) {
+                document.querySelector('.upload-text strong').textContent = fileName;
+                document.querySelector('.upload-text span').textContent = 'فایل انتخاب شده';
+
+                // Show file size
+                const fileSize = fileInput.files[0].size;
+                const fileSizeMB = (fileSize / (1024 * 1024)).toFixed(2);
+                document.querySelector('.upload-text span').textContent = `حجم فایل: ${fileSizeMB} مگابایت`;
+            }
+        }
+
+        // Form validation
+        document.querySelector('form').addEventListener('submit', function (e) {
+            const fileInput = document.getElementById('zip');
+            if (!fileInput.files.length) {
+                e.preventDefault();
+                alert('لطفاً فایل ZIP را انتخاب کنید');
+                return false;
+            }
+
+            const file = fileInput.files[0];
+            const maxSize = 300 * 1024 * 1024; // 100MB
+
+            if (file.size > maxSize) {
+                e.preventDefault();
+                alert('حجم فایل نباید بیش از 300 مگابایت باشد');
+                return false;
+            }
+
+            if (!file.name.toLowerCase().endsWith('.zip')) {
+                e.preventDefault();
+                alert('لطفاً فقط فایل ZIP انتخاب کنید');
+                return false;
+            }
+        });
     });
-});
 </script>
 {% endblock %}
