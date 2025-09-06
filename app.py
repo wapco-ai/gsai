@@ -47,6 +47,7 @@ from metashape_script import (
     add_class_field_to_ply,
 )
 import sign_pipeline
+from settings import ENABLE_PLY_VALIDATION
 
 
 def apply_windows_proxy():
@@ -832,6 +833,7 @@ def video_upload():
                                 output_dir,
                                 analyses=analyses,
                                 add_class_field=classify_images,
+                                validate=ENABLE_PLY_VALIDATION,
                             )
                             if classify_images and sign_summary:
                                 proc_db = Process.query.get(process_id)
@@ -1291,6 +1293,7 @@ def zip_upload():
                             output_dir,
                             analyses=analyses,
                             add_class_field=classify_images,
+                            validate=ENABLE_PLY_VALIDATION,
                         )
                         if classify_images and sign_summary:
                             proc_db = Process.query.get(process_id)
@@ -1779,10 +1782,13 @@ def ply(output_foldername, file_path):
         return redirect(url_for("results", output_foldername=output_foldername))
 
     if os.path.exists(full_file_path) and os.path.isfile(full_file_path):
-        try:
-            validate_ply_file(full_file_path)
-        except Exception as exc:
-            logging.warning(f"PLY validation failed for {full_file_path}: {exc}")
+        if ENABLE_PLY_VALIDATION:  # Integrity check; can slow down large files
+            try:
+                validate_ply_file(full_file_path)
+            except Exception as exc:
+                logging.warning(
+                    f"PLY validation failed for {full_file_path}: {exc}"
+                )
 
         options_path = os.path.join(output_dir, "options.json")
         generate_preview = False
@@ -1807,10 +1813,13 @@ def ply(output_foldername, file_path):
                 try:
                     downsample_point_cloud(full_file_path, preview_path, ratio=0.1)
                     add_class_field_to_ply(preview_path)
-                    preview_with_class = preview_path.replace('.ply', '_with_class.ply')
+                    preview_with_class = preview_path.replace(
+                        '.ply', '_with_class.ply'
+                    )
                     if os.path.exists(preview_with_class):
                         os.replace(preview_with_class, preview_path)
-                    validate_ply_file(preview_path)
+                    if ENABLE_PLY_VALIDATION:
+                        validate_ply_file(preview_path)
                 except Exception as exc:
                     logging.warning(f"Failed to create preview PLY: {exc}")
             return redirect(

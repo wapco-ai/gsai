@@ -16,6 +16,7 @@ import json
 from typing import Dict, List, Optional
 
 from metashape_script import add_class_field_to_ply
+from settings import ENABLE_PLY_VALIDATION
 import analysis
 
 ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png"}
@@ -48,6 +49,7 @@ def process_sign_pipeline(
     output_dir: str,
     analyses: Optional[List[str]] = None,
     add_class_field: bool = True,
+    validate: bool = ENABLE_PLY_VALIDATION,
 ) -> Dict[str, int]:
     """Run the sign detection pipeline.
 
@@ -59,6 +61,8 @@ def process_sign_pipeline(
             signs. If *add_class_field* is True and a PLY file is present, a new
             file with added ``class`` and ``label`` fields will be generated
             alongside it.
+        validate: When ``True`` run extra integrity checks on PLY files. Disable
+            for faster processing once files are trusted.
 
     Returns:
         A dictionary summarising the counts of detected sign classes.
@@ -84,7 +88,7 @@ def process_sign_pipeline(
                     ply_path = os.path.join(root, file)
                     if add_class_field:
                         try:
-                            add_class_field_to_ply(ply_path)
+                            add_class_field_to_ply(ply_path, validate=validate)
                             with_class = os.path.splitext(ply_path)[0] + "_with_class.ply"
                             if os.path.exists(with_class):
                                 ply_path = with_class
