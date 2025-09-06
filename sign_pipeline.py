@@ -96,7 +96,7 @@ def process_sign_pipeline(
                     if add_class_field:
                         try:
                             add_class_field_to_ply(
-                                ply_path, validate=validate, overwrite=True
+                                ply_path, validate=validate, overwrite=False
                             )
                         except Exception:
                             pass

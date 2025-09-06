@@ -228,12 +228,16 @@ def add_class_field_to_ply(
         # Write the output without forcing text mode. On Windows the long-path
         # prefix (``\\\\?\\``) avoids ``OSError: [Errno 22]`` when paths contain
         # UUIDs or otherwise exceed the traditional 260 character limit.
-        output_ply_path = output_ply_path.resolve()
-        output_ply_str = os.fspath(output_ply_path)
-        if os.name == "nt" and not output_ply_str.startswith("\\\\?\\"):
-            output_ply_str = "\\\\?\\" + output_ply_str
-        with open(output_ply_str, "wb") as fh:
-            plydata_out.write(fh)
+        output_ply_str = str(output_ply_path)
+        if os.name == "nt":
+            output_ply_str = output_ply_str.replace("/", "\\")  # مطمئن شوید اسلش درست باشد
+        if not output_ply_str.startswith(r"\\?\\"):
+            output_ply_str = r"\\?\\" + output_ply_str
+        # output_ply_str = os.fspath(output_ply_path)
+        # if os.name == "nt" and not output_ply_str.startswith("\\\\?\\"):
+        #     output_ply_str = "\\\\?\\" + output_ply_str
+        # with open(output_ply_str, "wb") as fh:
+        #     plydata_out.write(fh)
         validate_ply_file(output_ply_str, mode, validate)
         print(
             f"SUCCESS: Added class field to PLY and saved to {output_ply_str}"
@@ -556,7 +560,7 @@ def convert_to_point_cloud(
                 )
                 if add_class_field:
                     add_class_field_to_ply(
-                        output_path, mode="binary", validate=validate, overwrite=True
+                        output_path, mode="binary", validate=validate, overwrite=False
                     )
                 ply_paths.append((output_path, "binary"))
                 print(f"ply Point cloud exported to {output_path}")
@@ -573,7 +577,7 @@ def convert_to_point_cloud(
                 )
                 if add_class_field:
                     add_class_field_to_ply(
-                        output_path, mode="ascii", validate=validate, overwrite=True
+                        output_path, mode="ascii", validate=validate, overwrite=False
                     )
                 ply_paths.append((output_path, "ascii"))
                 print(f"ply Point cloud exported to {output_path}")
@@ -646,7 +650,7 @@ def convert_to_point_cloud(
                 if downsample_point_cloud(path, preview_path, ratio, pmode):
                     if add_class_field:
                         add_class_field_to_ply(
-                            preview_path, mode=pmode, validate=validate, overwrite=True
+                            preview_path, mode=pmode, validate=validate, overwrite=False
                         )
         if pcd_preview_pct:
             ratio = float(pcd_preview_pct) / 100.0
