@@ -108,6 +108,10 @@ metashape -r metashape_script.py --image_full_pipeline \
     --image_dir path/to/images --output_dir outputs/run1 --export_ply
 ```
 
+Include the optional `--add_class_field` flag to duplicate the colour channel
+into ``class`` and ``label`` fields within exported point clouds. The web
+interface automatically enables this when SegFormer classification is selected.
+
 The web interface performs similar commands internally when you upload files through the browser.
 When uploading a video or ZIP file you can now choose the point cloud formats using checkboxes for **PLY** and **PCD**.
 
