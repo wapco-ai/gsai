@@ -228,13 +228,14 @@ def add_class_field_to_ply(
         # Write the output without forcing text mode. On Windows the long-path
         # prefix (``\\\\?\\``) avoids ``OSError: [Errno 22]`` when paths contain
         # UUIDs or otherwise exceed the traditional 260 character limit.
-        output_ply_str = os.fspath(output_ply_path)
+        output_ply_str = str(output_ply_path)
         if os.name == "nt":
-            output_ply_str = output_ply_str.replace("/", "\\")
-            if not output_ply_str.startswith("\\\\?\\"):
-                output_ply_str = "\\\\?\\" + output_ply_str
+            output_ply_str = output_ply_str.replace("/", "\\")  # مطمئن شوید اسلش درست باشد
+            if not output_ply_str.startswith(r"\\?\\"):
+                output_ply_str = r"\\?\\" + output_ply_str
         with open(output_ply_str, "wb") as fh:
             plydata_out.write(fh)
+        
         validate_ply_file(output_ply_str, mode, validate)
         print(
             f"SUCCESS: Added class field to PLY and saved to {output_ply_path.resolve()}"
