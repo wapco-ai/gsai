@@ -159,13 +159,14 @@ def add_class_field_to_ply(ply_path):
 
         other_elements = [el for el in plydata_in.elements if el.name != 'vertex']
 
-        # +++ خط اصلاح شده اینجاست +++
-        # ما آرگومان‌های text و comments را که باعث خطا می‌شدند حذف کردیم.
-        plydata_out = PlyData([new_vertex_element] + other_elements)
-        # ++++++++++++++++++++++++++++++
-        
-        # فایل را در مسیر خروجی جدید می‌نویسیم
-        plydata_out.write(output_ply_path, text=True)
+        # Preserve the input format; set ``text=True`` above for ASCII output
+        plydata_out = PlyData(
+            [new_vertex_element] + other_elements,
+            text=plydata_in.text,
+        )
+
+        # Write the output without forcing text mode
+        plydata_out.write(output_ply_path)
         validate_ply_file(output_ply_path)
         print(f"SUCCESS: Added class field to PLY and saved to {output_ply_path}")
 
