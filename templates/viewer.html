@@ -39,24 +39,26 @@
 
         #controls {
             width: 300px;
-            background-color: #2d2d2d;
+            background-color: #f5f5f5;
+            color: #333;
             padding: 20px;
             overflow-y: auto;
-            border-left: 2px solid #444;
+            border-left: 2px solid #ddd;
         }
 
         .control-section {
             margin-bottom: 25px;
             padding: 15px;
-            background-color: #3a3a3a;
+            background-color: #ffffff;
             border-radius: 8px;
+            border: 1px solid #ddd;
         }
 
         .control-section h3 {
             margin: 0 0 15px 0;
-            color: #4CAF50;
+            color: #3f51b5;
             font-size: 16px;
-            border-bottom: 2px solid #4CAF50;
+            border-bottom: 2px solid #3f51b5;
             padding-bottom: 5px;
         }
 
@@ -68,15 +70,15 @@
         input[type="file"] {
             width: 100%;
             padding: 8px;
-            background-color: #555;
-            border: 1px solid #777;
+            background-color: #fff;
+            border: 1px solid #ccc;
             border-radius: 4px;
-            color: #fff;
+            color: #333;
         }
 
         input[type="file"]::file-selector-button {
-            background-color: #4CAF50;
-            color: white;
+            background-color: #3f51b5;
+            color: #fff;
             border: none;
             padding: 8px 12px;
             border-radius: 4px;
@@ -85,15 +87,16 @@
         }
 
         input[type="file"]::file-selector-button:hover {
-            background-color: #45a049;
+            background-color: #303f9f;
         }
 
         .info-box {
-            background-color: #444;
+            background-color: #e9ecef;
             padding: 10px;
             border-radius: 4px;
             margin-bottom: 10px;
             font-size: 12px;
+            color: #333;
         }
 
         .class-list {
@@ -107,13 +110,15 @@
             justify-content: space-between;
             padding: 8px;
             margin: 2px 0;
-            background-color: #4a4a4a;
+            background-color: #f5f5f5;
+            border: 1px solid #ddd;
             border-radius: 4px;
             font-size: 12px;
+            color: #333;
         }
 
         .class-item:hover {
-            background-color: #555;
+            background-color: #e9ecef;
         }
 
         .class-checkbox {
@@ -125,7 +130,7 @@
             height: 20px;
             border-radius: 50%;
             margin-right: 8px;
-            border: 2px solid #fff;
+            border: 2px solid #333;
         }
 
         .class-name {
@@ -134,11 +139,12 @@
         }
 
         .class-count {
-            background-color: #666;
+            background-color: #e0e0e0;
             padding: 2px 6px;
             border-radius: 10px;
             font-size: 10px;
             margin-right: 5px;
+            color: #333;
         }
 
         #point-info {
@@ -172,7 +178,7 @@
             position: absolute;
             top: 10px;
             left: 10px;
-            background-color: rgba(45, 45, 45, 0.8);
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 8px;
             border-radius: 8px;
             display: flex;
@@ -181,7 +187,7 @@
         }
 
         .measure-btn {
-            background-color: #4CAF50;
+            background-color: #3f51b5;
             color: #fff;
             border: none;
             padding: 6px 12px;
@@ -191,14 +197,14 @@
         }
 
         .measure-btn:hover {
-            background-color: #45a049;
+            background-color: #303f9f;
         }
 
         .point-info-header {
             font-weight: bold;
-            color: #4CAF50;
+            color: #3f51b5;
             margin-bottom: 8px;
-            border-bottom: 1px solid #555;
+            border-bottom: 1px solid #ccc;
             padding-bottom: 5px;
         }
 
@@ -238,7 +244,7 @@
 
         .stats {
             font-size: 11px;
-            color: #aaa;
+            color: #555;
             margin-top: 10px;
         }
 
@@ -254,7 +260,7 @@
         }
 
         .button {
-            background-color: #4CAF50;
+            background-color: #3f51b5;
             color: white;
             border: none;
             padding: 8px 16px;
@@ -265,30 +271,30 @@
         }
 
         .button:hover {
-            background-color: #45a049;
+            background-color: #303f9f;
         }
 
         .button:disabled {
-            background-color: #666;
+            background-color: #999;
             cursor: not-allowed;
         }
 
         .debug-info {
-            background-color: #333;
+            background-color: #f0f0f0;
             padding: 8px;
             margin: 5px 0;
             border-radius: 4px;
             font-size: 11px;
-            color: #ccc;
+            color: #333;
         }
 
         .file-info {
-            background-color: #4a5568;
+            background-color: #e9ecef;
             padding: 10px;
             border-radius: 4px;
             margin-bottom: 10px;
             font-size: 12px;
-            border-left: 4px solid #4CAF50;
+            border-left: 4px solid #3f51b5;
         }
 
         .hidden {
@@ -296,27 +302,32 @@
         }
 
         #url-info {
-            background-color: #2a4a3a;
+            background-color: #e9ecef;
             padding: 10px;
             border-radius: 4px;
             margin-bottom: 10px;
             font-size: 11px;
-            border: 1px solid #4CAF50;
+            border: 1px solid #3f51b5;
+            color: #333;
         }
 
         .url-debug {
-            background-color: #3a3a2a;
+            background-color: #f0f0f0;
             padding: 8px;
             border-radius: 4px;
             margin: 5px 0;
             font-size: 10px;
-            color: #ccc;
+            color: #333;
             font-family: monospace;
         }
 
         .rot-input {
             width: 60px;
-
+            padding: 4px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            color: #333;
         }
     </style>
 </head>
@@ -468,6 +479,7 @@
         const HAS_CLASSIFICATION = {{ has_classification | tojson }};
         const MIN_CLASS_POINTS = 200;
         let scene, camera, renderer, controls, pointCloud;
+        let rotXInput, rotYInput, rotZInput;
         let raycaster, mouse;
         let classManager = {};
         let pointsData = [];
@@ -779,13 +791,18 @@
             document.getElementById('measureDistanceBtn').addEventListener('click', startDistanceMeasurement);
             document.getElementById('measureAreaBtn').addEventListener('click', startAreaMeasurement);
             document.getElementById('clearMeasureBtn').addEventListener('click', clearMeasurement);
+
+            rotXInput = document.getElementById('rotX');
+            rotYInput = document.getElementById('rotY');
+            rotZInput = document.getElementById('rotZ');
             document.getElementById('applyRotationBtn').addEventListener('click', () => {
                 const rad = THREE.MathUtils.degToRad;
-                const x = rad(parseFloat(document.getElementById('rotX').value) || 0);
-                const y = rad(parseFloat(document.getElementById('rotY').value) || 0);
-                const z = rad(parseFloat(document.getElementById('rotZ').value) || 0);
+                const x = rad(parseFloat(rotXInput.value) || 0);
+                const y = rad(parseFloat(rotYInput.value) || 0);
+                const z = rad(parseFloat(rotZInput.value) || 0);
                 if (pointCloud) {
                     pointCloud.rotation.set(x, y, z);
+                    updateRotationInputs();
                 }
             });
 
@@ -796,6 +813,7 @@
                 if (e.key === 'ArrowRight') pointCloud.rotation.y += step;
                 if (e.key === 'ArrowUp')    pointCloud.rotation.x -= step;
                 if (e.key === 'ArrowDown')  pointCloud.rotation.x += step;
+                updateRotationInputs();
             });
 
             const bboxToggle = document.getElementById('showSignBBoxes');
@@ -805,6 +823,14 @@
 
             // Point size slider
             document.getElementById('pointSize').addEventListener('input', (e) => updatePointSize(e.target.value));
+        }
+
+        function updateRotationInputs() {
+            if (!pointCloud) return;
+            const deg = THREE.MathUtils.radToDeg;
+            rotXInput.value = deg(pointCloud.rotation.x).toFixed(1);
+            rotYInput.value = deg(pointCloud.rotation.y).toFixed(1);
+            rotZInput.value = deg(pointCloud.rotation.z).toFixed(1);
         }
 
         // Animation loop
@@ -918,6 +944,7 @@
             updateStats();
             centerCamera();
             showLoading(false);
+            updateRotationInputs();
 
             console.log('Point cloud loaded successfully');
             updateDebugInfo();
