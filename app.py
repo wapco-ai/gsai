@@ -1800,7 +1800,7 @@ def ply(output_foldername, file_path):
             except Exception:
                 generate_preview = False
 
-        size_limit = 50 * 1024 * 1024  # 50 MB
+        size_limit = 1000 * 1024 * 1024  # 50 MB
         file_size = os.path.getsize(full_file_path)
         if (
             generate_preview
