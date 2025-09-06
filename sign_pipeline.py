@@ -44,7 +44,10 @@ def _summarise(detections: List[Dict[str, str]]) -> Dict[str, int]:
 
 
 def process_sign_pipeline(
-    image_dir: str, output_dir: str, analyses: Optional[List[str]] = None
+    image_dir: str,
+    output_dir: str,
+    analyses: Optional[List[str]] = None,
+    add_class_field: bool = True,
 ) -> Dict[str, int]:
     """Run the sign detection pipeline.
 
@@ -52,9 +55,10 @@ def process_sign_pipeline(
         image_dir: Directory containing the images that were processed by
             Metashape.
         output_dir: Directory containing the point cloud outputs. A JSON file
-        named ``signs.json`` will be written here describing the detected
-        signs. If a PLY file is present a new file with added ``class`` and
-        ``label`` fields will be generated alongside it.
+            named ``signs.json`` will be written here describing the detected
+            signs. If *add_class_field* is True and a PLY file is present, a new
+            file with added ``class`` and ``label`` fields will be generated
+            alongside it.
 
     Returns:
         A dictionary summarising the counts of detected sign classes.
@@ -72,19 +76,20 @@ def process_sign_pipeline(
                 indent=2,
             )
 
-        # Locate first PLY point cloud and add classification fields
+        # Locate first PLY point cloud and optionally add classification fields
         ply_path = None
         for root, _, files in os.walk(output_dir):
             for file in files:
                 if file.lower().endswith(".ply") and not file.lower().endswith("_with_class.ply"):
                     ply_path = os.path.join(root, file)
-                    try:
-                        add_class_field_to_ply(ply_path)
-                        with_class = os.path.splitext(ply_path)[0] + "_with_class.ply"
-                        if os.path.exists(with_class):
-                            ply_path = with_class
-                    except Exception:
-                        pass
+                    if add_class_field:
+                        try:
+                            add_class_field_to_ply(ply_path)
+                            with_class = os.path.splitext(ply_path)[0] + "_with_class.ply"
+                            if os.path.exists(with_class):
+                                ply_path = with_class
+                        except Exception:
+                            pass
                     break
             else:
                 continue
