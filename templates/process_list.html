@@ -517,7 +517,7 @@
                     <th>کاربر</th>
                     <th>تعداد فریم/تصویر</th>
                     <th>زمان شروع</th>
-                    <th>زمان پایان</th>
+                    <th>کلاس‌بندی شده؟</th>
                     <th>مدت‌زمان (ثانیه)</th>
                     <th>وضعیت</th>
                     <th>عملیات</th>
@@ -539,7 +539,9 @@
                         <div class="time-display">{{ p.start_time }}</div>
                     </td>
                     <td class="table-cell">
-                        <div class="time-display">{{ p.end_time or '-' }}</div>
+                        <span class="status-badge {{ 'status-completed' if p.has_classification else 'status-failed' }}">
+                            {{ 'بله' if p.has_classification else 'خیر' }}
+                        </span>
                     </td>
                     <td class="table-cell">
                         {% if p.duration %}
