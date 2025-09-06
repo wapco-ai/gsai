@@ -80,24 +80,29 @@ def process_sign_pipeline(
                 indent=2,
             )
 
-        # Locate first PLY point cloud and optionally add classification fields
+        # Locate a PLY point cloud and optionally add classification fields
         ply_path = None
         for root, _, files in os.walk(output_dir):
+            # Prefer an already classified file if present
             for file in files:
-                if file.lower().endswith(".ply") and not file.lower().endswith("_with_class.ply"):
+                if file.lower().endswith("_with_class.ply"):
+                    ply_path = os.path.join(root, file)
+                    break
+            if ply_path:
+                break
+            for file in files:
+                if file.lower().endswith(".ply"):
                     ply_path = os.path.join(root, file)
                     if add_class_field:
                         try:
-                            add_class_field_to_ply(ply_path, validate=validate)
-                            with_class = os.path.splitext(ply_path)[0] + "_with_class.ply"
-                            if os.path.exists(with_class):
-                                ply_path = with_class
+                            add_class_field_to_ply(
+                                ply_path, validate=validate, overwrite=True
+                            )
                         except Exception:
                             pass
                     break
-            else:
-                continue
-            break
+            if ply_path:
+                break
 
         if analyses and ply_path:
             for name in analyses:

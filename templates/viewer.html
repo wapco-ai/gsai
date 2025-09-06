@@ -157,7 +157,7 @@
 
         #measurement-info {
             position: absolute;
-            top: 50px;
+            top: 60px;
             left: 10px;
             background-color: rgba(0, 0, 0, 0.8);
             padding: 10px;
@@ -166,6 +166,32 @@
             font-size: 14px;
             display: none;
             z-index: 1000;
+        }
+
+        .measure-controls {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: rgba(45, 45, 45, 0.8);
+            padding: 8px;
+            border-radius: 8px;
+            display: flex;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .measure-btn {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .measure-btn:hover {
+            background-color: #45a049;
         }
 
         .point-info-header {
@@ -298,6 +324,11 @@
                 <div class="point-info-header">مشخصات نقطه</div>
                 <div id="point-details"></div>
             </div>
+            <div id="measure-controls" class="measure-controls">
+                <button class="measure-btn" id="measureDistanceBtn">اندازه‌گیری طول</button>
+                <button class="measure-btn" id="measureAreaBtn">اندازه‌گیری مساحت</button>
+                <button class="measure-btn" id="clearMeasureBtn">پاک کردن</button>
+            </div>
             <div id="measurement-info"></div>
             <div id="viewer-stats">
                 <div>تعداد نقاط: <span id="total-points">0</span></div>
@@ -347,14 +378,6 @@
                     <div style="text-align: center; color: #888; padding: 20px;">
                         ابتدا یک فایل point cloud بارگذاری کنید
                     </div>
-                </div>
-            </div>
-
-            <div class="control-section">
-                <h3>ابزار اندازه‌گیری</h3>
-                <div>
-                    <button class="button" id="measureDistanceBtn">اندازه‌گیری طول</button>
-                    <button class="button" id="measureAreaBtn">اندازه‌گیری مساحت</button>
                 </div>
             </div>
 
@@ -748,6 +771,7 @@
             document.getElementById('toggleUrlDebugBtn').addEventListener('click', toggleUrlDebugInfo);
             document.getElementById('measureDistanceBtn').addEventListener('click', startDistanceMeasurement);
             document.getElementById('measureAreaBtn').addEventListener('click', startAreaMeasurement);
+            document.getElementById('clearMeasureBtn').addEventListener('click', clearMeasurement);
 
             // Point size slider
             document.getElementById('pointSize').addEventListener('input', (e) => updatePointSize(e.target.value));
@@ -1064,20 +1088,21 @@
 
         // Measurement functions
         function startDistanceMeasurement() {
-            measurementMode = 'distance';
             clearMeasurement();
+            measurementMode = 'distance';
             hidePointInfo();
             showMeasurementInfo('برای اندازه‌گیری طول دو نقطه را انتخاب کنید');
         }
 
         function startAreaMeasurement() {
-            measurementMode = 'area';
             clearMeasurement();
+            measurementMode = 'area';
             hidePointInfo();
             showMeasurementInfo('برای اندازه‌گیری مساحت چند نقطه را انتخاب کرده و دوبار کلیک کنید');
         }
 
         function clearMeasurement() {
+            measurementMode = null;
             measurementPoints = [];
             measurementObjects.forEach(obj => scene.remove(obj));
             measurementObjects = [];
