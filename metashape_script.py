@@ -233,12 +233,14 @@ def add_class_field_to_ply(
         # UUIDs or otherwise exceed the traditional 260 character limit.
         output_ply_path.parent.mkdir(parents=True, exist_ok=True)
         output_ply_str = os.fspath(output_ply_path)
+
         if os.name == "nt":
-            output_ply_str = output_ply_str.replace("/", "\\")
-            if not output_ply_str.startswith("\\\\?\\"):
-                output_ply_str = "\\\\?\\" + output_ply_str
+            output_ply_str = output_ply_str.replace("/", "\\")  # مطمئن شوید اسلش درست باشد
+            if not output_ply_str.startswith(r"\\?\\"):
+                output_ply_str = r"\\?\\" + output_ply_str
         with open(output_ply_str, "wb") as fh:
             plydata_out.write(fh)
+        
         validate_ply_file(output_ply_str, mode, validate)
         print(
             f"SUCCESS: Added class field to PLY and saved to {output_ply_path.resolve()}"
