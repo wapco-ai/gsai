@@ -9,10 +9,24 @@
     <style>
         html, body {width:100%; height:100%; margin:0; padding:0; overflow:hidden;}
         #potree_container {width:100%; height:100%;}
+        #toolbar {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+        #toolbar button {
+            margin-left: 5px;
+            padding: 5px 10px;
+        }
     </style>
 </head>
 <body>
 <div id="potree_container"></div>
+<div id="toolbar">
+    <button id="measure-distance">اندازه‌گیری طول</button>
+    <button id="measure-area">اندازه‌گیری مساحت</button>
+</div>
 <script>
     const viewer = new Potree.Viewer(document.getElementById("potree_container"));
     viewer.setEDLEnabled(true);
@@ -21,6 +35,25 @@
     viewer.loadSettingsFromFile(
         "{{ url_for('potree_file', output_foldername=output_foldername, filename='cloud.js') }}"
     ).then(() => viewer.fitToScreen());
+
+    document.getElementById("measure-distance").addEventListener("click", () => {
+        viewer.measuringTool.startInsertion({
+            showDistances: true,
+            showArea: false,
+            closed: false,
+            maxMarkers: 2,
+            name: "distance"
+        });
+    });
+
+    document.getElementById("measure-area").addEventListener("click", () => {
+        viewer.measuringTool.startInsertion({
+            showDistances: true,
+            showArea: true,
+            closed: true,
+            name: "area"
+        });
+    });
 </script>
 </body>
 </html>

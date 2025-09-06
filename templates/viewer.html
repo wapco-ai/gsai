@@ -155,6 +155,19 @@
             z-index: 1000;
         }
 
+        #measurement-info {
+            position: absolute;
+            top: 50px;
+            left: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            display: none;
+            z-index: 1000;
+        }
+
         .point-info-header {
             font-weight: bold;
             color: #4CAF50;
@@ -285,6 +298,7 @@
                 <div class="point-info-header">مشخصات نقطه</div>
                 <div id="point-details"></div>
             </div>
+            <div id="measurement-info"></div>
             <div id="viewer-stats">
                 <div>تعداد نقاط: <span id="total-points">0</span></div>
                 <div>نقاط قابل مشاهده: <span id="visible-points">0</span></div>
@@ -333,6 +347,14 @@
                     <div style="text-align: center; color: #888; padding: 20px;">
                         ابتدا یک فایل point cloud بارگذاری کنید
                     </div>
+                </div>
+            </div>
+
+            <div class="control-section">
+                <h3>ابزار اندازه‌گیری</h3>
+                <div>
+                    <button class="button" id="measureDistanceBtn">اندازه‌گیری طول</button>
+                    <button class="button" id="measureAreaBtn">اندازه‌گیری مساحت</button>
                 </div>
             </div>
 
@@ -408,6 +430,9 @@
         let debugMode = false;
         let urlDebugMode = false;
         let isUrlMode = false;
+        let measurementMode = null;
+        let measurementPoints = [];
+        let measurementObjects = [];
 
         // Check URL for file parameter and load if present
         function checkUrlForFile() {
@@ -707,6 +732,7 @@
         function setupEventListeners() {
             renderer.domElement.addEventListener('click', onPointClick);
             renderer.domElement.addEventListener('mousemove', onMouseMove);
+            renderer.domElement.addEventListener('dblclick', onDoubleClick);
             window.addEventListener('resize', onWindowResize);
 
             // File input (only if not in URL mode)
@@ -720,6 +746,8 @@
             document.getElementById('resetCameraBtn').addEventListener('click', resetCamera);
             document.getElementById('toggleDebugBtn').addEventListener('click', toggleDebugInfo);
             document.getElementById('toggleUrlDebugBtn').addEventListener('click', toggleUrlDebugInfo);
+            document.getElementById('measureDistanceBtn').addEventListener('click', startDistanceMeasurement);
+            document.getElementById('measureAreaBtn').addEventListener('click', startAreaMeasurement);
 
             // Point size slider
             document.getElementById('pointSize').addEventListener('input', (e) => updatePointSize(e.target.value));
@@ -1034,9 +1062,91 @@
             pointCloud.geometry = geometry;
         }
 
+        // Measurement functions
+        function startDistanceMeasurement() {
+            measurementMode = 'distance';
+            clearMeasurement();
+            hidePointInfo();
+            showMeasurementInfo('برای اندازه‌گیری طول دو نقطه را انتخاب کنید');
+        }
+
+        function startAreaMeasurement() {
+            measurementMode = 'area';
+            clearMeasurement();
+            hidePointInfo();
+            showMeasurementInfo('برای اندازه‌گیری مساحت چند نقطه را انتخاب کرده و دوبار کلیک کنید');
+        }
+
+        function clearMeasurement() {
+            measurementPoints = [];
+            measurementObjects.forEach(obj => scene.remove(obj));
+            measurementObjects = [];
+            const box = document.getElementById('measurement-info');
+            box.style.display = 'none';
+        }
+
+        function showMeasurementInfo(text) {
+            const box = document.getElementById('measurement-info');
+            box.textContent = text;
+            box.style.display = 'block';
+        }
+
+        function handleMeasurementClick(position) {
+            const sphere = new THREE.Mesh(
+                new THREE.SphereGeometry(0.1),
+                new THREE.MeshBasicMaterial({ color: 0xff0000 })
+            );
+            sphere.position.copy(position);
+            scene.add(sphere);
+            measurementObjects.push(sphere);
+            measurementPoints.push(position.clone());
+
+            if (measurementMode === 'distance' && measurementPoints.length === 2) {
+                const geometry = new THREE.BufferGeometry().setFromPoints(measurementPoints);
+                const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x00ff00 }));
+                scene.add(line);
+                measurementObjects.push(line);
+                const dist = measurementPoints[0].distanceTo(measurementPoints[1]);
+                showMeasurementInfo(`فاصله: ${dist.toFixed(2)}`);
+                measurementMode = null;
+            } else if (measurementMode === 'area' && measurementPoints.length >= 2) {
+                const geometry = new THREE.BufferGeometry().setFromPoints(measurementPoints.slice(-2));
+                const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x00ff00 }));
+                scene.add(line);
+                measurementObjects.push(line);
+            }
+        }
+
+        function onDoubleClick(event) {
+            if (measurementMode !== 'area' || measurementPoints.length < 3) return;
+
+            const geometry = new THREE.BufferGeometry().setFromPoints([...measurementPoints, measurementPoints[0]]);
+            const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x00ff00 }));
+            scene.add(line);
+            measurementObjects.push(line);
+
+            const area = computePolygonArea(measurementPoints);
+            showMeasurementInfo(`مساحت: ${area.toFixed(2)}`);
+            measurementMode = null;
+        }
+
+        function computePolygonArea(points) {
+            let area = 0;
+            for (let i = 1; i < points.length - 1; i++) {
+                const v1 = new THREE.Vector3().subVectors(points[i], points[0]);
+                const v2 = new THREE.Vector3().subVectors(points[i + 1], points[0]);
+                area += v1.cross(v2).length() / 2;
+            }
+            return area;
+        }
+
         // Handle point click
         function onPointClick(event) {
             if (!pointCloud) return;
+
+            if (measurementMode === 'area' && event.detail > 1) {
+                return;
+            }
 
             const rect = renderer.domElement.getBoundingClientRect();
             mouse.x = ((event.clientX - rect.left) / (rect.width)) * 2 - 1;
@@ -1047,6 +1157,11 @@
 
             if (intersects.length > 0) {
                 const intersection = intersects[0];
+                if (measurementMode) {
+                    handleMeasurementClick(intersection.point);
+                    return;
+                }
+
                 const pointIndex = intersection.index;
 
                 // Find the corresponding point in our original data
@@ -1067,7 +1182,9 @@
                     showPointInfo(targetPoint, event.clientX, event.clientY);
                 }
             } else {
-                hidePointInfo();
+                if (!measurementMode) {
+                    hidePointInfo();
+                }
             }
         }
 
