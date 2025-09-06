@@ -12,6 +12,7 @@ import os
 import sys
 import logging
 import shutil
+from pathlib import Path
 from typing import Any, Dict
 from settings import (
     ENABLE_PLY_VALIDATION,
@@ -158,7 +159,7 @@ def add_class_field_to_ply(
 
     Parameters
     ----------
-    ply_path : str
+    ply_path : str or Path
         Input PLY file which will be rewritten.
     mode : str or None
         Output format, "ascii" or "binary". If ``None`` the input format is
@@ -174,13 +175,14 @@ def add_class_field_to_ply(
         import numpy as np
         from plyfile import PlyData, PlyElement
 
+        ply_path = Path(ply_path)
         # Ensure PLY header is valid before processing
-        validate_ply_file(ply_path, validate=validate)
+        validate_ply_file(str(ply_path), validate=validate)
         output_ply_path = (
-            ply_path if overwrite else ply_path.replace('.ply', '_with_class.ply')
+            ply_path if overwrite else ply_path.with_name(ply_path.stem + '_with_class.ply')
         )
 
-        plydata_in = PlyData.read(ply_path)
+        plydata_in = PlyData.read(str(ply_path))
         if mode is None:
             mode = "ascii" if plydata_in.text else "binary"
         vertex = plydata_in['vertex']
@@ -224,8 +226,9 @@ def add_class_field_to_ply(
         )
 
         # Write the output without forcing text mode
-        plydata_out.write(output_ply_path)
-        validate_ply_file(output_ply_path, mode, validate)
+        output_ply_path = output_ply_path.resolve()
+        plydata_out.write(str(output_ply_path))
+        validate_ply_file(str(output_ply_path), mode, validate)
         print(f"SUCCESS: Added class field to PLY and saved to {output_ply_path}")
 
     except Exception as exc:
