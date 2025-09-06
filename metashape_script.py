@@ -441,7 +441,8 @@ def convert_to_point_cloud(
                 save_point_classification=True,
                 save_point_color=True,
             )
-            add_class_field_to_ply(output_path)
+            if add_class_field:
+                add_class_field_to_ply(output_path)
             print(f"ply Point cloud exported to {output_path}")
 
         if export_pcd:
@@ -453,7 +454,8 @@ def convert_to_point_cloud(
                 binary=True,
                 save_point_color=True
             )
-            add_class_field_to_pcd(output_path)
+            if add_class_field:
+                add_class_field_to_pcd(output_path)
             print(f"pcd Point cloud exported to {output_path}")
             
         if export_potree:
@@ -493,19 +495,21 @@ def convert_to_point_cloud(
                 preview_path = os.path.join(output_dir, "point_cloud_preview.ply")
                 if os.path.exists(ply_path):
                     downsample_point_cloud(ply_path, preview_path, preview_ratio)
-                    add_class_field_to_ply(preview_path)
-                    preview_with_class = preview_path.replace('.ply', '_with_class.ply')
-                    if os.path.exists(preview_with_class):
-                        os.replace(preview_with_class, preview_path)
+                    if add_class_field:
+                        add_class_field_to_ply(preview_path)
+                        preview_with_class = preview_path.replace('.ply', '_with_class.ply')
+                        if os.path.exists(preview_with_class):
+                            os.replace(preview_with_class, preview_path)
             if export_pcd:
                 pcd_path = os.path.join(output_dir, "point_cloud.pcd")
                 preview_pcd = os.path.join(output_dir, "point_cloud_preview.pcd")
                 if os.path.exists(pcd_path):
                     downsample_point_cloud(pcd_path, preview_pcd, preview_ratio)
-                    add_class_field_to_pcd(preview_pcd)
-                    preview_pcd_with_class = preview_pcd.replace('.pcd', '_with_class.pcd')
-                    if os.path.exists(preview_pcd_with_class):
-                        os.replace(preview_pcd_with_class, preview_pcd)
+                    if add_class_field:
+                        add_class_field_to_pcd(preview_pcd)
+                        preview_pcd_with_class = preview_pcd.replace('.pcd', '_with_class.pcd')
+                        if os.path.exists(preview_pcd_with_class):
+                            os.replace(preview_pcd_with_class, preview_pcd)
 
 
     except Exception as e:
@@ -576,6 +580,7 @@ if __name__ == "__main__":
     export_ply = "--export_ply" in sys.argv
     export_pcd = "--export_pcd" in sys.argv
     export_potree = "--export_potree" in sys.argv
+    add_class_field = "--add_class_field" in sys.argv
     if not export_ply and not export_pcd and not export_potree:
         export_ply = export_pcd = True
     reference_preselection_mode = (

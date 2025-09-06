@@ -737,6 +737,8 @@ def video_upload():
                             metashape_command.append("--export_pcd")
                         if export_potree:
                             metashape_command.append("--export_potree")
+                        if classify_images:
+                            metashape_command.append("--add_class_field")
 
                         logging.info(
                             f"Running geoSphereAi command: {' '.join(metashape_command)}"
@@ -806,8 +808,9 @@ def video_upload():
                                 images_to_process_dir,
                                 output_dir,
                                 analyses=analyses,
+                                add_class_field=classify_images,
                             )
-                            if sign_summary:
+                            if classify_images and sign_summary:
                                 proc_db = Process.query.get(process_id)
                                 if proc_db:
                                     proc_db.has_classification = 1
@@ -1166,6 +1169,8 @@ def zip_upload():
                         metashape_command.append("--export_pcd")
                     if export_potree:
                         metashape_command.append("--export_potree")
+                    if classify_images:
+                        metashape_command.append("--add_class_field")
 
                     logging.info(
                         f"Running Metashape command: {' '.join(metashape_command)}"
@@ -1235,8 +1240,9 @@ def zip_upload():
                             images_to_process_dir,
                             output_dir,
                             analyses=analyses,
+                            add_class_field=classify_images,
                         )
-                        if sign_summary:
+                        if classify_images and sign_summary:
                             proc_db = Process.query.get(process_id)
                             if proc_db:
                                 proc_db.has_classification = 1
