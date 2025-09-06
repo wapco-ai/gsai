@@ -466,83 +466,51 @@
         let measurementObjects = [];
         let signBboxGroup;
         let signBboxesLoaded = false;
-        let currentOutputFolder = null;
+        const SERVER_OUTPUT_FOLDER = {{ output_foldername|tojson if output_foldername is defined else 'null' }};
+        const SERVER_FILE_PATH = {{ file_path|tojson if file_path is defined else 'null' }};
+        let currentOutputFolder = SERVER_OUTPUT_FOLDER;
+
 
         // Check URL for file parameter and load if present
         function checkUrlForFile() {
-            const currentUrl = window.location.pathname;
-            const currentFullUrl = window.location.href;
+            // If server provided values, use them directly
+            if (SERVER_OUTPUT_FOLDER && SERVER_FILE_PATH) {
+                isUrlMode = true;
+                const filename = SERVER_FILE_PATH.split('/').pop();
 
-            console.log('Current URL:', currentUrl);
-            console.log('Full URL:', currentFullUrl);
+                document.getElementById('file-upload-section').classList.add('hidden');
+                document.getElementById('url-load-section').classList.remove('hidden');
+                document.getElementById('loaded-filename').textContent = filename;
+                document.getElementById('loaded-filepath').textContent = SERVER_FILE_PATH;
+                document.getElementById('loading-status').textContent = 'در حال بارگذاری...';
 
-            // Pattern های مختلف که ممکن است استفاده شوند
-            const patterns = [
-                // Pattern 1: /prefix/uuid/filename.ext
-                /\/([^\/]*[a-f0-9\-]{8,})\/([^\/]+\.(pcd|ply))$/i,
-                // Pattern 2: /uuid/filename.ext  
-                /\/([a-f0-9\-]{8,})\/([^\/]+\.(pcd|ply))$/i,
-                // Pattern 3: /any_folder/uuid/filename.ext
-                /\/([^\/]+)\/([a-f0-9\-]{8,})\/([^\/]+\.(pcd|ply))$/i
-            ];
-
-            let match = null;
-            let patternUsed = -1;
-
-            for (let i = 0; i < patterns.length; i++) {
-                match = currentUrl.match(patterns[i]);
-                if (match) {
-                    patternUsed = i;
-                    console.log(`Pattern ${i + 1} matched:`, match);
-                    break;
-                }
+                const possibleUrls = generatePossibleUrls(SERVER_OUTPUT_FOLDER, SERVER_FILE_PATH);
+                tryLoadingUrls(possibleUrls, filename.split('.').pop().toLowerCase());
+                return true;
             }
 
-            if (match) {
-                let outputFoldername, filePath, prefix = '';
+            const currentUrl = window.location.pathname;
+            const segments = currentUrl.split('/').filter(Boolean);
+            const uuidRegex = /^[a-f0-9\-]{8,}$/i;
+            const uuidIndex = segments.findIndex(seg => uuidRegex.test(seg));
 
-                // تحلیل بر اساس pattern استفاده شده
-                if (patternUsed === 0) {
-                    // Pattern 1: /prefix/uuid/filename.ext
-                    prefix = match[1];
-                    outputFoldername = match[1];
-                    filePath = match[2];
-                } else if (patternUsed === 1) {
-                    // Pattern 2: /uuid/filename.ext
-                    outputFoldername = match[1];
-                    filePath = match[2];
-                } else if (patternUsed === 2) {
-                    // Pattern 3: /folder/uuid/filename.ext
-                    prefix = match[1];
-                    outputFoldername = match[2];
-                    filePath = match[3];
-                }
-
+            if (uuidIndex !== -1 && segments.length > uuidIndex + 1) {
+                const outputFoldername = segments[uuidIndex];
+                const filePath = segments.slice(uuidIndex + 1).join('/');
                 const filename = filePath.split('/').pop();
                 currentOutputFolder = outputFoldername;
 
                 isUrlMode = true;
 
-                // Hide file upload section and show URL load section
                 document.getElementById('file-upload-section').classList.add('hidden');
                 document.getElementById('url-load-section').classList.remove('hidden');
-
-                // Update UI with file info
                 document.getElementById('loaded-filename').textContent = filename;
                 document.getElementById('loaded-filepath').textContent = filePath;
                 document.getElementById('loading-status').textContent = 'در حال بارگذاری...';
 
-                // Update debug info
-                updateUrlDebugInfo(currentUrl, outputFoldername, filePath, prefix, patternUsed + 1);
-
-                // تولید URL فایل با روش‌های مختلف
-                const possibleUrls = generatePossibleUrls(outputFoldername, filePath, prefix);
-
-                console.log('Possible URLs:', possibleUrls);
-
-                // تلاش برای بارگذاری با URL های مختلف
+                updateUrlDebugInfo(currentUrl, outputFoldername, filePath, '', 'segments');
+                const possibleUrls = generatePossibleUrls(outputFoldername, filePath, '');
                 tryLoadingUrls(possibleUrls, filename.split('.').pop().toLowerCase());
-
                 return true;
             }
 
