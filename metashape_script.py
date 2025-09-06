@@ -13,6 +13,7 @@ import sys
 import logging
 import shutil
 from typing import Any, Dict
+from settings import ENABLE_PLY_VALIDATION
 
 try:
     # Local helper to invoke Open3D in an external Python environment
@@ -71,7 +72,7 @@ def downsample_point_cloud(input_path, output_path, ratio=0.1, mode="ascii"):
             return False
 
 
-def validate_ply_file(ply_path, mode=None):
+def validate_ply_file(ply_path, mode=None, validate=ENABLE_PLY_VALIDATION):
     """Validate PLY header and ensure correct point count and format.
 
     Parameters
@@ -81,7 +82,11 @@ def validate_ply_file(ply_path, mode=None):
     mode : str or None
         Desired format ("ascii" or "binary"). When ``None`` the existing
         file format is preserved.
+    validate : bool
+        Skip validation when ``False`` to improve performance.
     """
+    if not validate:
+        return True
     try:
         from plyfile import PlyData
 
@@ -142,7 +147,7 @@ def validate_ply_file(ply_path, mode=None):
         print(f"Failed to validate PLY file {ply_path}: {exc}")
         return False
  
-def add_class_field_to_ply(ply_path, mode=None):
+def add_class_field_to_ply(ply_path, mode=None, validate=ENABLE_PLY_VALIDATION):
     """Duplicate green channel into 'class' and 'label' fields in a PLY file.
 
     Parameters
@@ -152,13 +157,16 @@ def add_class_field_to_ply(ply_path, mode=None):
     mode : str or None
         Output format, "ascii" or "binary". If ``None`` the input format is
         preserved.
+    validate : bool
+        Perform a full :func:`validate_ply_file` when True (default) but may
+        slow processing.
     """
     try:
         import numpy as np
         from plyfile import PlyData, PlyElement
 
         # Ensure PLY header is valid before processing
-        validate_ply_file(ply_path)
+        validate_ply_file(ply_path, validate=validate)
 
         output_ply_path = ply_path.replace('.ply', '_with_class.ply')
 
@@ -204,7 +212,7 @@ def add_class_field_to_ply(ply_path, mode=None):
 
         # Write the output without forcing text mode
         plydata_out.write(output_ply_path)
-        validate_ply_file(output_ply_path, mode)
+        validate_ply_file(output_ply_path, mode, validate)
         print(f"SUCCESS: Added class field to PLY and saved to {output_ply_path}")
 
     except Exception as exc:
@@ -440,6 +448,7 @@ def convert_to_point_cloud(
     pcd_mode="binary",
     ply_preview_pct=None,
     pcd_preview_pct=None,
+    validate=ENABLE_PLY_VALIDATION,
 ):
     import Metashape
 
@@ -486,7 +495,7 @@ def convert_to_point_cloud(
                     save_point_color=True,
                 )
                 if add_class_field:
-                    add_class_field_to_ply(output_path, mode="binary")
+                    add_class_field_to_ply(output_path, mode="binary", validate=validate)
                 ply_paths.append((output_path, "binary"))
                 print(f"ply Point cloud exported to {output_path}")
             if ply_mode in ("ascii", "both"):
@@ -501,7 +510,7 @@ def convert_to_point_cloud(
                     save_point_color=True,
                 )
                 if add_class_field:
-                    add_class_field_to_ply(output_path, mode="ascii")
+                    add_class_field_to_ply(output_path, mode="ascii", validate=validate)
                 ply_paths.append((output_path, "ascii"))
                 print(f"ply Point cloud exported to {output_path}")
 
@@ -572,7 +581,7 @@ def convert_to_point_cloud(
                 preview_path = path.replace('.ply', '_preview.ply')
                 if downsample_point_cloud(path, preview_path, ratio, pmode):
                     if add_class_field:
-                        add_class_field_to_ply(preview_path, mode=pmode)
+                        add_class_field_to_ply(preview_path, mode=pmode, validate=validate)
                         preview_with_class = preview_path.replace('.ply', '_with_class.ply')
                         if os.path.exists(preview_with_class):
                             os.replace(preview_with_class, preview_path)
@@ -656,6 +665,7 @@ if __name__ == "__main__":
     export_pcd = "--export_pcd" in sys.argv
     export_potree = "--export_potree" in sys.argv
     add_class_field = "--add_class_field" in sys.argv
+    validate = "--validate_ply" in sys.argv or ENABLE_PLY_VALIDATION  # integrity check
     ply_mode = sys.argv[sys.argv.index("--ply-mode") + 1] if "--ply-mode" in sys.argv else "binary"
     pcd_mode = sys.argv[sys.argv.index("--pcd-mode") + 1] if "--pcd-mode" in sys.argv else "binary"
     ply_preview_pct = float(sys.argv[sys.argv.index("--ply-preview-pct") + 1]) if "--ply-preview-pct" in sys.argv else None
@@ -710,6 +720,7 @@ if __name__ == "__main__":
             pcd_mode,
             ply_preview_pct,
             pcd_preview_pct,
+            validate,
         )
     
     if "--create_and_export_3d_model" in sys.argv:  
@@ -738,6 +749,7 @@ if __name__ == "__main__":
             pcd_mode,
             ply_preview_pct,
             pcd_preview_pct,
+            validate,
         )
         
     if "--video_full_pipeline" in sys.argv:  
@@ -782,4 +794,5 @@ if __name__ == "__main__":
             pcd_mode,
             ply_preview_pct,
             pcd_preview_pct,
+            validate,
         )
