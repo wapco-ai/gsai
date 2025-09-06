@@ -730,7 +730,7 @@ def video_upload():
                         if reference_file_path:
                             metashape_command.extend(["--reference_file", reference_file_path])
                         if generate_preview:
-                            metashape_command.extend(["--preview_ratio", "0.1"])
+                            metashape_command.extend(["--preview_ratio", "0.3"])
                         if export_ply:
                             metashape_command.append("--export_ply")
                         if export_pcd:
