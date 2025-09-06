@@ -405,6 +405,7 @@
         let debugMode = false;
         let urlDebugMode = false;
         let isUrlMode = false;
+        let centeringOffset = new THREE.Vector3();
 
         // Check URL for file parameter and load if present
         function checkUrlForFile() {
@@ -571,7 +572,9 @@
                     const geometry = points.geometry;
                     geometry.rotateX(0);
                     geometry.rotateY(0);
-                    geometry.center();
+                    geometry.computeBoundingBox();
+                    centeringOffset = geometry.boundingBox.getCenter(new THREE.Vector3());
+                    geometry.translate(-centeringOffset.x, -centeringOffset.y, -centeringOffset.z);
                     
                     processPointCloud(points);
                     resolve(points);
@@ -602,7 +605,9 @@
                     // Apply transformations
                     geometry.rotateX(0);
                     geometry.rotateY(0);
-                    geometry.center();
+                    geometry.computeBoundingBox();
+                    centeringOffset = geometry.boundingBox.getCenter(new THREE.Vector3());
+                    geometry.translate(-centeringOffset.x, -centeringOffset.y, -centeringOffset.z);
                     
                     const material = new THREE.PointsMaterial({ size: 0.02, vertexColors: true, sizeAttenuation: true });
                     const points = new THREE.Points(geometry, material);
