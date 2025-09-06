@@ -382,6 +382,14 @@
             </div>
 
             <div class="control-section">
+                <h3>تابلوهای شناسایی شده</h3>
+                <div>
+                    <input type="checkbox" id="showSignBBoxes">
+                    <label for="showSignBBoxes">نمایش تابلوها</label>
+                </div>
+            </div>
+
+            <div class="control-section">
                 <h3>تنظیمات نمایش</h3>
                 <div>
                     <label>اندازه نقاط:</label>
@@ -456,6 +464,9 @@
         let measurementMode = null;
         let measurementPoints = [];
         let measurementObjects = [];
+        let signBboxGroup;
+        let signBboxesLoaded = false;
+        let currentOutputFolder = null;
 
         // Check URL for file parameter and load if present
         function checkUrlForFile() {
@@ -508,6 +519,7 @@
                 }
 
                 const filename = filePath.split('/').pop();
+                currentOutputFolder = outputFoldername;
 
                 isUrlMode = true;
 
@@ -717,6 +729,9 @@
             // Scene setup
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0x111111);
+            signBboxGroup = new THREE.Group();
+            signBboxGroup.visible = false;
+            scene.add(signBboxGroup);
 
             // Camera setup
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -772,6 +787,11 @@
             document.getElementById('measureDistanceBtn').addEventListener('click', startDistanceMeasurement);
             document.getElementById('measureAreaBtn').addEventListener('click', startAreaMeasurement);
             document.getElementById('clearMeasureBtn').addEventListener('click', clearMeasurement);
+
+            const bboxToggle = document.getElementById('showSignBBoxes');
+            if (bboxToggle) {
+                bboxToggle.addEventListener('change', (e) => toggleSignBBoxes(e.target.checked));
+            }
 
             // Point size slider
             document.getElementById('pointSize').addEventListener('input', (e) => updatePointSize(e.target.value));
@@ -1143,16 +1163,36 @@
         }
 
         function onDoubleClick(event) {
-            if (measurementMode !== 'area' || measurementPoints.length < 3) return;
+            if (measurementMode === 'area' && measurementPoints.length >= 3) {
+                const geometry = new THREE.BufferGeometry().setFromPoints([...measurementPoints, measurementPoints[0]]);
+                const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x00ff00 }));
+                scene.add(line);
+                measurementObjects.push(line);
 
-            const geometry = new THREE.BufferGeometry().setFromPoints([...measurementPoints, measurementPoints[0]]);
-            const line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: 0x00ff00 }));
-            scene.add(line);
-            measurementObjects.push(line);
+                const area = computePolygonArea(measurementPoints);
+                showMeasurementInfo(`مساحت: ${area.toFixed(2)}`);
+                measurementMode = null;
+                return;
+            }
 
-            const area = computePolygonArea(measurementPoints);
-            showMeasurementInfo(`مساحت: ${area.toFixed(2)}`);
-            measurementMode = null;
+            if (!signBboxGroup || !signBboxGroup.visible) return;
+
+            const rect = renderer.domElement.getBoundingClientRect();
+            const mouse = new THREE.Vector2(
+                ((event.clientX - rect.left) / rect.width) * 2 - 1,
+                -((event.clientY - rect.top) / rect.height) * 2 + 1
+            );
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(signBboxGroup.children, true);
+            if (intersects.length > 0) {
+                let box3 = intersects[0].object.userData.box3;
+                if (!box3 && intersects[0].object.parent) {
+                    box3 = intersects[0].object.parent.userData.box3;
+                }
+                if (box3) {
+                    zoomToBox(box3);
+                }
+            }
         }
 
         function computePolygonArea(points) {
@@ -1163,6 +1203,93 @@
                 area += v1.cross(v2).length() / 2;
             }
             return area;
+        }
+
+        async function loadSignBBoxes() {
+            if (signBboxesLoaded) {
+                signBboxGroup.visible = true;
+                return;
+            }
+            if (!currentOutputFolder) {
+                console.warn('No output folder for bounding boxes');
+                return;
+            }
+            try {
+                const response = await fetch(`/outputs/${currentOutputFolder}/sign_bboxes.json`);
+                if (!response.ok) {
+                    console.warn('sign_bboxes.json not found');
+                    return;
+                }
+                const boxes = await response.json();
+                boxes.forEach(box => {
+                    const min = new THREE.Vector3(...box.min);
+                    const max = new THREE.Vector3(...box.max);
+                    const dx = max.x - min.x;
+                    const dy = max.y - min.y;
+                    const dz = max.z - min.z;
+                    const area = dx * dy;
+
+                    const geometry = new THREE.PlaneGeometry(dx, dy);
+                    const material = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.15, side: THREE.DoubleSide });
+                    const plane = new THREE.Mesh(geometry, material);
+                    const center = new THREE.Vector3().addVectors(min, max).multiplyScalar(0.5);
+                    plane.position.copy(center);
+
+                    const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), new THREE.LineBasicMaterial({ color: 0xff0000 }));
+                    plane.add(edges);
+
+                    const label = createTextSprite(`W:${dx.toFixed(2)} H:${dy.toFixed(2)} A:${area.toFixed(2)}`);
+                    label.position.set(0, 0, dz / 2 + 0.01);
+                    plane.add(label);
+
+                    plane.userData.box3 = new THREE.Box3(min, max);
+                    signBboxGroup.add(plane);
+                });
+                signBboxGroup.visible = true;
+                signBboxesLoaded = true;
+            } catch (err) {
+                console.error('Error loading sign_bboxes', err);
+            }
+        }
+
+        function toggleSignBBoxes(show) {
+            if (show) {
+                loadSignBBoxes();
+            } else if (signBboxGroup) {
+                signBboxGroup.visible = false;
+            }
+        }
+
+        function createTextSprite(message) {
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            const fontSize = 64;
+            context.font = `${fontSize}px Arial`;
+            const padding = 10;
+            const textWidth = context.measureText(message).width;
+            canvas.width = textWidth + padding * 2;
+            canvas.height = fontSize + padding * 2;
+            context.font = `${fontSize}px Arial`;
+            context.fillStyle = 'white';
+            context.fillText(message, padding, fontSize + padding / 2);
+            const texture = new THREE.CanvasTexture(canvas);
+            const material = new THREE.SpriteMaterial({ map: texture, transparent: true });
+            const sprite = new THREE.Sprite(material);
+            const scaleFactor = 0.01;
+            sprite.scale.set(canvas.width * scaleFactor, canvas.height * scaleFactor, 1);
+            return sprite;
+        }
+
+        function zoomToBox(box3) {
+            const center = new THREE.Vector3();
+            const size = new THREE.Vector3();
+            box3.getCenter(center);
+            box3.getSize(size);
+            const maxDim = Math.max(size.x, size.y, size.z);
+            const fitDistance = maxDim / (2 * Math.tan((camera.fov * Math.PI / 180) / 2));
+            const dir = new THREE.Vector3().subVectors(camera.position, controls.target).normalize();
+            camera.position.copy(center.clone().add(dir.multiplyScalar(fitDistance)));
+            controls.target.copy(center);
         }
 
         // Handle point click
