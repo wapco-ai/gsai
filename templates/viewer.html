@@ -313,6 +313,10 @@
             color: #ccc;
             font-family: monospace;
         }
+
+        .rot-input {
+            width: 60px;
+        }
     </style>
 </head>
 
@@ -401,9 +405,9 @@
                 <div style="margin-top: 10px;">
                     <label>چرخش مدل (درجه):</label>
                     <div style="display: flex; align-items: center; gap: 4px; margin-top: 5px;">
-                        X:<input type="number" id="rotX" value="0" style="width: 60px;">
-                        Y:<input type="number" id="rotY" value="0" style="width: 60px;">
-                        Z:<input type="number" id="rotZ" value="0" style="width: 60px;">
+                        X:<input type="number" id="rotX" value="0" class="rot-input">
+                        Y:<input type="number" id="rotY" value="0" class="rot-input">
+                        Z:<input type="number" id="rotZ" value="0" class="rot-input">
                         <button class="button" id="applyRotationBtn">اعمال</button>
                     </div>
                 </div>
