@@ -27,6 +27,7 @@ def downsample_point_cloud(input_path, output_path, ratio=0.1):
     """Create a simplified preview of a point cloud using Open3D."""
     try:
         import open3d as o3d
+        import numpy as np
 
         if ratio <= 0 or ratio >= 1:
             raise ValueError("ratio must be between 0 and 1")
@@ -37,7 +38,9 @@ def downsample_point_cloud(input_path, output_path, ratio=0.1):
             return False
 
         sampled = pcd.random_down_sample(ratio)
-        o3d.io.write_point_cloud(output_path, sampled)
+        points = np.asarray(sampled.points)
+        sampled.points = o3d.utility.Vector3dVector(np.round(points, 2))
+        o3d.io.write_point_cloud(output_path, sampled, write_ascii=True)
         print(f"Preview point cloud saved to {output_path}")
         return True
     except Exception as exc:
@@ -144,9 +147,13 @@ def add_class_field_to_ply(ply_path):
         new_data = np.empty(vertex.count, dtype=dtype_descr)
         for name in vertex.data.dtype.names:
             new_data[name] = vertex.data[name]
-        
+
         new_data['class'] = g
         new_data['label'] = g
+
+        for coord in ('x', 'y', 'z'):
+            if coord in new_data.dtype.names:
+                new_data[coord] = np.round(new_data[coord], 2)
         
         new_vertex_element = PlyElement.describe(new_data, 'vertex')
 
@@ -158,7 +165,7 @@ def add_class_field_to_ply(ply_path):
         # ++++++++++++++++++++++++++++++
         
         # فایل را در مسیر خروجی جدید می‌نویسیم
-        plydata_out.write(output_ply_path)
+        plydata_out.write(output_ply_path, text=True)
         validate_ply_file(output_ply_path)
         print(f"SUCCESS: Added class field to PLY and saved to {output_ply_path}")
 
