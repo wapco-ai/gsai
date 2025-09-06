@@ -966,12 +966,21 @@
                     classDistribution[classId]++;
                 }
 
+                const originalX = positions[i] + centeringOffset.x;
+                const originalY = positions[i + 1] + centeringOffset.y;
+                const originalZ = positions[i + 2] + centeringOffset.z;
+
                 pointsData.push({
                     index: pointIndex,
                     position: {
                         x: positions[i],
                         y: positions[i + 1],
                         z: positions[i + 2]
+                    },
+                    originalPosition: {
+                        x: originalX,
+                        y: originalY,
+                        z: originalZ
                     },
                     color: { // همیشه رنگ را از colors اصلی بخوان
                         r: colors[i],
@@ -1386,6 +1395,13 @@
             const pointInfo = document.getElementById('point-info');
             const pointDetails = document.getElementById('point-details');
 
+            pointCloud.updateMatrixWorld();
+            const worldPos = pointCloud.localToWorld(new THREE.Vector3(
+                point.originalPosition.x,
+                point.originalPosition.y,
+                point.originalPosition.z
+            ));
+
             if (HAS_CLASSIFICATION) {
                 const className = CLASS_LABELS_FA[point.classId] || `کلاس ${point.classId}`;
                 pointDetails.innerHTML = `
@@ -1399,15 +1415,15 @@
                     </div>
                     <div class="point-info-item">
                         <span>موقعیت X:</span>
-                        <span class="point-info-label">${point.position.x.toFixed(3)}</span>
+                        <span class="point-info-label">${worldPos.x.toFixed(3)}</span>
                     </div>
-                    <div class="point-info-item">
+                        <div class="point-info-item">
                         <span>موقعیت Y:</span>
-                        <span class="point-info-label">${point.position.y.toFixed(3)}</span>
+                        <span class="point-info-label">${worldPos.y.toFixed(3)}</span>
                     </div>
                     <div class="point-info-item">
                         <span>موقعیت Z:</span>
-                        <span class="point-info-label">${point.position.z.toFixed(3)}</span>
+                        <span class="point-info-label">${worldPos.z.toFixed(3)}</span>
                     </div>
                     <div class="point-info-item">
                         <span>رنگ RGB:</span>
@@ -1434,15 +1450,15 @@
                     </div>
                     <div class="point-info-item">
                         <span>موقعیت X:</span>
-                        <span class="point-info-label">${point.position.x.toFixed(3)}</span>
+                        <span class="point-info-label">${worldPos.x.toFixed(3)}</span>
                     </div>
                     <div class="point-info-item">
                         <span>موقعیت Y:</span>
-                        <span class="point-info-label">${point.position.y.toFixed(3)}</span>
+                        <span class="point-info-label">${worldPos.y.toFixed(3)}</span>
                     </div>
                     <div class="point-info-item">
                         <span>موقعیت Z:</span>
-                        <span class="point-info-label">${point.position.z.toFixed(3)}</span>
+                        <span class="point-info-label">${worldPos.z.toFixed(3)}</span>
                     </div>
                     <div class="point-info-item">
                         <span>رنگ RGB:</span>
