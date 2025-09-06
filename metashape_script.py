@@ -181,6 +181,9 @@ def add_class_field_to_ply(
         output_ply_path = (
             ply_path if overwrite else ply_path.with_name(ply_path.stem + '_with_class.ply')
         )
+        # Convert to absolute path so the Windows long-path prefix works with
+        # relative ``ply_path`` values.
+        output_ply_path = output_ply_path.resolve()
 
         plydata_in = PlyData.read(str(ply_path))
         if mode is None:
@@ -228,7 +231,9 @@ def add_class_field_to_ply(
         # Write the output without forcing text mode. On Windows the long-path
         # prefix (``\\\\?\\``) avoids ``OSError: [Errno 22]`` when paths contain
         # UUIDs or otherwise exceed the traditional 260 character limit.
-        output_ply_str = str(output_ply_path)
+        output_ply_path.parent.mkdir(parents=True, exist_ok=True)
+        output_ply_str = os.fspath(output_ply_path)
+
         if os.name == "nt":
             output_ply_str = output_ply_str.replace("/", "\\")  # مطمئن شوید اسلش درست باشد
             if not output_ply_str.startswith(r"\\?\\"):
