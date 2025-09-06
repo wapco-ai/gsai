@@ -13,7 +13,11 @@ import sys
 import logging
 import shutil
 from typing import Any, Dict
-from settings import ENABLE_PLY_VALIDATION
+from settings import (
+    ENABLE_PLY_VALIDATION,
+    PLY_ROUND_COORDS,
+    PLY_ROUND_DECIMALS,
+)
 
 try:
     # Local helper to invoke Open3D in an external Python environment
@@ -202,9 +206,12 @@ def add_class_field_to_ply(
         new_data['class'] = g
         new_data['label'] = g
 
-        for coord in ('x', 'y', 'z'):
-            if coord in new_data.dtype.names:
-                new_data[coord] = np.round(new_data[coord], 2)
+        if PLY_ROUND_COORDS:
+            for coord in ("x", "y", "z"):
+                if coord in new_data.dtype.names:
+                    new_data[coord] = np.round(
+                        new_data[coord], PLY_ROUND_DECIMALS
+                    )
         
         new_vertex_element = PlyElement.describe(new_data, 'vertex')
 
@@ -465,6 +472,42 @@ def convert_to_point_cloud(
     doc.open(project_path)
     chunk = doc.chunk
 
+    export_crs = chunk.crs
+
+    def has_reference(chunk_obj):
+        try:
+            if any(
+                getattr(cam.reference, "location", None) is not None
+                for cam in chunk_obj.cameras
+            ):
+                return True
+        except Exception:
+            pass
+        try:
+            if any(
+                getattr(marker.reference, "location", None) is not None
+                for marker in chunk_obj.markers
+            ):
+                return True
+        except Exception:
+            pass
+        return False
+
+    if export_crs and has_reference(chunk):
+        is_geo = False
+        try:
+            is_geo = bool(getattr(export_crs, "isGeographic", False))
+        except Exception:
+            pass
+        if not is_geo:
+            wkt = getattr(export_crs, "wkt", "")
+            if isinstance(wkt, str):
+                is_geo = "GEOGCS" in wkt.upper()
+        if is_geo:
+            export_crs = Metashape.CoordinateSystem("EPSG::32640")
+
+    crs_params = {"crs": export_crs} if export_crs else {}
+
     # Check if dense point cloud exists  
     if chunk.point_cloud is None:  
         print("No dense point cloud found. Building dense point cloud...")  
@@ -495,10 +538,10 @@ def convert_to_point_cloud(
                 chunk.exportPointCloud(
                     output_path,
                     format=Metashape.PointCloudFormatPLY,
-                    crs=Metashape.CoordinateSystem("EPSG::32640"),
                     binary=True,
                     save_point_classification=True,
                     save_point_color=True,
+                    **crs_params,
                 )
                 if add_class_field:
                     add_class_field_to_ply(
@@ -512,10 +555,10 @@ def convert_to_point_cloud(
                 chunk.exportPointCloud(
                     output_path,
                     format=Metashape.PointCloudFormatPLY,
-                    crs=Metashape.CoordinateSystem("EPSG::32640"),
                     binary=False,
                     save_point_classification=True,
                     save_point_color=True,
+                    **crs_params,
                 )
                 if add_class_field:
                     add_class_field_to_ply(
@@ -531,9 +574,9 @@ def convert_to_point_cloud(
                 chunk.exportPointCloud(
                     output_path,
                     format=Metashape.PointCloudFormatPCD,
-                    crs=Metashape.CoordinateSystem("EPSG::32640"),
                     binary=True,
                     save_point_color=True,
+                    **crs_params,
                 )
                 if add_class_field:
                     add_class_field_to_pcd(output_path, mode="binary")
@@ -545,9 +588,9 @@ def convert_to_point_cloud(
                 chunk.exportPointCloud(
                     output_path,
                     format=Metashape.PointCloudFormatPCD,
-                    crs=Metashape.CoordinateSystem("EPSG::32640"),
                     binary=False,
                     save_point_color=True,
+                    **crs_params,
                 )
                 if add_class_field:
                     add_class_field_to_pcd(output_path, mode="ascii")
@@ -561,9 +604,9 @@ def convert_to_point_cloud(
             chunk.exportPointCloud(
                 potree_dir,
                 format=Metashape.PointCloudFormatPotree,
-                crs=Metashape.CoordinateSystem("EPSG::32640"), #chunk.crs,
                 save_point_classification=True,
                 save_point_color=True,
+                **crs_params,
             )
 
             cloud_js = os.path.join(potree_dir, "cloud.js")

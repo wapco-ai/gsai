@@ -470,6 +470,7 @@
         const SERVER_FILE_PATH = {{ file_path|tojson if file_path is defined else 'null' }};
         let currentOutputFolder = SERVER_OUTPUT_FOLDER;
 
+
         // Check URL for file parameter and load if present
         function checkUrlForFile() {
             // If server provided values, use them directly
@@ -498,6 +499,7 @@
                 const filePath = segments.slice(uuidIndex + 1).join('/');
                 const filename = filePath.split('/').pop();
                 currentOutputFolder = outputFoldername;
+
                 isUrlMode = true;
 
                 document.getElementById('file-upload-section').classList.add('hidden');
