@@ -186,27 +186,55 @@
             </div>
             <div class="input-group">
                 <label for="ply_mode">حالت PLY</label>
-                <div class="select-container">
-                    <select name="ply_mode" id="ply_mode" class="modern-select">
-                        <option value="binary" selected>binary</option>
-                        <option value="ascii">ascii</option>
-                        <option value="both">both</option>
-                    </select>
+                <div class="mode-options">
+                    <label class="mode-option">
+                        <input type="radio" name="ply_mode" value="binary" checked>
+                        <span>binary</span>
+                    </label>
+                    <label class="mode-option">
+                        <input type="radio" name="ply_mode" value="ascii">
+                        <span>ascii</span>
+                    </label>
+                    <label class="mode-option">
+                        <input type="radio" name="ply_mode" value="both">
+                        <span>both</span>
+                    </label>
                 </div>
-                <label><input type="checkbox" name="ply_preview"> پیش‌نمایش PLY</label>
-                <input type="number" name="ply_preview_pct" min="1" max="100" placeholder="٪" style="width:80px;">
+                <label class="preview-toggle"><input type="checkbox" name="ply_preview"> پیش‌نمایش PLY</label>
+                <div class="range-container">
+                    <div class="range-display">
+                        <span class="range-current-value" id="ply-preview-display">50٪</span>
+                    </div>
+                    <div class="range-wrapper">
+                        <input type="range" name="ply_preview_pct" min="1" max="100" value="50" class="modern-range" oninput="updatePreviewValue(this.value, 'ply-preview-display')">
+                    </div>
+                </div>
             </div>
             <div class="input-group">
                 <label for="pcd_mode">حالت PCD</label>
-                <div class="select-container">
-                    <select name="pcd_mode" id="pcd_mode" class="modern-select">
-                        <option value="binary" selected>binary</option>
-                        <option value="ascii">ascii</option>
-                        <option value="both">both</option>
-                    </select>
+                <div class="mode-options">
+                    <label class="mode-option">
+                        <input type="radio" name="pcd_mode" value="binary" checked>
+                        <span>binary</span>
+                    </label>
+                    <label class="mode-option">
+                        <input type="radio" name="pcd_mode" value="ascii">
+                        <span>ascii</span>
+                    </label>
+                    <label class="mode-option">
+                        <input type="radio" name="pcd_mode" value="both">
+                        <span>both</span>
+                    </label>
                 </div>
-                <label><input type="checkbox" name="pcd_preview"> پیش‌نمایش PCD</label>
-                <input type="number" name="pcd_preview_pct" min="1" max="100" placeholder="٪" style="width:80px;">
+                <label class="preview-toggle"><input type="checkbox" name="pcd_preview"> پیش‌نمایش PCD</label>
+                <div class="range-container">
+                    <div class="range-display">
+                        <span class="range-current-value" id="pcd-preview-display">50٪</span>
+                    </div>
+                    <div class="range-wrapper">
+                        <input type="range" name="pcd_preview_pct" min="1" max="100" value="50" class="modern-range" oninput="updatePreviewValue(this.value, 'pcd-preview-display')">
+                    </div>
+                </div>
             </div>
             {% if analyses %}
             <div class="input-group">
@@ -243,6 +271,10 @@ function updateFrameInterval(value) {
 function updateCropRatio(value) {
     const percentage = Math.round(parseFloat(value) * 100);
     document.getElementById('crop-ratio-display').textContent = percentage + '%';
+}
+
+function updatePreviewValue(value, id) {
+    document.getElementById(id).textContent = value + '٪';
 }
 
 // File upload functionality

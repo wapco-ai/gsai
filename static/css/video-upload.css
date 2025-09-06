@@ -230,6 +230,48 @@
     height: 14px;
 }
 
+/* Mode selection buttons */
+.mode-options {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.mode-option input {
+    display: none;
+}
+
+.mode-option span {
+    display: inline-block;
+    padding: 8px 16px;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: #495057;
+    background: #fff;
+    font-weight: 500;
+}
+
+.mode-option span:hover {
+    border-color: #007bff;
+}
+
+.mode-option input:checked + span {
+    background: #007bff;
+    color: #fff;
+    border-color: #007bff;
+}
+
+.preview-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #495057;
+}
+
 /* Fixed Toggle Switch for RTL */
 .toggle-group {
     background: #f8f9fa;
