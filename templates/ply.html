@@ -23,6 +23,7 @@
         import * as THREE from 'three';
         import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
         import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
+        import GUI from 'https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.module.js';
 
 
         let camera, scene, renderer, controls;
@@ -58,6 +59,41 @@
 
              controls.target.set(0, 0, 0); // Center controls around origin
              controls.update();
+
+            const gui = new GUI();
+            const rotation = {
+                x: THREE.MathUtils.radToDeg(camera.rotation.x),
+                y: THREE.MathUtils.radToDeg(camera.rotation.y),
+                z: THREE.MathUtils.radToDeg(camera.rotation.z)
+            };
+            const xController = gui.add(rotation, 'x', -180, 180).name('Rotate X').onChange(value => {
+                camera.rotation.x = THREE.MathUtils.degToRad(value);
+                render();
+            });
+            const yController = gui.add(rotation, 'y', -180, 180).name('Rotate Y').onChange(value => {
+                camera.rotation.y = THREE.MathUtils.degToRad(value);
+                render();
+            });
+            const zController = gui.add(rotation, 'z', -180, 180).name('Rotate Z').onChange(value => {
+                camera.rotation.z = THREE.MathUtils.degToRad(value);
+                render();
+            });
+            const step = 15;
+            const stepFolder = gui.addFolder('Step Rotation');
+            const stepActions = {
+                xPlus: () => { rotation.x += step; camera.rotation.x = THREE.MathUtils.degToRad(rotation.x); xController.setValue(rotation.x); render(); },
+                xMinus: () => { rotation.x -= step; camera.rotation.x = THREE.MathUtils.degToRad(rotation.x); xController.setValue(rotation.x); render(); },
+                yPlus: () => { rotation.y += step; camera.rotation.y = THREE.MathUtils.degToRad(rotation.y); yController.setValue(rotation.y); render(); },
+                yMinus: () => { rotation.y -= step; camera.rotation.y = THREE.MathUtils.degToRad(rotation.y); yController.setValue(rotation.y); render(); },
+                zPlus: () => { rotation.z += step; camera.rotation.z = THREE.MathUtils.degToRad(rotation.z); zController.setValue(rotation.z); render(); },
+                zMinus: () => { rotation.z -= step; camera.rotation.z = THREE.MathUtils.degToRad(rotation.z); zController.setValue(rotation.z); render(); }
+            };
+            stepFolder.add(stepActions, 'xPlus').name('X +15°');
+            stepFolder.add(stepActions, 'xMinus').name('X -15°');
+            stepFolder.add(stepActions, 'yPlus').name('Y +15°');
+            stepFolder.add(stepActions, 'yMinus').name('Y -15°');
+            stepFolder.add(stepActions, 'zPlus').name('Z +15°');
+            stepFolder.add(stepActions, 'zMinus').name('Z -15°');
 
             // --- CORRECTED FILE LOADING PATH ---
             // This line uses the Flask url_for function to generate the correct path
