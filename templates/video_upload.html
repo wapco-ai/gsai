@@ -184,6 +184,30 @@
                     <label><input type="checkbox" name="export_potree"> Potree</label>
                 </div>
             </div>
+            <div class="input-group">
+                <label for="ply_mode">حالت PLY</label>
+                <div class="select-container">
+                    <select name="ply_mode" id="ply_mode" class="modern-select">
+                        <option value="binary" selected>binary</option>
+                        <option value="ascii">ascii</option>
+                        <option value="both">both</option>
+                    </select>
+                </div>
+                <label><input type="checkbox" name="ply_preview"> پیش‌نمایش PLY</label>
+                <input type="number" name="ply_preview_pct" min="1" max="100" placeholder="٪" style="width:80px;">
+            </div>
+            <div class="input-group">
+                <label for="pcd_mode">حالت PCD</label>
+                <div class="select-container">
+                    <select name="pcd_mode" id="pcd_mode" class="modern-select">
+                        <option value="binary" selected>binary</option>
+                        <option value="ascii">ascii</option>
+                        <option value="both">both</option>
+                    </select>
+                </div>
+                <label><input type="checkbox" name="pcd_preview"> پیش‌نمایش PCD</label>
+                <input type="number" name="pcd_preview_pct" min="1" max="100" placeholder="٪" style="width:80px;">
+            </div>
             {% if analyses %}
             <div class="input-group">
                 <label>تحلیل‌های اختیاری</label>

@@ -399,6 +399,15 @@ def video_upload():
             export_ply = "export_ply" in request.form
             export_pcd = "export_pcd" in request.form
             export_potree = "export_potree" in request.form
+            ply_mode = request.form.get("ply_mode", "binary")
+            pcd_mode = request.form.get("pcd_mode", "binary")
+            ply_preview_pct = request.form.get("ply_preview_pct")
+            if request.form.get("ply_preview") != "on":
+                ply_preview_pct = None
+            pcd_preview_pct = request.form.get("pcd_preview_pct")
+            if request.form.get("pcd_preview") != "on":
+                pcd_preview_pct = None
+            generate_preview = generate_preview or ply_preview_pct or pcd_preview_pct
             selected_analyses = request.form.getlist("analyses")
 
             options_path = os.path.join(output_dir, "options.json")
@@ -480,6 +489,10 @@ def video_upload():
                 sensor_type,
                 reference_file_path,
                 analyses,
+                ply_mode,
+                pcd_mode,
+                ply_preview_pct,
+                pcd_preview_pct,
             ):
                 with app.app_context():
                     try:
@@ -729,12 +742,22 @@ def video_upload():
                         ])
                         if reference_file_path:
                             metashape_command.extend(["--reference_file", reference_file_path])
-                        if generate_preview:
-                            metashape_command.extend(["--preview_ratio", "0.3"])
                         if export_ply:
                             metashape_command.append("--export_ply")
+                            metashape_command.extend(["--ply-mode", ply_mode])
+                            if ply_preview_pct:
+                                metashape_command.extend([
+                                    "--ply-preview-pct",
+                                    str(ply_preview_pct),
+                                ])
                         if export_pcd:
                             metashape_command.append("--export_pcd")
+                            metashape_command.extend(["--pcd-mode", pcd_mode])
+                            if pcd_preview_pct:
+                                metashape_command.extend([
+                                    "--pcd-preview-pct",
+                                    str(pcd_preview_pct),
+                                ])
                         if export_potree:
                             metashape_command.append("--export_potree")
                         if classify_images:
@@ -879,6 +902,10 @@ def video_upload():
                     sensor_type,
                     reference_file_path,
                     selected_analyses,
+                    ply_mode,
+                    pcd_mode,
+                    ply_preview_pct,
+                    pcd_preview_pct,
                 ),
             ).start()
 
@@ -948,6 +975,15 @@ def zip_upload():
         export_ply = "export_ply" in request.form
         export_pcd = "export_pcd" in request.form
         export_potree = "export_potree" in request.form
+        ply_mode = request.form.get("ply_mode", "binary")
+        pcd_mode = request.form.get("pcd_mode", "binary")
+        ply_preview_pct = request.form.get("ply_preview_pct")
+        if request.form.get("ply_preview") != "on":
+            ply_preview_pct = None
+        pcd_preview_pct = request.form.get("pcd_preview_pct")
+        if request.form.get("pcd_preview") != "on":
+            pcd_preview_pct = None
+        generate_preview = generate_preview or ply_preview_pct or pcd_preview_pct
         segformer_model = request.form.get("segformer_model", DEFAULT_SEGFORMER_MODEL)
         preselection_mode = request.form.get("preselection_mode", "source")
         sensor_type = request.form.get("sensor_type", "Frame")
@@ -995,6 +1031,10 @@ def zip_upload():
             sensor_type,
             reference_file_path,
             analyses,
+            ply_mode,
+            pcd_mode,
+            ply_preview_pct,
+            pcd_preview_pct,
         ):
             with app.app_context():
                 try:
@@ -1161,12 +1201,22 @@ def zip_upload():
                     ])
                     if reference_file_path:
                         metashape_command.extend(["--reference_file", reference_file_path])
-                    if generate_preview:
-                        metashape_command.extend(["--preview_ratio", "0.1"])
                     if export_ply:
                         metashape_command.append("--export_ply")
+                        metashape_command.extend(["--ply-mode", ply_mode])
+                        if ply_preview_pct:
+                            metashape_command.extend([
+                                "--ply-preview-pct",
+                                str(ply_preview_pct),
+                            ])
                     if export_pcd:
                         metashape_command.append("--export_pcd")
+                        metashape_command.extend(["--pcd-mode", pcd_mode])
+                        if pcd_preview_pct:
+                            metashape_command.extend([
+                                "--pcd-preview-pct",
+                                str(pcd_preview_pct),
+                            ])
                     if export_potree:
                         metashape_command.append("--export_potree")
                     if classify_images:
@@ -1307,6 +1357,10 @@ def zip_upload():
                 sensor_type,
                 reference_file_path,
                 selected_analyses,
+                ply_mode,
+                pcd_mode,
+                ply_preview_pct,
+                pcd_preview_pct,
             ),
         ).start()
 
