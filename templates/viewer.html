@@ -466,6 +466,7 @@
         let measurementObjects = [];
         let signBboxGroup;
         let signBboxesLoaded = false;
+        let centeringOffset = new THREE.Vector3();
         const SERVER_OUTPUT_FOLDER = {{ output_foldername|tojson if output_foldername is defined else 'null' }};
         const SERVER_FILE_PATH = {{ file_path|tojson if file_path is defined else 'null' }};
         let currentOutputFolder = SERVER_OUTPUT_FOLDER;
@@ -602,7 +603,9 @@
                     const geometry = points.geometry;
                     geometry.rotateX(0);
                     geometry.rotateY(0);
-                    geometry.center();
+                    geometry.computeBoundingBox();
+                    centeringOffset = geometry.boundingBox.getCenter(new THREE.Vector3());
+                    geometry.translate(-centeringOffset.x, -centeringOffset.y, -centeringOffset.z);
 
                     processPointCloud(points);
                     resolve(points);
@@ -646,7 +649,9 @@
                     // Apply transformations
                     geometry.rotateX(0);
                     geometry.rotateY(0);
-                    geometry.center();
+                    geometry.computeBoundingBox();
+                    centeringOffset = geometry.boundingBox.getCenter(new THREE.Vector3());
+                    geometry.translate(-centeringOffset.x, -centeringOffset.y, -centeringOffset.z);
 
                     const material = new THREE.PointsMaterial({ size: 0.01, vertexColors: true });
                     const points = new THREE.Points(geometry, material);
@@ -1190,8 +1195,8 @@
                 }
                 const boxes = await response.json();
                 boxes.forEach(box => {
-                    const min = new THREE.Vector3(...box.min);
-                    const max = new THREE.Vector3(...box.max);
+                    const min = new THREE.Vector3(...box.min).sub(centeringOffset);
+                    const max = new THREE.Vector3(...box.max).sub(centeringOffset);
                     const dx = max.x - min.x;
                     const dy = max.y - min.y;
                     const dz = max.z - min.z;
