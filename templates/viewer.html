@@ -1196,13 +1196,13 @@
                     const dy = max.y - min.y;
                     const dz = max.z - min.z;
                     const area = dx * dy;
-
+                    
                     const geometry = new THREE.PlaneGeometry(dx, dy);
                     const material = new THREE.MeshBasicMaterial({ color: 0xff0000, transparent: true, opacity: 0.15, side: THREE.DoubleSide });
                     const plane = new THREE.Mesh(geometry, material);
                     const center = new THREE.Vector3().addVectors(min, max).multiplyScalar(0.5);
                     plane.position.copy(center);
-
+                    console.log(geometry)
                     const edges = new THREE.LineSegments(new THREE.EdgesGeometry(geometry), new THREE.LineBasicMaterial({ color: 0xff0000 }));
                     plane.add(edges);
 
