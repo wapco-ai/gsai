@@ -147,7 +147,9 @@ def validate_ply_file(ply_path, mode=None, validate=ENABLE_PLY_VALIDATION):
         print(f"Failed to validate PLY file {ply_path}: {exc}")
         return False
  
-def add_class_field_to_ply(ply_path, mode=None, validate=ENABLE_PLY_VALIDATION):
+def add_class_field_to_ply(
+    ply_path, mode=None, validate=ENABLE_PLY_VALIDATION, overwrite=False
+):
     """Duplicate green channel into 'class' and 'label' fields in a PLY file.
 
     Parameters
@@ -160,6 +162,9 @@ def add_class_field_to_ply(ply_path, mode=None, validate=ENABLE_PLY_VALIDATION):
     validate : bool
         Perform a full :func:`validate_ply_file` when True (default) but may
         slow processing.
+    overwrite : bool
+        When ``True`` rewrite ``ply_path`` in place instead of creating a new
+        file with ``_with_class`` suffix.
     """
     try:
         import numpy as np
@@ -167,8 +172,9 @@ def add_class_field_to_ply(ply_path, mode=None, validate=ENABLE_PLY_VALIDATION):
 
         # Ensure PLY header is valid before processing
         validate_ply_file(ply_path, validate=validate)
-
-        output_ply_path = ply_path.replace('.ply', '_with_class.ply')
+        output_ply_path = (
+            ply_path if overwrite else ply_path.replace('.ply', '_with_class.ply')
+        )
 
         plydata_in = PlyData.read(ply_path)
         if mode is None:
@@ -495,7 +501,9 @@ def convert_to_point_cloud(
                     save_point_color=True,
                 )
                 if add_class_field:
-                    add_class_field_to_ply(output_path, mode="binary", validate=validate)
+                    add_class_field_to_ply(
+                        output_path, mode="binary", validate=validate, overwrite=True
+                    )
                 ply_paths.append((output_path, "binary"))
                 print(f"ply Point cloud exported to {output_path}")
             if ply_mode in ("ascii", "both"):
@@ -510,7 +518,9 @@ def convert_to_point_cloud(
                     save_point_color=True,
                 )
                 if add_class_field:
-                    add_class_field_to_ply(output_path, mode="ascii", validate=validate)
+                    add_class_field_to_ply(
+                        output_path, mode="ascii", validate=validate, overwrite=True
+                    )
                 ply_paths.append((output_path, "ascii"))
                 print(f"ply Point cloud exported to {output_path}")
 
@@ -581,10 +591,9 @@ def convert_to_point_cloud(
                 preview_path = path.replace('.ply', '_preview.ply')
                 if downsample_point_cloud(path, preview_path, ratio, pmode):
                     if add_class_field:
-                        add_class_field_to_ply(preview_path, mode=pmode, validate=validate)
-                        preview_with_class = preview_path.replace('.ply', '_with_class.ply')
-                        if os.path.exists(preview_with_class):
-                            os.replace(preview_with_class, preview_path)
+                        add_class_field_to_ply(
+                            preview_path, mode=pmode, validate=validate, overwrite=True
+                        )
         if pcd_preview_pct:
             ratio = float(pcd_preview_pct) / 100.0
             for path, pmode in pcd_paths:
