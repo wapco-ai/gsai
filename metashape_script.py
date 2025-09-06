@@ -23,8 +23,20 @@ except Exception:  # pragma: no cover - bridge is optional at runtime
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
-def downsample_point_cloud(input_path, output_path, ratio=0.1):
-    """Create a simplified preview of a point cloud using Open3D."""
+def downsample_point_cloud(input_path, output_path, ratio=0.1, mode="ascii"):
+    """Create a simplified preview of a point cloud using Open3D.
+
+    Parameters
+    ----------
+    input_path : str
+        Path to source point cloud.
+    output_path : str
+        Where to write the reduced point cloud.
+    ratio : float
+        Fraction of points to keep (0-1).
+    mode : str
+        ``"ascii"`` or ``"binary"`` output format.
+    """
     try:
         import open3d as o3d
         import numpy as np
@@ -40,7 +52,7 @@ def downsample_point_cloud(input_path, output_path, ratio=0.1):
         sampled = pcd.random_down_sample(ratio)
         points = np.asarray(sampled.points)
         sampled.points = o3d.utility.Vector3dVector(np.round(points, 2))
-        o3d.io.write_point_cloud(output_path, sampled, write_ascii=True)
+        o3d.io.write_point_cloud(output_path, sampled, write_ascii=(mode == "ascii"))
         print(f"Preview point cloud saved to {output_path}")
         return True
     except Exception as exc:
@@ -59,8 +71,17 @@ def downsample_point_cloud(input_path, output_path, ratio=0.1):
             return False
 
 
-def validate_ply_file(ply_path):
-    """Validate PLY header and ensure correct point count and format."""
+def validate_ply_file(ply_path, mode=None):
+    """Validate PLY header and ensure correct point count and format.
+
+    Parameters
+    ----------
+    ply_path : str
+        Path to PLY file.
+    mode : str or None
+        Desired format ("ascii" or "binary"). When ``None`` the existing
+        file format is preserved.
+    """
     try:
         from plyfile import PlyData
 
@@ -69,16 +90,21 @@ def validate_ply_file(ply_path):
         header_count = vertex.count
         actual_count = len(vertex.data)
 
-        # Safely determine PLY format without assuming header is a dict
+        # Safely determine existing PLY format
         if isinstance(getattr(ply, "header", None), dict) and "format" in ply.header:
             ply_format = ply.header["format"][0]
         else:
             ply_format = "ascii" if getattr(ply, "text", False) else "binary_little_endian"
 
+        if mode is None:
+            mode = "ascii" if ply_format == "ascii" else "binary"
+        target_text = mode == "ascii"
+        expected_format = "ascii" if target_text else "binary_little_endian"
+
         # Rewrite file if header count or format is inconsistent
-        needs_rewrite = header_count != actual_count or ply_format != "binary_little_endian"
+        needs_rewrite = header_count != actual_count or ply_format != expected_format
         if needs_rewrite:
-            PlyData(ply.elements, text=False).write(ply_path)
+            PlyData(ply.elements, text=target_text).write(ply_path)
             ply = PlyData.read(ply_path)
             vertex = ply['vertex']
             header_count = vertex.count
@@ -116,8 +142,17 @@ def validate_ply_file(ply_path):
         print(f"Failed to validate PLY file {ply_path}: {exc}")
         return False
  
-def add_class_field_to_ply(ply_path):
-    """Duplicate green channel into 'class' and 'label' fields in a PLY file."""
+def add_class_field_to_ply(ply_path, mode=None):
+    """Duplicate green channel into 'class' and 'label' fields in a PLY file.
+
+    Parameters
+    ----------
+    ply_path : str
+        Input PLY file which will be rewritten.
+    mode : str or None
+        Output format, "ascii" or "binary". If ``None`` the input format is
+        preserved.
+    """
     try:
         import numpy as np
         from plyfile import PlyData, PlyElement
@@ -128,6 +163,8 @@ def add_class_field_to_ply(ply_path):
         output_ply_path = ply_path.replace('.ply', '_with_class.ply')
 
         plydata_in = PlyData.read(ply_path)
+        if mode is None:
+            mode = "ascii" if plydata_in.text else "binary"
         vertex = plydata_in['vertex']
         
         if 'green' not in vertex.data.dtype.names:
@@ -162,12 +199,12 @@ def add_class_field_to_ply(ply_path):
         # Preserve the input format; set ``text=True`` above for ASCII output
         plydata_out = PlyData(
             [new_vertex_element] + other_elements,
-            text=plydata_in.text,
+            text=(mode == "ascii"),
         )
 
         # Write the output without forcing text mode
         plydata_out.write(output_ply_path)
-        validate_ply_file(output_ply_path)
+        validate_ply_file(output_ply_path, mode)
         print(f"SUCCESS: Added class field to PLY and saved to {output_ply_path}")
 
     except Exception as exc:
@@ -176,7 +213,7 @@ def add_class_field_to_ply(ply_path):
         print(traceback.format_exc())
 
 
-def add_class_field_to_pcd(pcd_path):
+def add_class_field_to_pcd(pcd_path, mode=None):
     """
     Duplicate green channel into 'class' and 'label' fields in a PCD file.
     This version uses a safer method to add fields to prevent data corruption.
@@ -236,7 +273,8 @@ def add_class_field_to_pcd(pcd_path):
         # متادیتا به صورت خودکار توسط save_pcd به‌روز می‌شود
 
         output_pcd_path = pcd_path.replace('.pcd', '_with_class.pcd')
-        pc.save_pcd(output_pcd_path, compression='binary')
+        compression = 'ascii' if mode == 'ascii' else 'binary'
+        pc.save_pcd(output_pcd_path, compression=compression)
         
         print(f"SUCCESS (Safe Mode): Added class field to PCD and saved to {output_pcd_path}")
 
@@ -395,10 +433,13 @@ def process_in_metashape(
 def convert_to_point_cloud(
     project_path,
     output_dir,
-    preview_ratio=None,
     export_ply=True,
     export_pcd=True,
     export_potree=False,
+    ply_mode="binary",
+    pcd_mode="binary",
+    ply_preview_pct=None,
+    pcd_preview_pct=None,
 ):
     import Metashape
 
@@ -432,32 +473,67 @@ def convert_to_point_cloud(
 
     # Export point cloud
     try:
+        ply_paths = []
         if export_ply:
-            output_path = os.path.join(output_dir, "point_cloud.ply")
-            chunk.exportPointCloud(
-                output_path,
-                format=Metashape.PointCloudFormatPLY,  # Point cloud format (PLY)
-                crs=Metashape.CoordinateSystem("EPSG::32640"), #chunk.crs,  # Coordinate Reference System
-                binary=True,
-                save_point_classification=True,
-                save_point_color=True,
-            )
-            if add_class_field:
-                add_class_field_to_ply(output_path)
-            print(f"ply Point cloud exported to {output_path}")
+            if ply_mode in ("binary", "both"):
+                output_path = os.path.join(output_dir, "point_cloud.ply")
+                chunk.exportPointCloud(
+                    output_path,
+                    format=Metashape.PointCloudFormatPLY,
+                    crs=Metashape.CoordinateSystem("EPSG::32640"),
+                    binary=True,
+                    save_point_classification=True,
+                    save_point_color=True,
+                )
+                if add_class_field:
+                    add_class_field_to_ply(output_path, mode="binary")
+                ply_paths.append((output_path, "binary"))
+                print(f"ply Point cloud exported to {output_path}")
+            if ply_mode in ("ascii", "both"):
+                name = "point_cloud_ascii.ply" if ply_mode == "both" else "point_cloud.ply"
+                output_path = os.path.join(output_dir, name)
+                chunk.exportPointCloud(
+                    output_path,
+                    format=Metashape.PointCloudFormatPLY,
+                    crs=Metashape.CoordinateSystem("EPSG::32640"),
+                    binary=False,
+                    save_point_classification=True,
+                    save_point_color=True,
+                )
+                if add_class_field:
+                    add_class_field_to_ply(output_path, mode="ascii")
+                ply_paths.append((output_path, "ascii"))
+                print(f"ply Point cloud exported to {output_path}")
 
+        pcd_paths = []
         if export_pcd:
-            output_path = os.path.join(output_dir, "point_cloud.pcd")
-            chunk.exportPointCloud(
-                output_path,
-                format=Metashape.PointCloudFormatPCD,  # Point cloud format (pcd)
-                crs=Metashape.CoordinateSystem("EPSG::32640"), #chunk.crs,  # Coordinate Reference System
-                binary=True,
-                save_point_color=True
-            )
-            if add_class_field:
-                add_class_field_to_pcd(output_path)
-            print(f"pcd Point cloud exported to {output_path}")
+            if pcd_mode in ("binary", "both"):
+                output_path = os.path.join(output_dir, "point_cloud.pcd")
+                chunk.exportPointCloud(
+                    output_path,
+                    format=Metashape.PointCloudFormatPCD,
+                    crs=Metashape.CoordinateSystem("EPSG::32640"),
+                    binary=True,
+                    save_point_color=True,
+                )
+                if add_class_field:
+                    add_class_field_to_pcd(output_path, mode="binary")
+                pcd_paths.append((output_path, "binary"))
+                print(f"pcd Point cloud exported to {output_path}")
+            if pcd_mode in ("ascii", "both"):
+                name = "point_cloud_ascii.pcd" if pcd_mode == "both" else "point_cloud.pcd"
+                output_path = os.path.join(output_dir, name)
+                chunk.exportPointCloud(
+                    output_path,
+                    format=Metashape.PointCloudFormatPCD,
+                    crs=Metashape.CoordinateSystem("EPSG::32640"),
+                    binary=False,
+                    save_point_color=True,
+                )
+                if add_class_field:
+                    add_class_field_to_pcd(output_path, mode="ascii")
+                pcd_paths.append((output_path, "ascii"))
+                print(f"pcd Point cloud exported to {output_path}")
             
         if export_potree:
             potree_dir = os.path.join(output_dir, "potree")
@@ -490,24 +566,23 @@ def convert_to_point_cloud(
             else:
                 print(f"Potree point cloud exported to {potree_dir}")
 
-        if preview_ratio:
-            if export_ply:
-                ply_path = os.path.join(output_dir, "point_cloud.ply")
-                preview_path = os.path.join(output_dir, "point_cloud_preview.ply")
-                if os.path.exists(ply_path):
-                    downsample_point_cloud(ply_path, preview_path, preview_ratio)
+        if ply_preview_pct:
+            ratio = float(ply_preview_pct) / 100.0
+            for path, pmode in ply_paths:
+                preview_path = path.replace('.ply', '_preview.ply')
+                if downsample_point_cloud(path, preview_path, ratio, pmode):
                     if add_class_field:
-                        add_class_field_to_ply(preview_path)
+                        add_class_field_to_ply(preview_path, mode=pmode)
                         preview_with_class = preview_path.replace('.ply', '_with_class.ply')
                         if os.path.exists(preview_with_class):
                             os.replace(preview_with_class, preview_path)
-            if export_pcd:
-                pcd_path = os.path.join(output_dir, "point_cloud.pcd")
-                preview_pcd = os.path.join(output_dir, "point_cloud_preview.pcd")
-                if os.path.exists(pcd_path):
-                    downsample_point_cloud(pcd_path, preview_pcd, preview_ratio)
+        if pcd_preview_pct:
+            ratio = float(pcd_preview_pct) / 100.0
+            for path, pmode in pcd_paths:
+                preview_pcd = path.replace('.pcd', '_preview.pcd')
+                if downsample_point_cloud(path, preview_pcd, ratio, pmode):
                     if add_class_field:
-                        add_class_field_to_pcd(preview_pcd)
+                        add_class_field_to_pcd(preview_pcd, mode=pmode)
                         preview_pcd_with_class = preview_pcd.replace('.pcd', '_with_class.pcd')
                         if os.path.exists(preview_pcd_with_class):
                             os.replace(preview_pcd_with_class, preview_pcd)
@@ -577,11 +652,14 @@ def create_and_export_3d_model(project_path, output_dir, model_format="obj"):
 # --------------------------  
 
 if __name__ == "__main__":
-    preview_ratio = float(sys.argv[sys.argv.index("--preview_ratio") + 1]) if "--preview_ratio" in sys.argv else None
     export_ply = "--export_ply" in sys.argv
     export_pcd = "--export_pcd" in sys.argv
     export_potree = "--export_potree" in sys.argv
     add_class_field = "--add_class_field" in sys.argv
+    ply_mode = sys.argv[sys.argv.index("--ply-mode") + 1] if "--ply-mode" in sys.argv else "binary"
+    pcd_mode = sys.argv[sys.argv.index("--pcd-mode") + 1] if "--pcd-mode" in sys.argv else "binary"
+    ply_preview_pct = float(sys.argv[sys.argv.index("--ply-preview-pct") + 1]) if "--ply-preview-pct" in sys.argv else None
+    pcd_preview_pct = float(sys.argv[sys.argv.index("--pcd-preview-pct") + 1]) if "--pcd-preview-pct" in sys.argv else None
     if not export_ply and not export_pcd and not export_potree:
         export_ply = export_pcd = True
     reference_preselection_mode = (
@@ -625,10 +703,13 @@ if __name__ == "__main__":
         convert_to_point_cloud(
             project_path,
             output_dir,
-            preview_ratio,
             export_ply,
             export_pcd,
             export_potree,
+            ply_mode,
+            pcd_mode,
+            ply_preview_pct,
+            pcd_preview_pct,
         )
     
     if "--create_and_export_3d_model" in sys.argv:  
@@ -650,10 +731,13 @@ if __name__ == "__main__":
         convert_to_point_cloud(
             project_path,
             output_dir,
-            preview_ratio,
             export_ply,
             export_pcd,
             export_potree,
+            ply_mode,
+            pcd_mode,
+            ply_preview_pct,
+            pcd_preview_pct,
         )
         
     if "--video_full_pipeline" in sys.argv:  
@@ -691,8 +775,11 @@ if __name__ == "__main__":
         convert_to_point_cloud(
             project_path,
             metashape_output_dir,
-            preview_ratio,
             export_ply,
             export_pcd,
             export_potree,
+            ply_mode,
+            pcd_mode,
+            ply_preview_pct,
+            pcd_preview_pct,
         )
