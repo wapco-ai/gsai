@@ -1812,7 +1812,7 @@ def ply(output_foldername, file_path):
             if not os.path.exists(preview_path):
                 try:
                     downsample_point_cloud(full_file_path, preview_path, ratio=0.1)
-                    add_class_field_to_ply(preview_path, overwrite=False)
+                    add_class_field_to_ply(preview_path)
                     if ENABLE_PLY_VALIDATION:
                         validate_ply_file(preview_path)
                 except Exception as exc:
