@@ -64,7 +64,7 @@ def run_analysis(name: str, *args: Any, **kwargs: Any) -> Any:
     return entry["func"](*args, **kwargs)
 
 
-@register_analysis("sign_bbox", "Compute bounding box for traffic signs (label=43).")
+@register_analysis("sign_bbox", "پردازش جعبه‌های محدودکننده تابلوها")
 def compute_sign_bounding_box(ply_path: str, output_dir: str, label_value: int = 43) -> List[Dict[str, float]]:
     """Generate a bounding box around points with the given *label_value*.
 
