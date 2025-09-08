@@ -40,7 +40,7 @@ else:
 
 
 # Import the new image classifier module
-import image_classifier
+from image_classifier import SegformerClassifier
 from metashape_script import (
     downsample_point_cloud,
     validate_ply_file,
@@ -89,6 +89,9 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = "your_secret_key"
 db = SQLAlchemy(app)
+
+# Segformer classifier instance shared across threads
+segformer_classifier = SegformerClassifier()
 
 
 
@@ -631,7 +634,7 @@ def video_upload():
                             try:
                                 # classify_images_in_folder returns a list of paths to blended images
                                 blended_image_paths = (
-                                    image_classifier.classify_images_in_folder(
+                                    segformer_classifier.classify_images_in_folder(
                                         image_dir,
                                         blended_image_dir,
                                         segformer_model,
@@ -1099,7 +1102,7 @@ def zip_upload():
                         )
                         try:
                             blended_image_paths = (
-                                image_classifier.classify_images_in_folder(
+                                segformer_classifier.classify_images_in_folder(
                                     image_dir,
                                     blended_image_dir,
                                     segformer_model,
