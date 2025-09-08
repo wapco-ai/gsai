@@ -1,4 +1,5 @@
 import os
+from typing import Optional
 from PIL import Image, ExifTags
 import numpy as np
 import tensorflow as tf
@@ -56,7 +57,7 @@ class SegformerClassifier:
         self.default_model_name = default_model_name
         self._lock = threading.Lock()
 
-    def load_model_and_feature_extractor(self, model_name: str | None = None):
+    def load_model_and_feature_extractor(self, model_name: Optional[str] = None):
         """Load the Segformer model and feature extractor in a thread-safe manner."""
         model_name = model_name or self.default_model_name
         with self._lock:
@@ -97,7 +98,7 @@ class SegformerClassifier:
                 self.feature_extractor = None
                 raise
 
-    def classify_image(self, image_path: str, model_name: str | None = None):
+    def classify_image(self, image_path: str, model_name: Optional[str] = None):
         """Classify a single image and return the predicted segmentation mask."""
         model_name = model_name or self.default_model_name
         if (
@@ -119,7 +120,7 @@ class SegformerClassifier:
             logging.error(f"Error classifying image {image_path}: {e}")
             return None
 
-    def process_single_image(self, image_path, blended_output_folder, model_name: str | None = None):
+    def process_single_image(self, image_path, blended_output_folder, model_name: Optional[str] = None):
         """Classify a single image and return its blended path with EXIF data."""
         predicted_mask = self.classify_image(image_path, model_name)
         exif = extract_exif_data(image_path)
@@ -130,7 +131,7 @@ class SegformerClassifier:
             )
         return {"original_path": image_path, "blended_path": blended_path, "exif": exif}
 
-    def classify_images_in_folder(self, image_folder, blended_output_folder, model_name: str | None = None):
+    def classify_images_in_folder(self, image_folder, blended_output_folder, model_name: Optional[str] = None):
         """Classify all images in a folder and generate blended outputs."""
         model_name = model_name or self.default_model_name
         logging.info(f"Starting image classification and blending for images in: {image_folder}")
