@@ -5,6 +5,10 @@ input images, marks each as containing an urban sign, and stores the results in 
 JSON file. If a point cloud (PLY) exists in the output directory the module also
 adds ``class`` and ``label`` fields using :func:`metashape_script.add_class_field_to_ply`.
 
+Each execution should use a dedicated ``output_dir``.  When multiple runs target
+the same directory a file lock is used to coordinate access, but sharing
+directories between unrelated runs is unsupported.
+
 The intent is to demonstrate how a dedicated sign processing stage can be
 integrated into the existing project without requiring heavy dependencies.
 """
@@ -14,6 +18,8 @@ from __future__ import annotations
 import os
 import json
 from typing import Dict, List, Optional
+
+from filelock import FileLock
 
 from metashape_script import add_class_field_to_ply
 from settings import ENABLE_PLY_VALIDATION
@@ -72,37 +78,39 @@ def process_sign_pipeline(
 
     if summary:
         json_path = os.path.join(output_dir, "signs.json")
-        with open(json_path, "w", encoding="utf-8") as fh:
-            json.dump(
-                {"detections": detections, "summary": summary},
-                fh,
-                ensure_ascii=False,
-                indent=2,
-            )
+        lock_path = json_path + ".lock"
+        ply_path: Optional[str] = None
+        with FileLock(lock_path):
+            with open(json_path, "w", encoding="utf-8") as fh:
+                json.dump(
+                    {"detections": detections, "summary": summary},
+                    fh,
+                    ensure_ascii=False,
+                    indent=2,
+                )
 
-        # Locate a PLY point cloud and optionally add classification fields
-        ply_path = None
-        for root, _, files in os.walk(output_dir):
-            # Prefer an already classified file if present
-            for file in files:
-                if file.lower().endswith("_with_class.ply"):
-                    ply_path = os.path.join(root, file)
+            # Locate a PLY point cloud and optionally add classification fields
+            for root, _, files in os.walk(output_dir):
+                # Prefer an already classified file if present
+                for file in files:
+                    if file.lower().endswith("_with_class.ply"):
+                        ply_path = os.path.join(root, file)
+                        break
+                if ply_path:
                     break
-            if ply_path:
-                break
-            for file in files:
-                if file.lower().endswith(".ply"):
-                    ply_path = os.path.join(root, file)
-                    if add_class_field:
-                        try:
-                            add_class_field_to_ply(
-                                ply_path, validate=validate
-                            )
-                        except Exception:
-                            pass
+                for file in files:
+                    if file.lower().endswith(".ply"):
+                        ply_path = os.path.join(root, file)
+                        if add_class_field:
+                            try:
+                                add_class_field_to_ply(
+                                    ply_path, validate=validate
+                                )
+                            except Exception:
+                                pass
+                        break
+                if ply_path:
                     break
-            if ply_path:
-                break
 
         if analyses and ply_path:
             for name in analyses:

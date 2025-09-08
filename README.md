@@ -166,6 +166,11 @@ process_sign_pipeline(
 )
 ```
 
+Each invocation should write to its own `output_dir`; results are
+stored in-place and concurrent runs are not expected to share a
+directory.  Internally `process_sign_pipeline` uses a file lock to guard
+writes to `signs.json` and point‑cloud modifications.
+
 The provided `sign_bbox` analysis computes a bounding box around traffic
 sign points (label `43`) and writes the results to `sign_bboxes.json` in
 the output directory. When uploading a ZIP or video through the web
