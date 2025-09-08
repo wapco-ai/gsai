@@ -18,7 +18,8 @@ import subprocess
 import shutil
 import uuid
 import json
-from threading import Thread
+from threading import Thread, Lock
+from collections import defaultdict
 import sys  # Import sys to get the python executable
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
@@ -79,12 +80,13 @@ apply_windows_proxy()
 
 # Initialize Flask app
 app = Flask(__name__)
+PROCESS_STATE_LOCK = Lock()
 app.config["UPLOAD_FOLDER"] = "uploads"
 app.config["OUTPUT_FOLDER"] = "outputs"
 app.config["ALLOWED_IMAGE_EXTENSIONS"] = {"jpg", "jpeg", "png"}
 app.config["ALLOWED_VIDEO_EXTENSIONS"] = {"mp4", "avi", "mov", "mkv", "360"}
 app.config["ALLOWED_ZIP_EXTENSIONS"] = {"zip"}
-app.config["PROCESSING_STATES"] = {}
+app.config["PROCESSING_STATES"] = defaultdict(dict)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///app.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = "your_secret_key"
@@ -256,11 +258,12 @@ def create_filtered_zip(directory, extensions, zip_name):
 
 # Helper function to update process state both in-memory and in the database
 def update_process_state(process_id, updates=None, **kwargs):
-    state = app.config["PROCESSING_STATES"].setdefault(process_id, {})
-    if updates:
-        state.update(updates)
-    state.update(kwargs)
-    process = Process.query.get(process_id)
+    with PROCESS_STATE_LOCK:
+        state = app.config["PROCESSING_STATES"][process_id]
+        if updates:
+            state.update(updates)
+        state.update(kwargs)
+    process = db.session.get(Process, process_id)
     if process:
         combined = updates.copy() if updates else {}
         combined.update(kwargs)
@@ -433,13 +436,14 @@ def video_upload():
 
             db.session.commit()
 
-            app.config["PROCESSING_STATES"][process_id] = {
-                "status": "processing",
-                "progress": 0,
-                "message": "در حال پردازش اولیه و آماده‌سازی...",
-                "filename": filename,
-                "output_foldername": process_id,
-            }
+            with PROCESS_STATE_LOCK:
+                app.config["PROCESSING_STATES"][process_id] = {
+                    "status": "processing",
+                    "progress": 0,
+                    "message": "در حال پردازش اولیه و آماده‌سازی...",
+                    "filename": filename,
+                    "output_foldername": process_id,
+                }
 
             start_time_str = request.form.get("start_time", "0")
             end_time_str = request.form.get("end_time", "")
@@ -610,13 +614,14 @@ def video_upload():
                         if proc:
                             proc.frame_count = len(extracted_image_files)
                             db.session.commit()
-                        app.config["PROCESSING_STATES"][process_id].update(
-                            {
-                                "progress": 20,
-                                "message": f"استخراج فریم‌ها کامل شد. یافت شد: {len(extracted_image_files)} تصویر.",
-                                "frame_count": len(extracted_image_files),
-                            },
-                        )
+                        with PROCESS_STATE_LOCK:
+                            app.config["PROCESSING_STATES"][process_id].update(
+                                {
+                                    "progress": 20,
+                                    "message": f"استخراج فریم‌ها کامل شد. یافت شد: {len(extracted_image_files)} تصویر.",
+                                    "frame_count": len(extracted_image_files),
+                                },
+                            )
 
                         images_to_process_dir = image_dir  # Default to original frames
                         blended_image_dir = os.path.join(
@@ -1014,13 +1019,14 @@ def zip_upload():
 
         db.session.commit()
 
-        app.config["PROCESSING_STATES"][process_id] = {
-            "status": "processing",
-            "progress": 0,
-            "message": "در حال استخراج تصاویر از فایل ZIP...",
-            "filename": zip_filename,
-            "output_foldername": process_uuid,
-        }
+        with PROCESS_STATE_LOCK:
+            app.config["PROCESSING_STATES"][process_id] = {
+                "status": "processing",
+                "progress": 0,
+                "message": "در حال استخراج تصاویر از فایل ZIP...",
+                "filename": zip_filename,
+                "output_foldername": process_uuid,
+            }
 
         def process_zip_task(
             process_id,
@@ -1080,12 +1086,13 @@ def zip_upload():
                     if proc:
                         proc.frame_count = extracted_files_count
                         db.session.commit()
-                    app.config["PROCESSING_STATES"][process_id].update(
-                        {
-                            "progress": 20,
-                            "message": f"تصاویر از ZIP استخراج شدند. یافت شد: {extracted_files_count} تصویر.",
-                        }
-                    )
+                    with PROCESS_STATE_LOCK:
+                        app.config["PROCESSING_STATES"][process_id].update(
+                            {
+                                "progress": 20,
+                                "message": f"تصاویر از ZIP استخراج شدند. یافت شد: {extracted_files_count} تصویر.",
+                            }
+                        )
 
                     images_to_process_dir = image_dir  # Default to extracted images
                     blended_image_dir = os.path.join(
